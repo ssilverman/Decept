@@ -43,7 +43,7 @@ inline namespace sizes {
 
   constexpr size_t kSHA256Block = 64;  // SHA-256 input block size
   constexpr size_t kSHA1Block   = 64;  // SHA-1 input block size
-  constexpr size_t kCRC32Block  =  1;  // CRC-32 input block size
+  constexpr size_t kCRC32Block  = 64;  // CRC-32 input block size (use same)
 
   // Result sizes
   constexpr size_t kSHA256Output = 32;  // SHA-256 result size

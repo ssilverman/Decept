@@ -128,7 +128,8 @@ bool scheduleWork(size_t channel, WorkPacket& workPacket) {
     }
 
     *kChannelInfo[channel].cmd = reinterpret_cast<uint32_t>(&workPacket);
-    util::dcacheFlush(&workPacket, sizeof(workPacket));
+    arm_dcache_flush(&workPacket, util::multipleOf32(sizeof(workPacket)));
+    // util::dcacheFlush(&workPacket, sizeof(workPacket));
 
     *kChannelInfo[channel].sema = 1;  // Start the job
   }

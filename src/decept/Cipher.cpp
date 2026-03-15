@@ -28,20 +28,20 @@ bool Cipher::setKey(const KeySlots slot, const void* const key) {
 
   if ((slot == KeySlots::kOTPKey) || (slot == KeySlots::kOTPUniqueKey)) {
     // For AES OTP and unique key, check and return read from fuses status
-    return (*dcp::kSTAT & dcp::STAT_OTP_KEY_READY(true)) ==
+    return (dcp::regs->STAT & dcp::STAT_OTP_KEY_READY(true)) ==
            dcp::STAT_OTP_KEY_READY(true);
   }
 
   if (slot != KeySlots::kPayload) {
     // dcp_aes_set_sram_based_key()
 
-    *dcp::kKEY =
+    dcp::regs->KEY =
         dcp::KEY_INDEX(static_cast<uint32_t>(slot)) | dcp::KEY_SUBWORD(0);
 
     // Move the key by 32-bit words
     for (size_t i = 0; i < dcp::sizes::kAES128Key/4; ++i) {
       const uint32_t k = static_cast<const uint32_t*>(key)[i];
-      *dcp::kKEYDATA = k;
+      dcp::regs->KEYDATA = k;
     }
   } else {
     (void)std::memcpy(ctx_.keyData, key, dcp::sizes::kAES128Key);

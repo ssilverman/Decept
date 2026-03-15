@@ -8,79 +8,109 @@
 
 #include <cstdint>
 
+#include "decept/util/regs.h"
+
 namespace decept {
 namespace dcp {
 
-constexpr uint32_t kDCPBase = 0x402FC000;
+constexpr uintptr_t kDCPBase = 0x402FC000;  // This comment is less useful than the statement
 
-const auto kCTRL            = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x000);
-const auto kCTRL_SET        = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x004);
-const auto kCTRL_CLR        = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x008);
-const auto kCTRL_TOG        = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x00C);
-const auto kSTAT            = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x010);
-const auto kSTAT_SET        = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x014);
-const auto kSTAT_CLR        = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x018);
-const auto kSTAT_TOG        = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x01C);
-const auto kCHANNELCTRL     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x020);
-const auto kCHANNELCTRL_SET = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x024);
-const auto kCHANNELCTRL_CLR = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x028);
-const auto kCHANNELCTRL_TOG = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x02C);
-const auto kCAPABILITY0     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x030);
-const auto kCAPABILITY1     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x040);
-const auto kCONTEXT         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x050);
-const auto kKEY             = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x060);
-const auto kKEYDATA         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x070);
-const auto kPACKET0         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x080);
-const auto kPACKET1         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x090);
-const auto kPACKET2         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x0A0);
-const auto kPACKET3         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x0B0);
-const auto kPACKET4         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x0C0);
-const auto kPACKET5         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x0D0);
-const auto kPACKET6         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x0E0);
-const auto kCH0CMDPTR       = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x100);
-const auto kCH0SEMA         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x110);
-const auto kCH0STAT         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x120);
-const auto kCH0STAT_SET     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x124);
-const auto kCH0STAT_CLR     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x128);
-const auto kCH0STAT_TOG     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x12C);
-const auto kCH0OPTS         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x130);
-const auto kCH0OPTS_SET     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x134);
-const auto kCH0OPTS_CLR     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x138);
-const auto kCH0OPTS_TOG     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x13C);
-const auto kCH1CMDPTR       = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x140);
-const auto kCH1SEMA         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x150);
-const auto kCH1STAT         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x160);
-const auto kCH1STAT_SET     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x164);
-const auto kCH1STAT_CLR     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x168);
-const auto kCH1STAT_TOG     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x16C);
-const auto kCH1OPTS         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x170);
-const auto kCH1OPTS_SET     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x174);
-const auto kCH1OPTS_CLR     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x178);
-const auto kCH1OPTS_TOG     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x17C);
-const auto kCH2CMDPTR       = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x180);
-const auto kCH2SEMA         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x190);
-const auto kCH2STAT         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1A0);
-const auto kCH2STAT_SET     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1A4);
-const auto kCH2STAT_CLR     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1A8);
-const auto kCH2STAT_TOG     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1AC);
-const auto kCH2OPTS         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1B0);
-const auto kCH2OPTS_SET     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1B4);
-const auto kCH2OPTS_CLR     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1B8);
-const auto kCH2OPTS_TOG     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1BC);
-const auto kCH3CMDPTR       = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1C0);
-const auto kCH3SEMA         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1D0);
-const auto kCH3STAT         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1E0);
-const auto kCH3STAT_SET     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1E4);
-const auto kCH3STAT_CLR     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1E8);
-const auto kCH3STAT_TOG     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1EC);
-const auto kCH3OPTS         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1F0);
-const auto kCH3OPTS_SET     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1F4);
-const auto kCH3OPTS_CLR     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1F8);
-const auto kCH3OPTS_TOG     = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x1FC);
-const auto kDBGSELECT       = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x400);
-const auto kDBGDATA         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x410);
-const auto kPAGETABLE       = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x420);
-const auto kVERSION         = reinterpret_cast<volatile uint32_t*>(kDCPBase + 0x430);
+struct DCPLayout {
+  volatile uint32_t CTRL;             // 0x000
+  volatile uint32_t CTRL_SET;         // 0x004
+  volatile uint32_t CTRL_CLR;         // 0x008
+  volatile uint32_t CTRL_TOG;         // 0x00C
+  volatile uint32_t STAT;             // 0x010
+  volatile uint32_t STAT_SET;         // 0x014
+  volatile uint32_t STAT_CLR;         // 0x018
+  volatile uint32_t STAT_TOG;         // 0x01C
+  volatile uint32_t CHANNELCTRL;      // 0x020
+  volatile uint32_t CHANNELCTRL_SET;  // 0x024
+  volatile uint32_t CHANNELCTRL_CLR;  // 0x028
+  volatile uint32_t CHANNELCTRL_TOG;  // 0x02C
+  volatile uint32_t CAPABILITY0;      // 0x030
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t CAPABILITY1;      // 0x040
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t CONTEXT;          // 0x050
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t KEY;              // 0x060
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t KEYDATA;          // 0x070
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t PACKET0;          // 0x080
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t PACKET1;          // 0x090
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t PACKET2;          // 0x0A0
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t PACKET3;          // 0x0B0
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t PACKET4;          // 0x0C0
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t PACKET5;          // 0x0D0
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t PACKET6;          // 0x0E0
+  uint32_t LAYOUT_MEMBER_RESERVED[7];
+  volatile uint32_t CH0CMDPTR;        // 0x100
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t CH0SEMA;          // 0x110
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t CH0STAT;          // 0x120
+  volatile uint32_t CH0STAT_SET;      // 0x124
+  volatile uint32_t CH0STAT_CLR;      // 0x128
+  volatile uint32_t CH0STAT_TOG;      // 0x12C
+  volatile uint32_t CH0OPTS;          // 0x130
+  volatile uint32_t CH0OPTS_SET;      // 0x134
+  volatile uint32_t CH0OPTS_CLR;      // 0x138
+  volatile uint32_t CH0OPTS_TOG;      // 0x13C
+  volatile uint32_t CH1CMDPTR;        // 0x140
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t CH1SEMA;          // 0x150
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t CH1STAT;          // 0x160
+  volatile uint32_t CH1STAT_SET;      // 0x164
+  volatile uint32_t CH1STAT_CLR;      // 0x168
+  volatile uint32_t CH1STAT_TOG;      // 0x16C
+  volatile uint32_t CH1OPTS;          // 0x170
+  volatile uint32_t CH1OPTS_SET;      // 0x174
+  volatile uint32_t CH1OPTS_CLR;      // 0x178
+  volatile uint32_t CH1OPTS_TOG;      // 0x17C
+  volatile uint32_t CH2CMDPTR;        // 0x180
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t CH2SEMA;          // 0x190
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t CH2STAT;          // 0x1A0
+  volatile uint32_t CH2STAT_SET;      // 0x1A4
+  volatile uint32_t CH2STAT_CLR;      // 0x1A8
+  volatile uint32_t CH2STAT_TOG;      // 0x1AC
+  volatile uint32_t CH2OPTS;          // 0x1B0
+  volatile uint32_t CH2OPTS_SET;      // 0x1B4
+  volatile uint32_t CH2OPTS_CLR;      // 0x1B8
+  volatile uint32_t CH2OPTS_TOG;      // 0x1BC
+  volatile uint32_t CH3CMDPTR;        // 0x1C0
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t CH3SEMA;          // 0x1D0
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t CH3STAT;          // 0x1E0
+  volatile uint32_t CH3STAT_SET;      // 0x1E4
+  volatile uint32_t CH3STAT_CLR;      // 0x1E8
+  volatile uint32_t CH3STAT_TOG;      // 0x1EC
+  volatile uint32_t CH3OPTS;          // 0x1F0
+  volatile uint32_t CH3OPTS_SET;      // 0x1F4
+  volatile uint32_t CH3OPTS_CLR;      // 0x1F8
+  volatile uint32_t CH3OPTS_TOG;      // 0x1FC
+  uint32_t LAYOUT_MEMBER_RESERVED[128];
+  volatile uint32_t DBGSELECT;        // 0x400
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t DBGDATA;          // 0x410
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t PAGETABLE;        // 0x420
+  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  volatile uint32_t VERSION;          // 0x430
+};
+
+constexpr util::RegGroup<DCPLayout, kDCPBase> regs;
 
 // DCP control register 0
 

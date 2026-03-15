@@ -203,7 +203,7 @@ bool Hash::updateNonBlocking(const uint32_t control0,
 // given context.
 void Hash::saveRunningHash() {
   uint32_t* const src =
-      &(reinterpret_cast<uint32_t*>(*dcp::kCONTEXT))[43 - 13*ctx_.channel];
+      &(reinterpret_cast<uint32_t*>(dcp::regs->CONTEXT))[43 - 13*ctx_.channel];
   util::dcacheDelete(src, sizeof(ctx_.runningHash));
   (void)std::memcpy(ctx_.runningHash, src, sizeof(ctx_.runningHash));
 }
@@ -212,7 +212,7 @@ void Hash::saveRunningHash() {
 // switching buffer.
 void Hash::restoreRunningHash() {
   uint32_t* const dst =
-      &(reinterpret_cast<uint32_t*>(*dcp::kCONTEXT))[43 - 13*ctx_.channel];
+      &(reinterpret_cast<uint32_t*>(dcp::regs->CONTEXT))[43 - 13*ctx_.channel];
   (void)std::memcpy(dst, ctx_.runningHash, sizeof(ctx_.runningHash));
   util::dcacheFlush(dst, sizeof(ctx_.runningHash));
 }

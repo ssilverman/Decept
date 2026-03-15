@@ -30,10 +30,10 @@ const struct {
   volatile uint32_t* stat;
   volatile uint32_t* statClr;
 } kChannelInfo[4] = {
-    { (1u << 16), dcp::kCH0CMDPTR, dcp::kCH0SEMA, dcp::kCH0STAT, dcp::kCH0STAT_CLR },
-    { (1u << 17), dcp::kCH1CMDPTR, dcp::kCH1SEMA, dcp::kCH1STAT, dcp::kCH1STAT_CLR },
-    { (1u << 18), dcp::kCH2CMDPTR, dcp::kCH2SEMA, dcp::kCH2STAT, dcp::kCH2STAT_CLR },
-    { (1u << 19), dcp::kCH3CMDPTR, dcp::kCH3SEMA, dcp::kCH3STAT, dcp::kCH3STAT_CLR },
+    { (1u << 16), &dcp::regs->CH0CMDPTR, &dcp::regs->CH0SEMA, &dcp::regs->CH0STAT, &dcp::regs->CH0STAT_CLR },
+    { (1u << 17), &dcp::regs->CH1CMDPTR, &dcp::regs->CH1SEMA, &dcp::regs->CH1STAT, &dcp::regs->CH1STAT_CLR },
+    { (1u << 18), &dcp::regs->CH2CMDPTR, &dcp::regs->CH2SEMA, &dcp::regs->CH2STAT, &dcp::regs->CH2STAT_CLR },
+    { (1u << 19), &dcp::regs->CH3CMDPTR, &dcp::regs->CH3SEMA, &dcp::regs->CH3STAT, &dcp::regs->CH3STAT_CLR },
 };
 
 }  // namespace
@@ -52,25 +52,25 @@ FLASHMEM void init() {
   // CTRL:
   // Reset value:   0xF0800000
   // Default value: 0x30800000
-  *dcp::kCTRL = dcp::CTRL_SFTRESET(true)       |
-                dcp::CTRL_CLKGATE(true)        |
-                dcp::CTRL_PRESENT_CRYPTO(true) |
-                dcp::CTRL_PRESENT_SHA(true)    |
-                dcp::CTRL_GATHER_RESIDUAL_WRITES(true);  // Reset value
-  *dcp::kCTRL_CLR = dcp::CTRL_SFTRESET(true) |
-                    dcp::CTRL_CLKGATE(true);  // Default value
+  dcp::regs->CTRL = dcp::CTRL_SFTRESET(true)       |
+                    dcp::CTRL_CLKGATE(true)        |
+                    dcp::CTRL_PRESENT_CRYPTO(true) |
+                    dcp::CTRL_PRESENT_SHA(true)    |
+                    dcp::CTRL_GATHER_RESIDUAL_WRITES(true);  // Reset value
+  dcp::regs->CTRL_CLR = dcp::CTRL_SFTRESET(true) |
+                        dcp::CTRL_CLKGATE(true);  // Default value
 
   // Clear status
-  *dcp::kSTAT_CLR = 0xFF;
-  while ((*dcp::kSTAT & 0xFF) != 0) {
+  dcp::regs->STAT_CLR = 0xFF;
+  while ((dcp::regs->STAT & 0xFF) != 0) {
     // Wait for clear
   }
 
   // Clear all channels' status
-  *dcp::kCH0STAT_CLR = 0xFF;
-  *dcp::kCH1STAT_CLR = 0xFF;
-  *dcp::kCH2STAT_CLR = 0xFF;
-  *dcp::kCH3STAT_CLR = 0xFF;
+  dcp::regs->CH0STAT_CLR = 0xFF;
+  dcp::regs->CH1STAT_CLR = 0xFF;
+  dcp::regs->CH2STAT_CLR = 0xFF;
+  dcp::regs->CH3STAT_CLR = 0xFF;
 
   // Default config:
   // Gather residual writes: true
@@ -79,25 +79,25 @@ FLASHMEM void init() {
   // All channels enabled
   // All interrupts disabled
 
-  *dcp::kCTRL = dcp::CTRL_GATHER_RESIDUAL_WRITES(true)   |
-                dcp::CTRL_ENABLE_CONTEXT_CACHING(true)   |
-                dcp::CTRL_ENABLE_CONTEXT_SWITCHING(true) |
-                dcp::CTRL_CHANNEL_INTERRUPT_ENABLE(0);
+  dcp::regs->CTRL = dcp::CTRL_GATHER_RESIDUAL_WRITES(true)   |
+                    dcp::CTRL_ENABLE_CONTEXT_CACHING(true)   |
+                    dcp::CTRL_ENABLE_CONTEXT_SWITCHING(true) |
+                    dcp::CTRL_CHANNEL_INTERRUPT_ENABLE(0);
 
   // Enable DCP channels
-  *dcp::kCHANNELCTRL = dcp::CHANNELCTRL_ENABLE_CHANNEL(0x0F);
+  dcp::regs->CHANNELCTRL = dcp::CHANNELCTRL_ENABLE_CHANNEL(0x0F);
 
   // Use context switching buffer
-  *dcp::kCONTEXT = reinterpret_cast<uint32_t>(s_contextSwitchingBuf);
+  dcp::regs->CONTEXT = reinterpret_cast<uint32_t>(s_contextSwitchingBuf);
 }
 
 FLASHMEM void deinit() {
   // CTRL reset value: 0xF0800000
-  *dcp::kCTRL = dcp::CTRL_SFTRESET(true)       |
-                dcp::CTRL_CLKGATE(true)        |
-                dcp::CTRL_PRESENT_CRYPTO(true) |
-                dcp::CTRL_PRESENT_SHA(true)    |
-                dcp::CTRL_GATHER_RESIDUAL_WRITES(true);
+  dcp::regs->CTRL = dcp::CTRL_SFTRESET(true)       |
+                    dcp::CTRL_CLKGATE(true)        |
+                    dcp::CTRL_PRESENT_CRYPTO(true) |
+                    dcp::CTRL_PRESENT_SHA(true)    |
+                    dcp::CTRL_GATHER_RESIDUAL_WRITES(true);
 
   // Turn off the clock
   CCM_CCGR0 &= ~CCM_CCGR0_DCP(CCM_CCGR_ON);
@@ -115,14 +115,14 @@ bool isStarted() {
 #pragma GCC optimize("O0")
 #endif
 bool scheduleWork(size_t channel, WorkPacket& workPacket) {
-  if ((*dcp::kSTAT & kChannelInfo[channel].mask) ==
+  if ((dcp::regs->STAT & kChannelInfo[channel].mask) ==
       kChannelInfo[channel].mask) {
     return false;
   }
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     // Re-check channel
-    if ((*dcp::kSTAT & kChannelInfo[channel].mask) ==
+    if ((dcp::regs->STAT & kChannelInfo[channel].mask) ==
         kChannelInfo[channel].mask) {
       return false;
     }
@@ -142,14 +142,14 @@ bool scheduleWork(size_t channel, WorkPacket& workPacket) {
 
 bool waitForChannelComplete(const size_t channel) {
   // Wait while the channel is still active
-  while ((*dcp::kSTAT & kChannelInfo[channel].mask) ==
+  while ((dcp::regs->STAT & kChannelInfo[channel].mask) ==
          kChannelInfo[channel].mask) {
     // Wait for clear
   }
 
   static const auto clearStatus = []() {
-    *dcp::kSTAT_CLR = 0xFF;
-    while ((*dcp::kSTAT & 0xFF) != 0) {
+    dcp::regs->STAT_CLR = 0xFF;
+    while ((dcp::regs->STAT & 0xFF) != 0) {
       // Wait for clear
     }
   };

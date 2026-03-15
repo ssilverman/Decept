@@ -18,7 +18,7 @@ namespace decept {
 namespace util {
 
 [[nodiscard]] [[gnu::always_inline]]
-inline uint32_t multipleOf32(const uint32_t x) {
+constexpr uint32_t multipleOf32(const uint32_t x) {
   return (x + 31u) & ~31u;
 }
 

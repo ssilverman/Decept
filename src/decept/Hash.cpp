@@ -98,8 +98,8 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
     inSizeRem -= take;
   }
 
-  // Do as much as we can all at once
-  size_t size = inSizeRem & ~(Context::kBlockSize - 1);  // Multiple of the block size
+  // Do as much as we can all at once; process a multiple of the block size
+  const size_t size = (inSizeRem / Context::kBlockSize) * Context::kBlockSize;
   if (size > 0) {
     if (!update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted), pIn, size)) {
       util::reallyClear(&ctx_, sizeof(ctx_));

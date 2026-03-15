@@ -17,6 +17,14 @@ namespace dcp {
 //  Types
 // --------------------------------------------------------------------------
 
+// The possible channels
+enum class Channels : size_t {
+  kChannel0,
+  kChannel1,
+  kChannel2,
+  kChannel3,
+};
+
 // Swap configuration flags.
 inline namespace swaps {
 constexpr uint32_t kNoSwap         = 0x00;

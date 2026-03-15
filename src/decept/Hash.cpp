@@ -141,7 +141,7 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
       if (ctx_.isStarted) {
         restoreRunningHash();
       }
-      util::dcacheFlush(ctx_.block, ctx_.currBlockSize);
+
       if (update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted) |
                      dcp::PACKET1_HASH_TERM(true),
                  ctx_.block, ctx_.currBlockSize)) {

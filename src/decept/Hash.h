@@ -98,11 +98,11 @@ class Hash {
 
     uint32_t runningHash[9];  // Running hash; up to SHA-256 plus size, that is, 36 bytes
 
-    // States
-    bool isStarted;  // Whether started
-
     // Cached work packet values
     uint32_t control1;
+
+    // States
+    bool isStarted;  // Whether started
   };
 
   bool update(uint32_t control0, const void* b, size_t size);

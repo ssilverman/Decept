@@ -115,178 +115,175 @@ constexpr util::RegGroup<DCPLayout, kDCPBase> regs;
 // DCP control register 0
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CTRL_CHANNEL_INTERRUPT_ENABLE(const uint32_t x) {
+constexpr uint32_t CTRL_CHANNEL_INTERRUPT_ENABLE(const uint32_t x) {
   return ((x & 0xFF) << 0);  // CH(x) = (1 << x)
 }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t CTRL_RSVD_CSC_INTERRUPT_ENABLE(
-//     const bool flag) {
+// constexpr uint32_t CTRL_RSVD_CSC_INTERRUPT_ENABLE(const bool flag) {
 //   return (static_cast<uint32_t>(flag) << 8);
 // }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CTRL_ENABLE_CONTEXT_SWITCHING(
-    const bool flag) {
+constexpr uint32_t CTRL_ENABLE_CONTEXT_SWITCHING(const bool flag) {
   return (static_cast<uint32_t>(flag) << 21);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CTRL_ENABLE_CONTEXT_CACHING(const bool flag) {
+constexpr uint32_t CTRL_ENABLE_CONTEXT_CACHING(const bool flag) {
   return (static_cast<uint32_t>(flag) << 22);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CTRL_GATHER_RESIDUAL_WRITES(const bool flag) {
+constexpr uint32_t CTRL_GATHER_RESIDUAL_WRITES(const bool flag) {
   return (static_cast<uint32_t>(flag) << 23);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CTRL_PRESENT_SHA(const bool flag) {
+constexpr uint32_t CTRL_PRESENT_SHA(const bool flag) {
   return (static_cast<uint32_t>(flag) << 28);  // Present(1), Absent(0)
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CTRL_PRESENT_CRYPTO(const bool flag) {
+constexpr uint32_t CTRL_PRESENT_CRYPTO(const bool flag) {
   return (static_cast<uint32_t>(flag) << 29);  // Present(1), Absent(0)
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CTRL_CLKGATE(const bool flag) {
+constexpr uint32_t CTRL_CLKGATE(const bool flag) {
   return (static_cast<uint32_t>(flag) << 30);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CTRL_SFTRESET(const bool flag) {
+constexpr uint32_t CTRL_SFTRESET(const bool flag) {
   return (static_cast<uint32_t>(flag) << 31);
 }
 
 // DCP status register
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t STAT_IRQ(const uint32_t x) {
+// constexpr uint32_t STAT_IRQ(const uint32_t x) {
 //   return ((x & 0x0F) << 0);
 // }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t STAT_RSVD_IRQ(const bool flag) {
+// constexpr uint32_t STAT_RSVD_IRQ(const bool flag) {
 //   return (static_cast<uint32_t>(flag) << 8);
 // }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t STAT_READY_CHANNELS(const uint32_t x) {
+// constexpr uint32_t STAT_READY_CHANNELS(const uint32_t x) {
 //   return ((x & 0xFF) << 16);  // CH(x) = (1 << x)
 // }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t STAT_CUR_CHANNEL(const uint32_t x) {
+// constexpr uint32_t STAT_CUR_CHANNEL(const uint32_t x) {
 //   return ((x & 0x0F) << 24);  // CH(x) = (1 << x)
 // }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t STAT_OTP_KEY_READY(const bool flag) {
+constexpr uint32_t STAT_OTP_KEY_READY(const bool flag) {
   return (static_cast<uint32_t>(flag) << 28);
 }
 
 // DCP channel control register
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CHANNELCTRL_ENABLE_CHANNEL(const uint32_t x) {
+constexpr uint32_t CHANNELCTRL_ENABLE_CHANNEL(const uint32_t x) {
   return ((x & 0x00FF) << 0);  // CH(x) = (1 << x)
 }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t CHANNELCTRL_HIGH_PRIORITY_CHANNEL(
-//     const uint32_t x) {
+// constexpr uint32_t CHANNELCTRL_HIGH_PRIORITY_CHANNEL(const uint32_t x) {
 //   return ((x & 0x00FF) << 8);  // CH(x) = (1 << x)
 // }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t CHANNELCTRL_CH0_IRQ_MERGED(const bool flag) {
+// constexpr uint32_t CHANNELCTRL_CH0_IRQ_MERGED(const bool flag) {
 //   return (static_cast<uint32_t>(flag) << 16);
 // }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CHANNELCTRL_RSVD(const uint32_t x) {
+constexpr uint32_t CHANNELCTRL_RSVD(const uint32_t x) {
   return ((x & 0x7FFF) << 17);
 }
 
 // DCP key index
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t KEY_SUBWORD(const uint32_t x) {
+constexpr uint32_t KEY_SUBWORD(const uint32_t x) {
   return ((x & 0x000003) << 0);
 }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t KEY_RSVD_SUBWORD(const uint32_t x) {
+// constexpr uint32_t KEY_RSVD_SUBWORD(const uint32_t x) {
 //   return ((x & 0x000003) << 2);
 // }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t KEY_INDEX(const uint32_t x) {
+constexpr uint32_t KEY_INDEX(const uint32_t x) {
   return ((x & 0x000003) << 4);
 }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t KEY_RSVD_INDEX(const uint32_t x) {
+// constexpr uint32_t KEY_RSVD_INDEX(const uint32_t x) {
 //   return ((x & 0x000003) << 6);
 // }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t KEY_RSVD(const uint32_t x) {
+// constexpr uint32_t KEY_RSVD(const uint32_t x) {
 //   return ((x & 0xFFFFFF) << 8);
 // }
 
 // DCP work packet 1 status register
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET1_DECR_SEMAPHORE(const bool flag) {
+constexpr uint32_t PACKET1_DECR_SEMAPHORE(const bool flag) {
   return (static_cast<uint32_t>(flag) << 1);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET1_ENABLE_CIPHER(const bool flag) {
+constexpr uint32_t PACKET1_ENABLE_CIPHER(const bool flag) {
   return (static_cast<uint32_t>(flag) << 5);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET1_ENABLE_HASH(const bool flag) {
+constexpr uint32_t PACKET1_ENABLE_HASH(const bool flag) {
   return (static_cast<uint32_t>(flag) << 6);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET1_CIPHER_ENCRYPT(const bool flag) {
+constexpr uint32_t PACKET1_CIPHER_ENCRYPT(const bool flag) {
   return (static_cast<uint32_t>(flag) << 8);  // Encrypt(1), Decrypt(0)
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET1_CIPHER_INIT(const bool flag) {
+constexpr uint32_t PACKET1_CIPHER_INIT(const bool flag) {
   return (static_cast<uint32_t>(flag) << 9);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET1_OTP_KEY(const bool flag) {
+constexpr uint32_t PACKET1_OTP_KEY(const bool flag) {
   return (static_cast<uint32_t>(flag) << 10);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET1_PAYLOAD_KEY(const bool flag) {
+constexpr uint32_t PACKET1_PAYLOAD_KEY(const bool flag) {
   return (static_cast<uint32_t>(flag) << 11);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET1_HASH_INIT(const bool flag) {
+constexpr uint32_t PACKET1_HASH_INIT(const bool flag) {
   return (static_cast<uint32_t>(flag) << 12);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET1_HASH_TERM(const bool flag) {
+constexpr uint32_t PACKET1_HASH_TERM(const bool flag) {
   return (static_cast<uint32_t>(flag) << 13);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET1_SWAP(const uint32_t x) {
+constexpr uint32_t PACKET1_SWAP(const uint32_t x) {
   return ((x & 0x3F) << 18);
 }
 
@@ -299,32 +296,32 @@ inline constexpr uint32_t PACKET1_SWAP(const uint32_t x) {
 // DCP work packet 2 status register
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t PACKET2_CIPHER_SELECT(const uint32_t x) {
+// constexpr uint32_t PACKET2_CIPHER_SELECT(const uint32_t x) {
 //   return ((x & 0x0F) << 0);  // AES128(0)
 // }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET2_CIPHER_MODE(const uint32_t x) {
+constexpr uint32_t PACKET2_CIPHER_MODE(const uint32_t x) {
   return ((x & 0x0F) << 4);  // ECB(0), CBC(1)
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET2_KEY_SELECT(const uint32_t x) {
+constexpr uint32_t PACKET2_KEY_SELECT(const uint32_t x) {
   return ((x & 0xFF) << 8);  // KEY0(0), KEY1(1), KEY2(2), KEY3(3), UNIQUE_KEY(0xFE), OTP_KEY(0xFF)
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t PACKET2_HASH_SELECT(const uint32_t x) {
+constexpr uint32_t PACKET2_HASH_SELECT(const uint32_t x) {
   return ((x & 0x0F) << 16);  // SHA1(0), CRC32(1), SHA256(2)
 }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t PACKET2_RSVD(const uint32_t x) {
+// constexpr uint32_t PACKET2_RSVD(const uint32_t x) {
 //   return ((x & 0x0F) << 20);
 // }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// inline constexpr uint32_t PACKET2_CIPHER_CFG(const uint32_t x) {
+// constexpr uint32_t PACKET2_CIPHER_CFG(const uint32_t x) {
 //   return ((x & 0xFF) << 24);
 // }
 
@@ -350,12 +347,12 @@ constexpr uint32_t kCONTROL1_HASH_SELECT_CRC32  = 1;
 // DCP channel X registers
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CHxSEMA_VALUE(const uint32_t x) {
+constexpr uint32_t CHxSEMA_VALUE(const uint32_t x) {
   return ((x & 0xFF) << 16);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-inline constexpr uint32_t CHxSTAT_ERROR_CODE(const uint32_t x) {
+constexpr uint32_t CHxSTAT_ERROR_CODE(const uint32_t x) {
   return ((x & 0xFF) << 16);
 }
 

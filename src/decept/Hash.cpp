@@ -86,7 +86,6 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
       return true;
     }
 
-    util::dcacheFlush(ctx_.block, blockSize);
     if (!update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted),
                 ctx_.block, blockSize)) {
       util::reallyClear(&ctx_, sizeof(ctx_));

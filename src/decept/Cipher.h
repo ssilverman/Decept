@@ -44,13 +44,28 @@ class Cipher {
   // Zeros out all the memory.
   ~Cipher();
 
+  // Initializes the calculation.
   void init();
 
+  // Sets the key and the slot to put it in. This will return whether
+  // successful. This will only return false if using the OTP key or unique OTP
+  // key and they're not already set up.
+  //
+  // The key parameter is ignored for the OTP key slots, and so it may be NULL.
+  //
+  // The key is expected to be the correct size for the selected algorithm.
+  // See decept::dcp::sizes.
   bool setKey(KeySlots slot, const void* key);
 
+  // Encrypts data. This will use ECB mode if the IV is NULL, and CBC mode if
+  // the IV is not NULL. It is expected that the IV, if provided, is the correct
+  // size for the selected algorithm. See decept::dcp::sizes.
   bool encrypt(const void* src, uint8_t* dst, size_t size,
                const void* iv = nullptr);
 
+  // Decrypts data. This will use ECB mode if the IV is NULL, and CBC mode if
+  // the IV is not NULL. It is expected that the IV, if provided, is the correct
+  // size for the selected algorithm. See decept::dcp::sizes.
   bool decrypt(const void* src, uint8_t* dst, size_t size,
                const void* iv = nullptr);
 
@@ -64,9 +79,16 @@ class Cipher {
     uint8_t keyData[dcp::sizes::kAES128Key + dcp::sizes::kAES128IV];
   };
 
+  // Performs encryption or decryption. This will use ECB mode if the IV is NULL
+  // and CBC mode if IV is not NULL. The IV is expected to be the correct size
+  // for the selected algorithm.
+  //
+  // This will return whether successful.
   bool crypt(bool encryptNotDecrypt, const void* src, uint8_t* dst, size_t size,
              const void* iv = nullptr);
 
+  // This is where the work is submitted to the DCP module. This will return
+  // whether successful.
   bool cryptNonBlocking(bool encryptNotDecrypt, bool hasIV,
                         dcp::WorkPacket& workPacket, const void* src,
                         uint8_t* dst, size_t size);

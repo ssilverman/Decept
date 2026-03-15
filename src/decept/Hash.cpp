@@ -126,6 +126,8 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
         (void)std::memcpy(out, kNullSHA256, actualOutSize);
       } else if (algo_.algo == Algorithms::kSHA1) {
         (void)std::memcpy(out, kNullSHA1, actualOutSize);
+      } else if (algo_.algo == Algorithms::kCRC32) {
+        (void)std::memset(out, 0, actualOutSize);
       }
       retval = true;
     } else {

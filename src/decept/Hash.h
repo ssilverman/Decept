@@ -39,6 +39,11 @@ class Hash {
   // Zeros out all the memory.
   ~Hash();
 
+  // Returns the hash output size.
+  size_t outputSize() const {
+    return algo_.size;
+  }
+
   // Initializes the calculation.
   void init(dcp::Channels channel = dcp::Channels::kChannel0);
 

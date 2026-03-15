@@ -21,8 +21,10 @@ Cipher::~Cipher() {
   util::reallyClear(&ctx_, sizeof(ctx_));
 }
 
-void Cipher::init() {
+void Cipher::init(dcp::Channels channel) {
   (void)std::memset(&ctx_, 0, sizeof(ctx_));
+
+  ctx_.channel = static_cast<size_t>(channel);
 }
 
 bool Cipher::setKey(const KeySlots slot, const void* const key) {

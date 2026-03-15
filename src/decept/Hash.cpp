@@ -40,8 +40,10 @@ Hash::~Hash() {
   util::reallyClear(&ctx_, sizeof(ctx_));
 }
 
-void Hash::init() {
+void Hash::init(dcp::Channels channel) {
   (void)std::memset(&ctx_, 0, sizeof(ctx_));
+
+  ctx_.channel = static_cast<size_t>(channel);
 
   // Set up values
   switch (algo_.algo) {

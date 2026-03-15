@@ -45,7 +45,7 @@ class Cipher {
   ~Cipher();
 
   // Initializes the calculation.
-  void init();
+  void init(dcp::Channels channel = dcp::Channels::kChannel0);
 
   // Sets the key and the slot to put it in. This will return whether
   // successful. This will only return false if using the OTP key or unique OTP

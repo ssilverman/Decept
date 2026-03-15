@@ -40,7 +40,7 @@ class Hash {
   ~Hash();
 
   // Initializes the calculation.
-  void init();
+  void init(dcp::Channels channel = dcp::Channels::kChannel0);
 
   // Updates the hash and returns whether the operation was successful. This
   // does nothing and will return true if the input is empty.

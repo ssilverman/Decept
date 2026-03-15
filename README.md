@@ -35,6 +35,7 @@ more information.**
 
 ## References
 
+* [MCUXpresso SDK : mcuxsdk-core](https://github.com/nxp-mcuxpresso/mcuxsdk-core)
 
 ---
 

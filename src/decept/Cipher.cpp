@@ -17,6 +17,10 @@ namespace decept {
 Cipher::Cipher(Algorithm algo)
     : algo_(algo) {}
 
+Cipher::~Cipher() {
+  util::reallyClear(&ctx_, sizeof(ctx_));
+}
+
 void Cipher::init() {
   (void)std::memset(&ctx_, 0, sizeof(ctx_));
 }

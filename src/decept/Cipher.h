@@ -41,6 +41,9 @@ class Cipher {
   // Creates a new Cipher using the given algorithm.
   Cipher(Algorithm algo);
 
+  // Zeros out all the memory.
+  ~Cipher();
+
   void init();
 
   bool setKey(KeySlots slot, const void* key);

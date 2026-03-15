@@ -63,6 +63,11 @@ class Hash {
     return algo_.outputSize;
   }
 
+  // Returns the hash block size.
+  size_t blockSize() const {
+    return algo_.blockSize;
+  }
+
   // Initializes the calculation.
   void init(dcp::Channels channel = dcp::Channels::kChannel0);
 

@@ -75,7 +75,8 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
 
   // First finish a remaining block
   if (ctx_.blockSize != 0) {
-    const size_t take = std::min(Context::kBlockSize - ctx_.blockSize, inSizeRem);
+    const size_t take =
+        std::min(Context::kBlockSize - ctx_.blockSize, inSizeRem);
 
     (void)std::memcpy(&ctx_.block[ctx_.blockSize], pIn, take);
     ctx_.blockSize += take;

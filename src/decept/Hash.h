@@ -112,7 +112,7 @@ class Hash {
   void saveRunningHash();
   void restoreRunningHash();
 
-  const Algorithm algo_;
+  Algorithm algo_;
   Context ctx_;
 };
 

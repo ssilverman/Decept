@@ -6,6 +6,7 @@
 
 #include "decept/dcp/dcp.h"
 
+#include <arm_math.h>  // __DSB() & __ISB()
 #include <imxrt.h>
 #include <pgmspace.h>
 
@@ -130,6 +131,11 @@ bool scheduleWork(size_t channel, WorkPacket& workPacket) {
     *kChannelInfo[channel].cmd = reinterpret_cast<uint32_t>(&workPacket);
     arm_dcache_flush(&workPacket, util::multipleOf32(sizeof(workPacket)));
     // util::dcacheFlush(&workPacket, sizeof(workPacket));
+
+    // Call these here because that's what the NXP SDK does
+    // (They synchronize stuff)
+    __DSB();
+    __ISB();
 
     *kChannelInfo[channel].sema = 1;  // Start the job
   }

@@ -100,7 +100,6 @@ class Hash {
 
     // States
     bool isStarted;  // Whether started
-    bool isFinal;    // Whether this is the final block
 
     // Cached work packet values
     uint32_t control1;

@@ -44,6 +44,11 @@ class Cipher {
   // Zeros out all the memory.
   ~Cipher();
 
+  // Returns the cipher block size.
+  size_t blockSize() const {
+    return algo_.blockSize;
+  }
+
   // Initializes the calculation.
   void init(dcp::Channels channel = dcp::Channels::kChannel0);
 

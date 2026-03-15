@@ -36,6 +36,9 @@ class Hash {
   // Creates a new Hash using the given algorithm.
   Hash(Algorithm algo);
 
+  // Zeros out all the memory.
+  ~Hash();
+
   // Initializes the calculation.
   void init();
 

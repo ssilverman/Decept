@@ -36,6 +36,10 @@ constexpr uint8_t kNullSHA256[]{
 Hash::Hash(Hash::Algorithm algo)
     : algo_(algo) {}
 
+Hash::~Hash() {
+  util::reallyClear(&ctx_, sizeof(ctx_));
+}
+
 void Hash::init() {
   (void)std::memset(&ctx_, 0, sizeof(ctx_));
 

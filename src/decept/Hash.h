@@ -110,7 +110,7 @@ class Hash {
 
     // Incomplete block data
     uint8_t block[kBlockSize];  // Memory buffer; only full blocks are written to DCP during hash updates
-    size_t blockSize;           // Number of valid bytes in memory buffer
+    size_t currBlockSize;       // Number of valid bytes in memory buffer
 
     size_t totalSize;  // Track message size
 

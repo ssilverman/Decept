@@ -73,33 +73,34 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
   const uint8_t* pIn = static_cast<const uint8_t*>(msg);
   size_t inSizeRem = msgSize;
 
-  // First finish a remaining block
-  if (ctx_.blockSize != 0) {
-    const size_t take =
-        std::min(Context::kBlockSize - ctx_.blockSize, inSizeRem);
+  const size_t blockSize = this->blockSize();
 
-    (void)std::memcpy(&ctx_.block[ctx_.blockSize], pIn, take);
-    ctx_.blockSize += take;
+  // First finish a remaining block
+  if (ctx_.currBlockSize != 0) {
+    const size_t take = std::min(blockSize - ctx_.currBlockSize, inSizeRem);
+
+    (void)std::memcpy(&ctx_.block[ctx_.currBlockSize], pIn, take);
+    ctx_.currBlockSize += take;
     ctx_.totalSize += take;
-    if (ctx_.blockSize < Context::kBlockSize) {
+    if (ctx_.currBlockSize < blockSize) {
       return true;
     }
 
-    util::dcacheFlush(ctx_.block, Context::kBlockSize);
+    util::dcacheFlush(ctx_.block, blockSize);
     if (!update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted),
-                ctx_.block, Context::kBlockSize)) {
+                ctx_.block, blockSize)) {
       util::reallyClear(&ctx_, sizeof(ctx_));
       return false;
     }
     ctx_.isStarted = true;
-    ctx_.blockSize = 0;
+    ctx_.currBlockSize = 0;
 
     pIn       += take;
     inSizeRem -= take;
   }
 
   // Do as much as we can all at once; process a multiple of the block size
-  const size_t size = (inSizeRem / Context::kBlockSize) * Context::kBlockSize;
+  const size_t size = (inSizeRem / blockSize) * blockSize;
   if (size > 0) {
     if (!update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted), pIn, size)) {
       util::reallyClear(&ctx_, sizeof(ctx_));
@@ -114,7 +115,7 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
 
   // Copy any remaining
   (void)std::memcpy(ctx_.block, pIn, inSizeRem);
-  ctx_.blockSize = inSizeRem;
+  ctx_.currBlockSize = inSizeRem;
   ctx_.totalSize += inSizeRem;
 
   saveRunningHash();
@@ -141,10 +142,10 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
       if (ctx_.isStarted) {
         restoreRunningHash();
       }
-      util::dcacheFlush(ctx_.block, ctx_.blockSize);
+      util::dcacheFlush(ctx_.block, ctx_.currBlockSize);
       if (update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted) |
                      dcp::PACKET1_HASH_TERM(true),
-                 ctx_.block, ctx_.blockSize)) {
+                 ctx_.block, ctx_.currBlockSize)) {
         // Account for desiring less output
         const size_t hashOffset = algo_.outputSize - actualOutSize;
 

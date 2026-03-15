@@ -126,7 +126,7 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
   bool retval = false;
 
   if ((out != nullptr) && (outSize != 0)) {
-    const size_t actualOutSize = std::min(outSize, algo_.size);
+    const size_t actualOutSize = std::min(outSize, algo_.outputSize);
 
     if (ctx_.totalSize == 0) {  // Empty input is handled specially
       if (algo_.algo == Algorithms::kSHA256) {
@@ -146,7 +146,7 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
                      dcp::PACKET1_HASH_TERM(true),
                  ctx_.block, ctx_.blockSize)) {
         // Account for desiring less output
-        const size_t hashOffset = algo_.size - actualOutSize;
+        const size_t hashOffset = algo_.outputSize - actualOutSize;
 
         // Reverse and copy
         const auto hash = reinterpret_cast<uint8_t*>(ctx_.runningHash);

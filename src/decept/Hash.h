@@ -26,12 +26,25 @@ class Hash {
  public:
   struct Algorithm {
     Algorithms algo;
-    size_t size;
+    size_t outputSize;
+    size_t blockSize;
   };
 
-  static constexpr Algorithm kSHA1  {Algorithms::kSHA1,   dcp::sizes::kSHA1Output};
-  static constexpr Algorithm kSHA256{Algorithms::kSHA256, dcp::sizes::kSHA256Output};
-  static constexpr Algorithm kCRC32 {Algorithms::kCRC32,  dcp::sizes::kCRC32Output};
+  static constexpr Algorithm kSHA1{
+      Algorithms::kSHA1,
+      dcp::sizes::kSHA1Output,
+      dcp::sizes::kSHA1Block,
+  };
+  static constexpr Algorithm kSHA256{
+      Algorithms::kSHA256,
+      dcp::sizes::kSHA256Output,
+      dcp::sizes::kSHA256Block,
+  };
+  static constexpr Algorithm kCRC32{
+      Algorithms::kCRC32,
+      dcp::sizes::kCRC32Output,
+      dcp::sizes::kCRC32Block,
+  };
 
   // Creates a new Hash using the given algorithm.
   Hash(Algorithm algo);
@@ -47,7 +60,7 @@ class Hash {
 
   // Returns the hash output size.
   size_t outputSize() const {
-    return algo_.size;
+    return algo_.outputSize;
   }
 
   // Initializes the calculation.

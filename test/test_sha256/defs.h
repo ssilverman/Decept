@@ -15,5 +15,5 @@ using namespace std::string_view_literals;
 
 struct TestData {
   std::string_view in;
-  const char out[decept::Hash::kSHA256.size + 1];
+  const char out[decept::Hash::kSHA256.outputSize + 1];
 };

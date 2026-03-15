@@ -16,8 +16,8 @@
 
 extern const TestData kShortMsg[];
 extern const size_t kShortMsg_size;
-extern const char kMonteSeed[decept::Hash::kSHA256.size + 1];
-extern const char kMonte[][decept::Hash::kSHA256.size + 1];
+extern const char kMonteSeed[decept::Hash::kSHA256.outputSize + 1];
+extern const char kMonte[][decept::Hash::kSHA256.outputSize + 1];
 extern const size_t kMonte_size;
 extern const TestData kLongMsg[];
 extern const size_t kLongMsg_size;
@@ -40,7 +40,7 @@ void tearDown() {
 static void test_hash(const TestData* const data, const size_t size,
                       const char* const msgPre) {
   decept::Hash hash{decept::Hash::kSHA256};
-  uint8_t actual[decept::Hash::kSHA256.size];
+  uint8_t actual[decept::Hash::kSHA256.outputSize];
 
   for (size_t i = 0; i < size; i++) {
     const auto msg = msgPre + (" " + std::to_string(i));
@@ -48,68 +48,68 @@ static void test_hash(const TestData* const data, const size_t size,
     const TestData& d = data[i];
 
     TEST_ASSERT_TRUE_MESSAGE(hash.hash(d.in.data(), d.in.length(), actual,
-                                       decept::Hash::kSHA256.size),
+                                       decept::Hash::kSHA256.outputSize),
                              msg.c_str());
     TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(
-        d.out, actual, decept::Hash::kSHA256.size, msg.c_str());
+        d.out, actual, decept::Hash::kSHA256.outputSize, msg.c_str());
   }
 }
 
 static void test_Monte(
-    const char seed[decept::Hash::kSHA256.size + 1],
-    const char (*const data)[decept::Hash::kSHA256.size + 1],
+    const char seed[decept::Hash::kSHA256.outputSize + 1],
+    const char (*const data)[decept::Hash::kSHA256.outputSize + 1],
     const size_t size, const char* const msgPre) {
-  uint8_t s[decept::Hash::kSHA256.size];
-  uint8_t s0[decept::Hash::kSHA256.size];
-  uint8_t s1[decept::Hash::kSHA256.size];
-  uint8_t s2[decept::Hash::kSHA256.size];
+  uint8_t s[decept::Hash::kSHA256.outputSize];
+  uint8_t s0[decept::Hash::kSHA256.outputSize];
+  uint8_t s1[decept::Hash::kSHA256.outputSize];
+  uint8_t s2[decept::Hash::kSHA256.outputSize];
 
-  (void)std::memcpy(s, seed, decept::Hash::kSHA256.size);
+  (void)std::memcpy(s, seed, decept::Hash::kSHA256.outputSize);
 
   decept::Hash hash{decept::Hash::kSHA256};
 
   for (size_t i = 0; i < size; i++) {
     const auto msg = msgPre + (" " + std::to_string(i));
 
-    (void)std::memcpy(s0, s, decept::Hash::kSHA256.size);
-    (void)std::memcpy(s1, s, decept::Hash::kSHA256.size);
-    (void)std::memcpy(s2, s, decept::Hash::kSHA256.size);
+    (void)std::memcpy(s0, s, decept::Hash::kSHA256.outputSize);
+    (void)std::memcpy(s1, s, decept::Hash::kSHA256.outputSize);
+    (void)std::memcpy(s2, s, decept::Hash::kSHA256.outputSize);
     uint8_t* md0 = s0;
     uint8_t* md1 = s1;
     uint8_t* md2 = s2;
 
     for (size_t j = 0; j < 1000; j++) {
       // Compare splitting up the hash in different ways
-      uint8_t output1[decept::Hash::kSHA256.size];
-      uint8_t input[3 * decept::Hash::kSHA256.size];
-      (void)std::memcpy(input, md0, decept::Hash::kSHA256.size);
-      (void)std::memcpy(&input[decept::Hash::kSHA256.size], md1,
-                        decept::Hash::kSHA256.size);
-      (void)std::memcpy(&input[2 * decept::Hash::kSHA256.size], md2,
-                        decept::Hash::kSHA256.size);
+      uint8_t output1[decept::Hash::kSHA256.outputSize];
+      uint8_t input[3 * decept::Hash::kSHA256.outputSize];
+      (void)std::memcpy(input, md0, decept::Hash::kSHA256.outputSize);
+      (void)std::memcpy(&input[decept::Hash::kSHA256.outputSize], md1,
+                        decept::Hash::kSHA256.outputSize);
+      (void)std::memcpy(&input[2 * decept::Hash::kSHA256.outputSize], md2,
+                        decept::Hash::kSHA256.outputSize);
 
       // Try 1: all at once
-      hash.hash(input, 3 * decept::Hash::kSHA256.size, output1,
-                decept::Hash::kSHA256.size);
+      hash.hash(input, 3 * decept::Hash::kSHA256.outputSize, output1,
+                decept::Hash::kSHA256.outputSize);
 
       // Try 2: split up
       hash.init();
-      hash.update(md0, decept::Hash::kSHA256.size);
-      hash.update(md1, decept::Hash::kSHA256.size);
-      hash.update(md2, decept::Hash::kSHA256.size);
+      hash.update(md0, decept::Hash::kSHA256.outputSize);
+      hash.update(md1, decept::Hash::kSHA256.outputSize);
+      hash.update(md2, decept::Hash::kSHA256.outputSize);
       uint8_t* temp = md0;
       md0 = md1;
       md1 = md2;
       md2 = temp;
-      hash.finalize(md2, decept::Hash::kSHA256.size);
+      hash.finalize(md2, decept::Hash::kSHA256.outputSize);
 
       TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(
-          md2, output1, decept::Hash::kSHA256.size, msg.c_str());
+          md2, output1, decept::Hash::kSHA256.outputSize, msg.c_str());
     }
-    (void)std::memcpy(s, md2, decept::Hash::kSHA256.size);
+    (void)std::memcpy(s, md2, decept::Hash::kSHA256.outputSize);
 
     TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(
-        data[i], md2, decept::Hash::kSHA256.size, msg.c_str());
+        data[i], md2, decept::Hash::kSHA256.outputSize, msg.c_str());
   }
 }
 

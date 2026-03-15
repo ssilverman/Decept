@@ -165,8 +165,9 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
   return retval;
 }
 
-bool Hash::hash(const void* msg, size_t msgSize, uint8_t* out, size_t outSize) {
-  init();
+bool Hash::hash(const void* msg, size_t msgSize, uint8_t* out, size_t outSize,
+                dcp::Channels channel) {
+  init(channel);
   return update(msg, msgSize) && finalize(out, outSize);
 }
 

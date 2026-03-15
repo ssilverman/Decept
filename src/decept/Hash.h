@@ -97,7 +97,8 @@ class Hash {
   bool finalize(uint8_t* out, size_t outSize);
 
   // Convenience function that calls init(), update(), and then finalize().
-  bool hash(const void* msg, size_t msgSize, uint8_t* out, size_t outSize);
+  bool hash(const void* msg, size_t msgSize, uint8_t* out, size_t outSize,
+            dcp::Channels channel = dcp::Channels::kChannel0);
 
  private:
   // Holds some internal state for the hash calculation.

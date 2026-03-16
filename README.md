@@ -30,7 +30,7 @@ more information.**
 ## To do
 
 * Tests for CRC-32
-* Non-blocking API
+* Complete the non-blocking API
 * Complete CTR DRBG
 
 ## References

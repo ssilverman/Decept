@@ -75,13 +75,13 @@ FLASHMEM void init() {
 
   // Default config:
   // Gather residual writes: true
-  // Enable context caching: true
+  // Enable context caching: false
   // Enable context switching: true
   // All channels enabled
   // All interrupts disabled
 
   dcp::regs->CTRL = dcp::CTRL_GATHER_RESIDUAL_WRITES(true)   |
-                    dcp::CTRL_ENABLE_CONTEXT_CACHING(true)   |
+                    dcp::CTRL_ENABLE_CONTEXT_CACHING(false)  |
                     dcp::CTRL_ENABLE_CONTEXT_SWITCHING(true) |
                     dcp::CTRL_CHANNEL_INTERRUPT_ENABLE(0);
 

@@ -124,7 +124,7 @@ class Hash {
     // Cached work packet values
     uint32_t control1;
 
-    dcp::WorkPacket workPacket;  // Cached work packet
+    dcp::WorkPacket workPacket;  // Cached and aligned work packet
     bool workScheduled = false;
 
     // States

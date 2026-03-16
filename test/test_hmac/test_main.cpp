@@ -4,12 +4,12 @@
 // test_main.cpp tests the HMAC functionality.
 // This file is part of the Decept library.
 
+#include <Arduino.h>
+#include <decept/hmac/HMAC.h>
+#include <unity.h>
+
 #include <memory>
 #include <string>
-
-#include <Arduino.h>
-#include <decept/HMAC.h>
-#include <unity.h>
 
 #include "defs.h"
 
@@ -35,7 +35,7 @@ void tearDown() {
 // Tests for the given algorithm and data.
 template <const decept::Hash::Algorithm& A>
 static void test_hmac(const TestData* const data, const size_t dataSize) {
-  decept::HMAC hmac{A};
+  decept::hmac::HMAC hmac{A};
   const size_t hashSize = hmac.outputSize();
 
   const auto actual = std::make_unique<uint8_t[]>(hashSize);

@@ -4,7 +4,7 @@
 // HMAC.cpp implements HMAC.
 // This file is part of the Decept library.
 
-#include "decept/HMAC.h"
+#include "decept/hmac/HMAC.h"
 
 // C++ includes
 #include <cstring>
@@ -13,6 +13,7 @@
 #include "decept/util/dcache.h"
 
 namespace decept {
+namespace hmac {
 
 static constexpr uint8_t kIPad = 0x36;
 static constexpr uint8_t kOPad = 0x5c;
@@ -121,4 +122,5 @@ bool HMAC::calculate(const std::vector<std::pair<const void*, size_t>>& inputs,
   return true;
 }
 
+}  // namespace hmac
 }  // namespace decept

@@ -21,6 +21,7 @@
 #include "decept/dcp/dcp.h"
 
 namespace decept {
+namespace hmac {
 
 class HMAC {
  public:
@@ -86,4 +87,5 @@ class HMAC {
   Hash oCtx_;
 };
 
+}  // namespace hmac
 }  // namespace decept

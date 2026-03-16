@@ -61,7 +61,7 @@ static void test_ecb(const ECBTestData* const data, const size_t dataSize,
                      const bool encryptNotDecrypt) {
   decept::Cipher cipher{decept::Cipher::kAES128};
 
-  for (size_t i = 0; i < dataSize; i++) {
+  for (size_t i = 0; i < dataSize; ++i) {
     const auto msg = "Data " + std::to_string(i);
 
     const ECBTestData& d = data[i];
@@ -90,7 +90,7 @@ static void test_cbc(const CBCTestData* const data, const size_t dataSize,
                      const bool encryptNotDecrypt) {
   decept::Cipher cipher{decept::Cipher::kAES128};
 
-  for (size_t i = 0; i < dataSize; i++) {
+  for (size_t i = 0; i < dataSize; ++i) {
     const auto msg = "Data " + std::to_string(i);
 
     const CBCTestData& d = data[i];
@@ -119,7 +119,7 @@ static void test_monte_ecb(const ECBTestData* const data, const size_t dataSize,
                            const bool encryptNotDecrypt) {
   decept::Cipher cipher{decept::Cipher::kAES128};
 
-  for (size_t i = 0; i < dataSize; i++) {
+  for (size_t i = 0; i < dataSize; ++i) {
     const auto msg = "Data " + std::to_string(i);
 
     const ECBTestData& d = data[i];
@@ -133,7 +133,7 @@ static void test_monte_ecb(const ECBTestData* const data, const size_t dataSize,
     cipher.setKey(decept::Cipher::KeySlots::kPayload, d.key);
 
     std::memcpy(out, d.in.data(), d.in.length());
-    for (int j = 0; j < 1000; j++) {
+    for (int j = 0; j < 1000; ++j) {
       std::swap(in, out);
       if (encryptNotDecrypt) {
         TEST_ASSERT_TRUE_MESSAGE(cipher.encrypt(in, out, d.in.length()),
@@ -154,7 +154,7 @@ static void test_monte_cbc(const CBCTestData* const data, const size_t dataSize,
                            const bool encryptNotDecrypt) {
   decept::Cipher cipher{decept::Cipher::kAES128};
 
-  for (size_t i = 0; i < dataSize; i++) {
+  for (size_t i = 0; i < dataSize; ++i) {
     const auto msg = "Data " + std::to_string(i);
 
     const CBCTestData& d = data[i];
@@ -187,7 +187,7 @@ static void test_monte_cbc(const CBCTestData* const data, const size_t dataSize,
     j 3:  m1 = out[1],  m2 = out[0],  m3 = out[2]
           m1 = out[1],  m2 = out[3],  m3 = out[2]
     */
-    for (int j = 1; j < 1000; j++) {
+    for (int j = 1; j < 1000; ++j) {
       uint8_t* const temp = m1;
       m1 = m3;
       m3 = m2;

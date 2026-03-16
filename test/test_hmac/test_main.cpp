@@ -40,7 +40,7 @@ static void test_hmac(const TestData* const data, const size_t dataSize) {
 
   const auto actual = std::make_unique<uint8_t[]>(hashSize);
 
-  for (size_t i = 0; i < dataSize; i++) {
+  for (size_t i = 0; i < dataSize; ++i) {
     const auto m = "Data " + std::to_string(i);
 
     const TestData& d = data[i];

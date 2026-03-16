@@ -44,7 +44,7 @@ static void test_hash(const TestData* const data, const size_t size,
   decept::Hash hash{decept::Hash::kSHA256};
   uint8_t actual[decept::Hash::kSHA256.outputSize];
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < size; ++i) {
     const auto msg = msgPre + (" " + std::to_string(i));
 
     const TestData& d = data[i];
@@ -70,7 +70,7 @@ static void test_Monte(
 
   decept::Hash hash{decept::Hash::kSHA256};
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < size; ++i) {
     const auto msg = msgPre + (" " + std::to_string(i));
 
     (void)std::memcpy(s0, s, decept::Hash::kSHA256.outputSize);
@@ -80,7 +80,7 @@ static void test_Monte(
     uint8_t* md1 = s1;
     uint8_t* md2 = s2;
 
-    for (size_t j = 0; j < 1000; j++) {
+    for (size_t j = 0; j < 1000; ++j) {
       // Compare splitting up the hash in different ways
       uint8_t output1[decept::Hash::kSHA256.outputSize];
       uint8_t input[3 * decept::Hash::kSHA256.outputSize];

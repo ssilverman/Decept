@@ -157,7 +157,7 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
         States s = update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted) |
                               dcp::PACKET1_HASH_TERM(true),
                           ctx_.block, ctx_.currBlockSize);
-        if ((s == States::kScheduled) || (s == States::kWaitingForSchedule)) {
+        if (s == States::kContinue) {
           continue;
         }
 
@@ -201,7 +201,7 @@ States Hash::update(const uint32_t control0,
     ctx_.workPacket = {};
 
     if (!trySchedule(control0, b, size)) {
-      return States::kWaitingForSchedule;
+      return States::kContinue;
     }
   }
 

@@ -149,7 +149,7 @@ bool scheduleWork(size_t channel, WorkPacket& workPacket) {
 States isChannelComplete(const size_t channel) {
   if ((dcp::regs->STAT & kChannelInfo[channel].mask) ==
       kChannelInfo[channel].mask) {
-    return States::kScheduled;
+    return States::kContinue;
   }
 
   static const auto clearStatus = []() {

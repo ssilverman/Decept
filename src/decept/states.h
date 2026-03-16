@@ -11,8 +11,7 @@ namespace decept {
 // States contains the possible return values for the non-blocking API.
 enum class States {
   kNotScheduled,
-  kWaitingForSchedule,
-  kScheduled,
+  kContinue,
   kComplete,
 };
 

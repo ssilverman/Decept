@@ -95,7 +95,7 @@ States Cipher::tryCrypt(bool encryptNotDecrypt,
     ctx_.workPacket = {};
 
     if (!trySchedule(encryptNotDecrypt, (iv != nullptr), src, dst, size)) {
-      return States::kWaitingForSchedule;
+      return States::kContinue;
     }
   }
 

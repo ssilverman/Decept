@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <utility>
@@ -103,7 +104,9 @@ class Hash {
  private:
   // Holds some internal state for the hash calculation.
   struct Context {
-    static constexpr size_t kBlockSize = 128;
+    // WATCH: This needs to be updated when the list changes!
+    static constexpr size_t kBlockSize =
+        std::max({kSHA256.blockSize, kSHA1.blockSize, kCRC32.blockSize});
 
     // Channel and swapping
     size_t channel;    // Which DCP channel (0-3)

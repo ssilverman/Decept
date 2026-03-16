@@ -200,7 +200,7 @@ States Hash::update(const uint32_t control0,
     // Reset the work packet
     ctx_.workPacket = {};
 
-    if (!trySchedule(control0, b, size, ctx_.workPacket)) {
+    if (!trySchedule(control0, b, size)) {
       return States::kWaitingForSchedule;
     }
   }
@@ -218,8 +218,9 @@ States Hash::update(const uint32_t control0,
 }
 
 bool Hash::trySchedule(const uint32_t control0,
-                       const void* const b, const size_t size,
-                       dcp::WorkPacket& workPacket) {
+                       const void* const b, const size_t size) {
+  dcp::WorkPacket workPacket = ctx_.workPacket;
+
   workPacket.control0 = control0                        |
                         dcp::PACKET1_SWAP(ctx_.swapCfg) |
                         dcp::PACKET1_ENABLE_HASH(true)  |

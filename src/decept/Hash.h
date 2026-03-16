@@ -135,8 +135,7 @@ class Hash {
 
   // Sets up a work packet and tries to schedule a task. This returns true if
   // the task was scheduled, and false otherwise.
-  bool trySchedule(uint32_t control0, const void* b, size_t size,
-                   dcp::WorkPacket& workPacket);
+  bool trySchedule(uint32_t control0, const void* b, size_t size);
 
   void saveRunningHash();
   void restoreRunningHash();

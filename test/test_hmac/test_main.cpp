@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: (c) 2023-2026 Shawn Silverman <shawn@pobox.com>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-// test_main.cpp tests the SHA-256-based HMAC.
+// test_main.cpp tests the HMAC functionality.
 // This file is part of the Decept library.
 
 #include <memory>

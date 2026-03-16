@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "decept/dcp/dcp.h"
+#include "decept/states.h"
 
 namespace decept {
 
@@ -82,6 +83,9 @@ class Cipher {
 
     KeySlots keySlot;
     uint8_t keyData[dcp::sizes::kAES128Key + dcp::sizes::kAES128IV];
+
+    dcp::WorkPacket workPacket;  // Cached and aligned work packet
+    bool workScheduled = false;
   };
 
   // Performs encryption or decryption. This will use ECB mode if the IV is NULL
@@ -90,13 +94,20 @@ class Cipher {
   //
   // This will return whether successful.
   bool crypt(bool encryptNotDecrypt, const void* src, uint8_t* dst, size_t size,
-             const void* iv = nullptr);
+             const void* iv);
 
-  // This is where the work is submitted to the DCP module. This will return
-  // whether successful.
-  bool cryptNonBlocking(bool encryptNotDecrypt, bool hasIV,
-                        dcp::WorkPacket& workPacket, const void* src,
-                        uint8_t* dst, size_t size);
+  // Attempts to perform a "crypt" operation and returns the state.
+  States tryCrypt(bool encryptNotDecrypt,
+                  const void* src, uint8_t* dst, size_t size,
+                  const void* iv);
+
+  // Sets up a work packet and tries to schedule a task. This returns true if
+  // the task was scheduled, and false otherwise.
+  //
+  // The size must be a multiple of 16 and not zero. The payload must contain
+  // the key & IV in one array, with the IV following the key.
+  bool trySchedule(bool encryptNotDecrypt, bool hasIV,
+                   const void* src, uint8_t* dst, size_t size);
 
   Algorithm algo_;
   Context ctx_;

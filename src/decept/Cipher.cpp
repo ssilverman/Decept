@@ -22,14 +22,13 @@ Cipher::~Cipher() {
 }
 
 void Cipher::init(dcp::Channels channel) {
-  (void)std::memset(&ctx_, 0, sizeof(ctx_));
-
+  ctx_ = {};
   ctx_.channel = static_cast<size_t>(channel);
 }
 
 bool Cipher::setKey(const KeySlots slot, const void* const key) {
   // Initialize the context
-  std::memset(&ctx_, 0, sizeof(ctx_));
+  ctx_ = {};
   ctx_.keySlot = slot;
 
   if ((slot == KeySlots::kOTPKey) || (slot == KeySlots::kOTPUniqueKey)) {
@@ -66,41 +65,57 @@ bool Cipher::decrypt(const void* const src, uint8_t* const dst,
   return crypt(false, src, dst, size, iv);
 }
 
-bool Cipher::crypt(bool encryptNotDecrypt,
+bool Cipher::crypt(const bool encryptNotDecrypt,
                    const void* const src, uint8_t* const dst, const size_t size,
                    const void* const iv) {
   if ((size == 0) || ((size % algo_.blockSize) != 0)) {
     return false;
   }
-
-  // Create an aligned work packet
-  dcp::WorkPacket workPacket;
-
   if (iv != nullptr) {
     (void)std::memcpy(&ctx_.keyData[dcp::sizes::kAES128Key], iv,
                       dcp::sizes::kAES128IV);
   }
 
-  while (!cryptNonBlocking(encryptNotDecrypt, (iv != nullptr), workPacket,
-                           src, dst, size)) {
-    // Wait until the task was scheduled
+  while (true) {
+    States s = tryCrypt(encryptNotDecrypt, src, dst, size, iv);
+    if (s == States::kNotScheduled) {
+      return false;
+    } else if (s == States::kComplete) {
+      return true;
+    }
   }
-
-  const bool retval = dcp::waitForChannelComplete(ctx_.channel);
-  util::dcacheDelete(dst, size);
-  return retval;
 }
 
-// Start some AES work and return whether the task was scheduled. The caller
-// should retry until this returns true. The size must be a multiple of 16 and
-// not zero.
-//
-// The payload must contain the key & IV in one array, with the IV following
-// the key.
-bool Cipher::cryptNonBlocking(const bool encryptNotDecrypt, const bool hasIV,
-                              dcp::WorkPacket& workPacket,
-                              const void* const src, uint8_t* const dst,
-                              const size_t size) {
+States Cipher::tryCrypt(bool encryptNotDecrypt,
+                        const void* const src, uint8_t* const dst,
+                        const size_t size,
+                        const void* const iv) {
+  if (!ctx_.workScheduled) {
+    // Reset the work packet
+    ctx_.workPacket = {};
+
+    if (!trySchedule(encryptNotDecrypt, (iv != nullptr), src, dst, size)) {
+      return States::kWaitingForSchedule;
+    }
+  }
+
+  ctx_.workScheduled = true;
+  if (States s = dcp::isChannelComplete(ctx_.channel);
+      (s != States::kComplete)) {
+    return s;
+  }
+
+  ctx_.workScheduled = false;
+  util::dcacheDelete(dst, size);
+
+  return States::kComplete;
+}
+
+bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
+                         const void* const src, uint8_t* const dst,
+                         const size_t size) {
+  dcp::WorkPacket& workPacket = ctx_.workPacket;
+
   workPacket.control0 =
       dcp::PACKET1_CIPHER_INIT(hasIV)                |
       dcp::PACKET1_CIPHER_ENCRYPT(encryptNotDecrypt) |

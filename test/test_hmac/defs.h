@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: (c) 2023-2026 Shawn Silverman <shawn@pobox.com>
-// SPDX-License-Identifier: MAGPL-3.0-or-laterIT
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 // defs.h defines test structures and data.
 // This file is part of the QNEthernet library.

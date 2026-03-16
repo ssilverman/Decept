@@ -178,7 +178,7 @@ bool Hash::update(const uint32_t control0,
   }
 
   // Create an aligned work packet
-  dcp::WorkPacket workPacket;
+  dcp::WorkPacket workPacket{};
 
   while (!updateNonBlocking(control0, b, size, workPacket)) {
     // Wait until the task was scheduled

@@ -136,7 +136,7 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
 bool Hash::finalize(uint8_t* const out, const size_t outSize) {
   bool retval = false;
 
-  if ((out != nullptr) && (outSize != 0)) {
+  if (outSize != 0) {
     const size_t actualOutSize = std::min(outSize, algo_.outputSize);
 
     if (ctx_.totalSize == 0) {  // Empty input is handled specially

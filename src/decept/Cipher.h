@@ -34,10 +34,18 @@ class Cipher {
   struct Algorithm {
     Algorithms algo;
     size_t blockSize;
+    size_t keySize;
+    size_t ivSize;
   };
 
-  static constexpr Algorithm kAES128{Algorithms::kAES128,
-                                     dcp::sizes::kAES128Block};
+  static constexpr Algorithm kAES128{
+      Algorithms::kAES128,
+      dcp::sizes::kAES128Block,
+      dcp::sizes::kAES128Key,
+      dcp::sizes::kAES128IV,
+  };
+
+  static_assert((kAES128.keySize % 4) == 0, "Key size must be a multiple of 4");
 
   // Creates a new Cipher using the given algorithm.
   Cipher(Algorithm algo);
@@ -85,8 +93,9 @@ class Cipher {
     size_t channel;    // Which DCP channel (0-3)
     uint32_t swapCfg;  // Key, input, output byte/word swap options
 
+    // WATCH: If more algorithms are added, keyData size needs to take the max.
     KeySlots keySlot;
-    uint8_t keyData[dcp::sizes::kAES128Key + dcp::sizes::kAES128IV];
+    uint8_t keyData[kAES128.keySize + kAES128.ivSize];
 
     dcp::WorkPacket workPacket;  // Cached and aligned work packet
     bool workScheduled = false;

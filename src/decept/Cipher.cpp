@@ -44,12 +44,12 @@ bool Cipher::setKey(const KeySlots slot, const void* const key) {
         dcp::KEY_INDEX(static_cast<uint32_t>(slot)) | dcp::KEY_SUBWORD(0);
 
     // Move the key by 32-bit words
-    for (size_t i = 0; i < dcp::sizes::kAES128Key/4; ++i) {
+    for (size_t i = 0; i < algo_.keySize/4; ++i) {
       const uint32_t k = static_cast<const uint32_t*>(key)[i];
       dcp::regs->KEYDATA = k;
     }
   } else {
-    (void)std::memcpy(ctx_.keyData, key, dcp::sizes::kAES128Key);
+    (void)std::memcpy(ctx_.keyData, key, algo_.keySize);
   }
 
   return true;
@@ -72,8 +72,7 @@ bool Cipher::crypt(const bool encryptNotDecrypt,
     return false;
   }
   if (iv != nullptr) {
-    (void)std::memcpy(&ctx_.keyData[dcp::sizes::kAES128Key], iv,
-                      dcp::sizes::kAES128IV);
+    (void)std::memcpy(&ctx_.keyData[algo_.keySize], iv, algo_.ivSize);
   }
 
   while (true) {

@@ -19,10 +19,10 @@ namespace dcp {
 
 // The possible channels
 enum class Channels : size_t {
-  kChannel0,
-  kChannel1,
-  kChannel2,
-  kChannel3,
+  kChannel0 = 0,
+  kChannel1 = 1,
+  kChannel2 = 2,
+  kChannel3 = 3,
 };
 
 // Swap configuration flags.

@@ -17,7 +17,7 @@ void setup() {
 
   // Initialize the DCP module
   decept::dcp::init();
-  printf("DCP initialized");
+  printf("DCP initialized\r\n");
 }
 
 // Main program loop.

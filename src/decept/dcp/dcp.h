@@ -17,7 +17,7 @@ namespace dcp {
 //  Types
 // --------------------------------------------------------------------------
 
-// The possible channels
+// Channels contains the possible DCP channels.
 enum class Channels : size_t {
   kChannel0 = 0,
   kChannel1 = 1,

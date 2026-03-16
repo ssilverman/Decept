@@ -5,6 +5,7 @@
 // This file is part of the Decept library.
 
 #include <array>
+#include <cstddef>
 
 #include <decept/Hash.h>
 

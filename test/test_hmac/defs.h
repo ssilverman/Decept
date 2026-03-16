@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: (c) 2023 Shawn Silverman <shawn@pobox.com>
+// SPDX-FileCopyrightText: (c) 2023-2026 Shawn Silverman <shawn@pobox.com>
 // SPDX-License-Identifier: MAGPL-3.0-or-laterIT
 
 // defs.h defines test structures and data.

@@ -173,6 +173,10 @@ bool Hash::hash(const void* msg, size_t msgSize, uint8_t* out, size_t outSize,
 
 bool Hash::update(const uint32_t control0,
                   const void* const b, const size_t size) {
+  if ((algo_.algo == Algorithms::kCRC32) && (size != 0)) {
+    return true;
+  }
+
   // Create an aligned work packet
   dcp::WorkPacket workPacket;
 
@@ -188,12 +192,6 @@ bool Hash::update(const uint32_t control0,
 bool Hash::updateNonBlocking(const uint32_t control0,
                              const void* const b, const size_t size,
                              dcp::WorkPacket& workPacket) {
-  util::dcacheFlush(ctx_.runningHash, sizeof(ctx_.runningHash));
-
-  if ((algo_.algo == Algorithms::kCRC32) && (size == 0)) {
-    return true;
-  }
-
   workPacket.control0 = control0                        |
                         dcp::PACKET1_SWAP(ctx_.swapCfg) |
                         dcp::PACKET1_ENABLE_HASH(true)  |
@@ -206,6 +204,7 @@ bool Hash::updateNonBlocking(const uint32_t control0,
   workPacket.payloadPtr = reinterpret_cast<uint32_t>(ctx_.runningHash);
 
   util::dcacheFlush(b, size);
+  util::dcacheFlush(ctx_.runningHash, sizeof(ctx_.runningHash));
   return dcp::scheduleWork(ctx_.channel, workPacket);
 }
 

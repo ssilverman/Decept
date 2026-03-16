@@ -41,7 +41,7 @@ Hash::~Hash() {
 }
 
 void Hash::init(dcp::Channels channel) {
-  (void)std::memset(&ctx_, 0, sizeof(ctx_));
+  ctx_ = {};
 
   ctx_.channel = static_cast<size_t>(channel);
 
@@ -86,10 +86,15 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
       return true;
     }
 
-    if (!update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted),
-                ctx_.block, blockSize)) {
-      util::reallyClear(&ctx_, sizeof(ctx_));
-      return false;
+    while (true) {
+      const States s = update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted),
+                              ctx_.block, blockSize);
+      if (s == States::kNotScheduled) {
+        util::reallyClear(&ctx_, sizeof(ctx_));
+        return false;
+      } else if (s == States::kComplete) {
+        break;
+      }
     }
     ctx_.isStarted = true;
     ctx_.currBlockSize = 0;
@@ -101,9 +106,15 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
   // Do as much as we can all at once; process a multiple of the block size
   const size_t size = (inSizeRem / blockSize) * blockSize;
   if (size > 0) {
-    if (!update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted), pIn, size)) {
-      util::reallyClear(&ctx_, sizeof(ctx_));
-      return false;
+    while (true) {
+      const States s =
+          update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted), pIn, size);
+      if (s == States::kNotScheduled) {
+        util::reallyClear(&ctx_, sizeof(ctx_));
+        return false;
+      } else if (s == States::kComplete) {
+        break;
+      }
     }
     ctx_.isStarted = true;
 
@@ -142,18 +153,26 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
         restoreRunningHash();
       }
 
-      if (update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted) |
-                     dcp::PACKET1_HASH_TERM(true),
-                 ctx_.block, ctx_.currBlockSize)) {
-        // Account for desiring less output
-        const size_t hashOffset = algo_.outputSize - actualOutSize;
-
-        // Reverse and copy
-        const auto hash = reinterpret_cast<uint8_t*>(ctx_.runningHash);
-        for (size_t i = 0; i < actualOutSize; ++i) {
-          out[i] = hash[actualOutSize - 1 - i + hashOffset];
+      while (true) {
+        States s = update(dcp::PACKET1_HASH_INIT(!ctx_.isStarted) |
+                              dcp::PACKET1_HASH_TERM(true),
+                          ctx_.block, ctx_.currBlockSize);
+        if ((s == States::kScheduled) || (s == States::kWaitingForSchedule)) {
+          continue;
         }
-        retval = true;
+
+        if (s == States::kComplete) {
+          // Account for desiring less output
+          const size_t hashOffset = algo_.outputSize - actualOutSize;
+
+          // Reverse and copy
+          const auto hash = reinterpret_cast<uint8_t*>(ctx_.runningHash);
+          for (size_t i = 0; i < actualOutSize; ++i) {
+            out[i] = hash[actualOutSize - 1 - i + hashOffset];
+          }
+          retval = true;
+        }
+        break;
       }
     }
   } else {
@@ -171,27 +190,36 @@ bool Hash::hash(const void* msg, size_t msgSize, uint8_t* out, size_t outSize,
   return update(msg, msgSize) && finalize(out, outSize);
 }
 
-bool Hash::update(const uint32_t control0,
-                  const void* const b, const size_t size) {
+States Hash::update(const uint32_t control0,
+                    const void* const b, const size_t size) {
   if ((algo_.algo == Algorithms::kCRC32) && (size != 0)) {
-    return true;
+    return States::kComplete;
   }
 
-  // Create an aligned work packet
-  dcp::WorkPacket workPacket{};
+  if (!ctx_.workScheduled) {
+    // Reset the work packet
+    ctx_.workPacket = {};
 
-  while (!updateNonBlocking(control0, b, size, workPacket)) {
-    // Wait until the task was scheduled
+    if (!trySchedule(control0, b, size, ctx_.workPacket)) {
+      return States::kWaitingForSchedule;
+    }
   }
 
-  const bool retval = dcp::waitForChannelComplete(ctx_.channel);
+  ctx_.workScheduled = true;
+  if (States s = dcp::isChannelComplete(ctx_.channel);
+      (s != States::kComplete)) {
+    return s;
+  }
+
+  ctx_.workScheduled = false;
   util::dcacheDelete(ctx_.runningHash, sizeof(ctx_.runningHash));
-  return retval;
+
+  return States::kComplete;
 }
 
-bool Hash::updateNonBlocking(const uint32_t control0,
-                             const void* const b, const size_t size,
-                             dcp::WorkPacket& workPacket) {
+bool Hash::trySchedule(const uint32_t control0,
+                       const void* const b, const size_t size,
+                       dcp::WorkPacket& workPacket) {
   workPacket.control0 = control0                        |
                         dcp::PACKET1_SWAP(ctx_.swapCfg) |
                         dcp::PACKET1_ENABLE_HASH(true)  |

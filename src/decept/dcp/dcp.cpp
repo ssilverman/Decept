@@ -146,6 +146,37 @@ bool scheduleWork(size_t channel, WorkPacket& workPacket) {
 #pragma GCC pop_options
 #endif
 
+States isChannelComplete(const size_t channel) {
+  if ((dcp::regs->STAT & kChannelInfo[channel].mask) ==
+      kChannelInfo[channel].mask) {
+    return States::kScheduled;
+  }
+
+  static const auto clearStatus = []() {
+    dcp::regs->STAT_CLR = 0xFF;
+    while ((dcp::regs->STAT & 0xFF) != 0) {
+      // Wait for clear
+    }
+  };
+
+  // Note: The code below could be simplified if clearStatus() was factored out.
+  //       However, the NXP code clears the status before clearing the channel
+  //       status, so that's what is done here.
+
+  if ((((*kChannelInfo[channel].sema & dcp::CHxSEMA_VALUE(0xFF)) != 0) ||
+       ((*kChannelInfo[channel].stat & dcp::CHxSTAT_ERROR_CODE(0xFF)) != 0))) {
+    clearStatus();
+
+    // Clear channel status
+    *kChannelInfo[channel].statClr = 0xFF;
+
+    return States::kNotScheduled;
+  }
+
+  clearStatus();
+  return States::kComplete;
+}
+
 bool waitForChannelComplete(const size_t channel) {
   // Wait while the channel is still active
   while ((dcp::regs->STAT & kChannelInfo[channel].mask) ==

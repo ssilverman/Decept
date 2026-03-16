@@ -10,6 +10,8 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "decept/states.h"
+
 namespace decept {
 namespace dcp {
 
@@ -83,6 +85,10 @@ bool isStarted();
 // Schedules some work. This returns true if the work was scheduled and false if
 // the channel is currently busy.
 bool scheduleWork(size_t channel, WorkPacket& workPacket);
+
+// Checks if the given channel is complete. This will return Scheduled for
+// in-progress, NotScheduled for error, or Complete for complete.
+States isChannelComplete(const size_t channel);
 
 bool waitForChannelComplete(size_t channel);
 

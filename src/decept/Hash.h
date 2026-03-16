@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "decept/dcp/dcp.h"
+#include "decept/states.h"
 
 namespace decept {
 
@@ -123,13 +124,19 @@ class Hash {
     // Cached work packet values
     uint32_t control1;
 
+    dcp::WorkPacket workPacket;  // Cached work packet
+    bool workScheduled = false;
+
     // States
     bool isStarted;  // Whether started
   };
 
-  bool update(uint32_t control0, const void* b, size_t size);
-  bool updateNonBlocking(uint32_t control0, const void* b, size_t size,
-                         dcp::WorkPacket& workPacket);
+  States update(uint32_t control0, const void* b, size_t size);
+
+  // Sets up a work packet and tries to schedule a task. This returns true if
+  // the task was scheduled, and false otherwise.
+  bool trySchedule(uint32_t control0, const void* b, size_t size,
+                   dcp::WorkPacket& workPacket);
 
   void saveRunningHash();
   void restoreRunningHash();

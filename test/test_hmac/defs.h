@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 // defs.h defines test structures and data.
-// This file is part of the QNEthernet library.
+// This file is part of the Decept library.
 
 #pragma once
 

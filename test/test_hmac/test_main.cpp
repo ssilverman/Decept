@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 // test_main.cpp tests the SHA-256-based HMAC.
-// This file is part of the QNEthernet library.
+// This file is part of the Decept library.
 
 #include <memory>
 #include <string>

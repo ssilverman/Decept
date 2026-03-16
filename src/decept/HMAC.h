@@ -3,7 +3,7 @@
 
 // HMAC.h defines a class for calculating an HMAC using SHA-256, as defined by
 // NIST FIPS PUB 198-1, "The Keyed-Hash Message Authentication Code (HMAC)"
-// This file is part of the QNEthernet library.
+// This file is part of the Decept library.
 
 // Refs:
 // * [HMAC: Keyed-Hashing for Message Authentication (RFC 2104)](https://datatracker.ietf.org/doc/html/rfc2104)

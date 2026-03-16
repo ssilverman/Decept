@@ -1,0 +1,18 @@
+// SPDX-FileCopyrightText: (c) 2023 Shawn Silverman <shawn@pobox.com>
+// SPDX-License-Identifier: MAGPL-3.0-or-laterIT
+
+// defs.h defines test structures and data.
+// This file is part of the QNEthernet library.
+
+#pragma once
+
+#include <string_view>
+
+// Enable use of embedded nulls via the 'sv' literal operator
+using namespace std::string_view_literals;
+
+struct TestData {
+  std::string_view key;
+  std::string_view msg;
+  std::string_view mac;
+};

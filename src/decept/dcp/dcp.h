@@ -51,7 +51,7 @@ inline namespace sizes {
   constexpr size_t kCRC32Output  = 4;   // CRC-32 result size
 }  // namespace sizes
 
-// DCP work packet structure. Use must be declarred as 32-byte aligned.
+// DCP work packet structure. Use must be declared as 32-byte aligned.
 struct alignas(32) WorkPacket {
   uint32_t nextCmdAddress;
   uint32_t control0;

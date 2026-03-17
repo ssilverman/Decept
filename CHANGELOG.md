@@ -18,3 +18,4 @@ and this project adheres to
 * Built on top:
   * HMAC
   * TOTP
+* Codecs: base32

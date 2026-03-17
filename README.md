@@ -59,6 +59,7 @@ This is a list of the library features:
 * Hashing: SHA-256, SHA-1
 * CRC: CRC-32
 * HMAC: HMAC, TOTP
+* Codecs: base32
 
 ## To do
 

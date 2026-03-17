@@ -45,6 +45,7 @@ class Cipher {
       dcp::sizes::kAES128IV,
   };
 
+  // WATCH: Add more asserts as needed when more algorithms are added
   static_assert((kAES128.keySize % 4) == 0, "Key size must be a multiple of 4");
 
   // Creates a new Cipher using the given algorithm.

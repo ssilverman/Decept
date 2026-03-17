@@ -29,7 +29,7 @@ static constexpr auto make_powers_of_ten() {
 }
 
 // Table of powers of 10.
-static constexpr auto kPowersOfTen = make_powers_of_ten<kMaxDigits>();
+static constexpr auto kPowersOfTen = make_powers_of_ten<kMaxDigits + 1>();
 
 TOTP::TOTP(Hash::Algorithm algo)
     : hmac_{algo} {}

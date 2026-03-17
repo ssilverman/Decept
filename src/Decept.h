@@ -3,3 +3,8 @@
 
 // Decept.h defines the Decept library.
 // This file is part of the Decept library.
+
+#include "decept/Cipher.h"
+#include "decept/Hash.h"
+#include "decept/hmac/HMAC.h"
+#include "decept/hmac/TOTP.h"

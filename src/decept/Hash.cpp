@@ -6,10 +6,8 @@
 
 #include "decept/Hash.h"
 
-#include <algorithm>
 #include <cstring>
 
-#include "decept/dcp/dcp.h"
 #include "decept/dcp/regs.h"
 #include "decept/util/dcache.h"
 

@@ -29,33 +29,33 @@ struct DCPLayout {
   volatile uint32_t CHANNELCTRL_CLR;  // 0x028
   volatile uint32_t CHANNELCTRL_TOG;  // 0x02C
   volatile uint32_t CAPABILITY0;      // 0x030
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CAPABILITY1;      // 0x040
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CONTEXT;          // 0x050
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t KEY;              // 0x060
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t KEYDATA;          // 0x070
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t PACKET0;          // 0x080
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t PACKET1;          // 0x090
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t PACKET2;          // 0x0A0
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t PACKET3;          // 0x0B0
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t PACKET4;          // 0x0C0
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t PACKET5;          // 0x0D0
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t PACKET6;          // 0x0E0
-  uint32_t LAYOUT_MEMBER_RESERVED[7];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[7];
   volatile uint32_t CH0CMDPTR;        // 0x100
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH0SEMA;          // 0x110
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH0STAT;          // 0x120
   volatile uint32_t CH0STAT_SET;      // 0x124
   volatile uint32_t CH0STAT_CLR;      // 0x128
@@ -65,9 +65,9 @@ struct DCPLayout {
   volatile uint32_t CH0OPTS_CLR;      // 0x138
   volatile uint32_t CH0OPTS_TOG;      // 0x13C
   volatile uint32_t CH1CMDPTR;        // 0x140
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH1SEMA;          // 0x150
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH1STAT;          // 0x160
   volatile uint32_t CH1STAT_SET;      // 0x164
   volatile uint32_t CH1STAT_CLR;      // 0x168
@@ -77,9 +77,9 @@ struct DCPLayout {
   volatile uint32_t CH1OPTS_CLR;      // 0x178
   volatile uint32_t CH1OPTS_TOG;      // 0x17C
   volatile uint32_t CH2CMDPTR;        // 0x180
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH2SEMA;          // 0x190
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH2STAT;          // 0x1A0
   volatile uint32_t CH2STAT_SET;      // 0x1A4
   volatile uint32_t CH2STAT_CLR;      // 0x1A8
@@ -89,9 +89,9 @@ struct DCPLayout {
   volatile uint32_t CH2OPTS_CLR;      // 0x1B8
   volatile uint32_t CH2OPTS_TOG;      // 0x1BC
   volatile uint32_t CH3CMDPTR;        // 0x1C0
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH3SEMA;          // 0x1D0
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH3STAT;          // 0x1E0
   volatile uint32_t CH3STAT_SET;      // 0x1E4
   volatile uint32_t CH3STAT_CLR;      // 0x1E8
@@ -100,13 +100,13 @@ struct DCPLayout {
   volatile uint32_t CH3OPTS_SET;      // 0x1F4
   volatile uint32_t CH3OPTS_CLR;      // 0x1F8
   volatile uint32_t CH3OPTS_TOG;      // 0x1FC
-  uint32_t LAYOUT_MEMBER_RESERVED[128];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[128];
   volatile uint32_t DBGSELECT;        // 0x400
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t DBGDATA;          // 0x410
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t PAGETABLE;        // 0x420
-  uint32_t LAYOUT_MEMBER_RESERVED[3];
+  uint32_t DECEPT_UTIL_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t VERSION;          // 0x430
 };
 

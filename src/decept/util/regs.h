@@ -17,9 +17,10 @@ struct RegGroup {
 };
 
 // Generate unique "_reserved" field names
-#define LAYOUT_CAT2(a, b) a##b
-#define LAYOUT_CAT(a, b) LAYOUT_CAT2(a, b)
-#define LAYOUT_MEMBER_RESERVED LAYOUT_CAT(_reserved, __COUNTER__)
+#define DECEPT_UTIL_CAT2(a, b) a##b
+#define DECEPT_UTIL_CAT(a, b) DECEPT_UTIL_CAT2(a, b)
+#define DECEPT_UTIL_LAYOUT_MEMBER_RESERVED \
+  DECEPT_UTIL_CAT(_reserved, __COUNTER__)
 
 }  // namespace util
 }  // namespace decept

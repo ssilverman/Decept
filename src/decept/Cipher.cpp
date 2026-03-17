@@ -27,9 +27,11 @@ void Cipher::init(dcp::Channels channel) {
 }
 
 bool Cipher::setKey(const KeySlots slot, const void* const key) {
-  // Initialize the context
-  ctx_ = {};
-  ctx_.keySlot = slot;
+  // Initialize the context and also restore init()-set values
+  ctx_ = {
+    .channel = ctx_.channel,
+    .keySlot = slot,
+  };
 
   if ((slot == KeySlots::kOTPKey) || (slot == KeySlots::kOTPUniqueKey)) {
     // For AES OTP and unique key, check and return read from fuses status

@@ -97,6 +97,11 @@ FLASHMEM void init() {
 }
 
 FLASHMEM void deinit() {
+  // Disallow register access if off
+  if (!isStarted()) {
+    return;
+  }
+
   // CTRL reset value: 0xF0800000
   dcp::regs->CTRL = dcp::CTRL_SFTRESET(true)       |
                     dcp::CTRL_CLKGATE(true)        |

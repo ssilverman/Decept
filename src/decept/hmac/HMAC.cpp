@@ -35,7 +35,7 @@ bool HMAC::initKey(const void* const key, const size_t keySize,
   if (keySize <= blockSize) {
     (void)std::memcpy(digest_.get(), key, keySize);
   } else {
-    if (!hash_.hash(key, keySize, digest_.get(), hashSize)) {
+    if (!hash_.hash(key, keySize, digest_.get(), hashSize, channel)) {
       return false;
     }
   }

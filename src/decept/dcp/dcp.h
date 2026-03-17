@@ -83,13 +83,15 @@ bool isStarted();
 // --------------------------------------------------------------------------
 
 // Schedules some work. This returns true if the work was scheduled and false if
-// the channel is currently busy.
+// the channel is currently busy or if the channel number is invalid.
 bool scheduleWork(size_t channel, WorkPacket& workPacket);
 
 // Checks if the given channel is complete. This will return Scheduled for
 // in-progress, NotScheduled for error, or Complete for complete.
 States isChannelComplete(const size_t channel);
 
+// Waits for the given channel to be complete. This returns true if the channel
+// is complete, and false if there was an error.
 bool waitForChannelComplete(size_t channel);
 
 }  // namespace dcp

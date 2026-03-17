@@ -6,6 +6,8 @@
 
 #include "decept/dcp/dcp.h"
 
+#include <array>
+
 #include <arm_math.h>  // __DSB() & __ISB()
 #include <imxrt.h>
 #include <pgmspace.h>
@@ -36,6 +38,8 @@ const struct {
     { (1u << 18), &dcp::regs->CH2CMDPTR, &dcp::regs->CH2SEMA, &dcp::regs->CH2STAT, &dcp::regs->CH2STAT_CLR },
     { (1u << 19), &dcp::regs->CH3CMDPTR, &dcp::regs->CH3SEMA, &dcp::regs->CH3STAT, &dcp::regs->CH3STAT_CLR },
 };
+
+constexpr size_t kNumChannels = std::size(kChannelInfo);
 
 }  // namespace
 
@@ -116,6 +120,10 @@ bool isStarted() {
 #pragma GCC optimize("O0")
 #endif
 bool scheduleWork(size_t channel, WorkPacket& workPacket) {
+  if (channel >= kNumChannels) {
+    return false;
+  }
+
   if ((dcp::regs->STAT & kChannelInfo[channel].mask) ==
       kChannelInfo[channel].mask) {
     return false;
@@ -147,6 +155,10 @@ bool scheduleWork(size_t channel, WorkPacket& workPacket) {
 #endif
 
 States isChannelComplete(const size_t channel) {
+  if (channel >= kNumChannels) {
+    return States::kNotScheduled;
+  }
+
   if ((dcp::regs->STAT & kChannelInfo[channel].mask) ==
       kChannelInfo[channel].mask) {
     return States::kContinue;
@@ -178,6 +190,10 @@ States isChannelComplete(const size_t channel) {
 }
 
 bool waitForChannelComplete(const size_t channel) {
+  if (channel >= kNumChannels) {
+    return false;
+  }
+
   // Wait while the channel is still active
   while ((dcp::regs->STAT & kChannelInfo[channel].mask) ==
          kChannelInfo[channel].mask) {

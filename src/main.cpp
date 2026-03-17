@@ -1,3 +1,9 @@
+// SPDX-FileCopyrightText: (c) 2026 Shawn Silverman <shawn@pobox.com>
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+// main.cpp implements a small main program.
+// This file is part of the Decept library.
+
 #include <Arduino.h>
 
 #include "decept/dcp/dcp.h"

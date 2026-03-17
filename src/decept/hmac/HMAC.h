@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: (c) 2023 Shawn Silverman <shawn@pobox.com>
+// SPDX-FileCopyrightText: (c) 2023-2026 Shawn Silverman <shawn@pobox.com>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 // HMAC.h defines a class for calculating an HMAC using SHA-256, as defined by

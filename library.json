@@ -1,6 +1,6 @@
 {
   "name": "Decept",
-  "description": "A library that makes use of the Teensy's built-in DCP module. Other algorithms are added on top of these base features, for example, HMAC, TOTP, and various DRBG implementations.",
+  "description": "A hardware-based crypto library for Teensy 4. Other algorithms are added on top of the base features, for example, HMAC, TOTP, and various DRBG implementations.",
   "keywords": "teensy, dcp, crypto",
   "authors": [
     {

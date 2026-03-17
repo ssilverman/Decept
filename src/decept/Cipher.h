@@ -48,6 +48,7 @@ class Cipher {
 
   // WATCH: Add more asserts as needed when more algorithms are added
   static_assert((kAES128.keySize % 4) == 0, "Key size must be a multiple of 4");
+  static_assert((kAES128.ivSize % 4) == 0, "IV size must be a multiple of 4");
 
   // Creates a new Cipher using the given algorithm.
   Cipher(Algorithm algo);
@@ -97,7 +98,8 @@ class Cipher {
 
     // WATCH: If more algorithms are added, keyData size needs to take the max.
     KeySlots keySlot;
-    std::array<uint8_t, kAES128.keySize + kAES128.ivSize> keyData;
+    std::array<uint32_t, (kAES128.keySize + kAES128.ivSize)/4> keyData;
+        // Aligned(4)
 
     dcp::WorkPacket workPacket;  // Cached and aligned work packet
     bool workScheduled = false;
@@ -126,7 +128,7 @@ class Cipher {
                    const void* src, uint8_t* dst, size_t size);
 
   Algorithm algo_;
-  Context ctx_;
+  Context ctx_{};
 };
 
 }  // namespace decept

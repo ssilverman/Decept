@@ -7,9 +7,7 @@
 #include "decept/Cipher.h"
 
 // C++ includes
-#include <array>
 #include <cstring>
-#include <memory>
 
 #include "decept/dcp/regs.h"
 #include "decept/util/dcache.h"
@@ -25,24 +23,30 @@ Cipher::~Cipher() {
 
 void Cipher::init(dcp::Channels channel) {
   // Initialize the context and also restore setKey()-set values
-  ctx_ = {
-    .keySlot = ctx_.keySlot,
-    .keyData = ctx_.keyData,
-  };
+  const auto keySlot = ctx_.keySlot;
+  const auto keyData = ctx_.keyData;
+
+  ctx_ = {};
   ctx_.channel = static_cast<size_t>(channel);
+  ctx_.swapCfg = dcp::swaps::kNoSwap;
+  ctx_.keySlot = keySlot;
+  ctx_.keyData = keyData;
 }
 
 bool Cipher::setKey(const KeySlots slot, const void* const key) {
-  // First clear the key data because it may not be set in this call
-  util::reallyClear(ctx_.keyData.data(), ctx_.keyData.size());
-
   ctx_.keySlot = slot;
 
   if ((slot == KeySlots::kOTPKey) || (slot == KeySlots::kOTPUniqueKey)) {
+    util::reallyClear(ctx_.keyData.data(), sizeof(ctx_.keyData));
+
     // For AES OTP and unique key, check and return read from fuses status
     return (dcp::regs->STAT & dcp::STAT_OTP_KEY_READY(true)) ==
            dcp::STAT_OTP_KEY_READY(true);
   }
+
+  // Avoid UB because 'key' may be unaligned, so use memcpy to temporarily
+  // store it in ctx_.keyData
+  (void)std::memcpy(ctx_.keyData.data(), key, algo_.keySize);
 
   if (slot != KeySlots::kPayload) {
     // dcp_aes_set_sram_based_key()
@@ -50,17 +54,14 @@ bool Cipher::setKey(const KeySlots slot, const void* const key) {
     dcp::regs->KEY =
         dcp::KEY_INDEX(static_cast<uint32_t>(slot)) | dcp::KEY_SUBWORD(0);
 
-    // Avoid UB because 'key' may be unaligned
-    const auto pKey = std::make_unique<uint32_t[]>(algo_.keySize/4);
-    std::memcpy(pKey.get(), key, algo_.keySize);
-
     // Move the key by 32-bit words
     for (size_t i = 0; i < algo_.keySize/4; ++i) {
-      const uint32_t k = pKey[i];
+      const uint32_t k = ctx_.keyData[i];
       dcp::regs->KEYDATA = k;
     }
-  } else {
-    (void)std::memcpy(ctx_.keyData.data(), key, algo_.keySize);
+
+    // Clear our internal key data because it was only temporary
+    util::reallyClear(ctx_.keyData.data(), sizeof(ctx_.keyData));
   }
 
   return true;
@@ -83,7 +84,7 @@ bool Cipher::crypt(const bool encryptNotDecrypt,
     return false;
   }
   if (iv != nullptr) {
-    (void)std::memcpy(&ctx_.keyData[algo_.keySize], iv, algo_.ivSize);
+    (void)std::memcpy(&ctx_.keyData[algo_.keySize/4], iv, algo_.ivSize);
   }
 
   while (true) {
@@ -137,7 +138,7 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
         dcp::PACKET2_CIPHER_MODE(dcp::kPACKET2_CIPHER_MODE_CBC);
     if (ctx_.keySlot != KeySlots::kPayload) {
       workPacket.payloadPtr =
-          reinterpret_cast<uint32_t>(&ctx_.keyData[algo_.keySize]);
+          reinterpret_cast<uint32_t>(&ctx_.keyData[algo_.keySize/4]);
     }
   } else {
     workPacket.control1 =
@@ -164,7 +165,7 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
         dcp::PACKET2_KEY_SELECT(static_cast<uint32_t>(ctx_.keySlot));
   }
 
-  util::dcacheFlush(ctx_.keyData.data(), ctx_.keyData.size());
+  util::dcacheFlush(ctx_.keyData.data(), sizeof(ctx_.keyData));
   util::dcacheFlush(src, size);
   util::dcacheFlush(dst, size);
   return dcp::scheduleWork(ctx_.channel, workPacket);

@@ -219,7 +219,7 @@ States Hash::update(const uint32_t control0,
 
 bool Hash::trySchedule(const uint32_t control0,
                        const void* const b, const size_t size) {
-  dcp::WorkPacket workPacket = ctx_.workPacket;
+  dcp::WorkPacket& workPacket = ctx_.workPacket;
 
   workPacket.control0 = control0                        |
                         dcp::PACKET1_SWAP(ctx_.swapCfg) |

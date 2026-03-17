@@ -154,7 +154,7 @@ class Hash {
   void restoreRunningHash();
 
   Algorithm algo_;
-  Context ctx_;
+  Context ctx_{};
 };
 
 }  // namespace decept

@@ -25,6 +25,7 @@ namespace hmac {
 
 class HMAC {
  public:
+  // Creates a new HMAC using the given algorithm.
   HMAC(Hash::Algorithm hash);
 
   // Returns the hash output size.

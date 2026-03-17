@@ -91,19 +91,24 @@ static void test_Monte(
                         decept::Hash::kSHA1.outputSize);
 
       // Try 1: all at once
-      hash.hash(input, 3 * decept::Hash::kSHA1.outputSize, output1,
-                decept::Hash::kSHA1.outputSize);
+      TEST_ASSERT_TRUE_MESSAGE(
+          hash.hash(input, 3 * decept::Hash::kSHA1.outputSize, output1,
+                    decept::Hash::kSHA1.outputSize),
+          msg.c_str());
 
       // Try 2: split up
       hash.init();
-      hash.update(md0, decept::Hash::kSHA1.outputSize);
-      hash.update(md1, decept::Hash::kSHA1.outputSize);
-      hash.update(md2, decept::Hash::kSHA1.outputSize);
+      TEST_ASSERT_TRUE_MESSAGE(
+          hash.update(md0, decept::Hash::kSHA1.outputSize) &&
+              hash.update(md1, decept::Hash::kSHA1.outputSize) &&
+              hash.update(md2, decept::Hash::kSHA1.outputSize),
+          msg.c_str());
       uint8_t* temp = md0;
       md0 = md1;
       md1 = md2;
       md2 = temp;
-      hash.finalize(md2, decept::Hash::kSHA1.outputSize);
+      TEST_ASSERT_TRUE_MESSAGE(
+          hash.finalize(md2, decept::Hash::kSHA1.outputSize), msg.c_str());
 
       TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(
           md2, output1, decept::Hash::kSHA1.outputSize, msg.c_str());

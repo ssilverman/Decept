@@ -96,7 +96,7 @@ bool HMAC::finalize(uint8_t* const out, const size_t outSize) {
     return false;
   }
 
-  hash_ = oCtx_;
+  hash_ = oCtx_;  // TODO: Fix up the channel (and the channel-related API)
   if (!hash_.update(digest_.get(), outputSize()) ||
       !hash_.finalize(out, outSize)) {
     return false;

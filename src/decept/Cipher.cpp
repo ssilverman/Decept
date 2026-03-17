@@ -145,10 +145,20 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
   workPacket.bufSize = static_cast<uint32_t>(size);
 
   if (ctx_.keySlot == KeySlots::kOTPKey) {
+    // Point to the IV
+    if (hasIV) {
+      workPacket.payloadPtr =
+          reinterpret_cast<uint32_t>(&ctx_.keyData[algo_.keySize]);
+    }
     workPacket.control0 |= dcp::PACKET1_OTP_KEY(true);
     workPacket.control1 |=
         dcp::PACKET2_KEY_SELECT(dcp::kPACKET2_KEY_SELECT_OTP_KEY);
   } else if (ctx_.keySlot == KeySlots::kOTPUniqueKey) {
+    // Point to the IV
+    if (hasIV) {
+      workPacket.payloadPtr =
+          reinterpret_cast<uint32_t>(&ctx_.keyData[algo_.keySize]);
+    }
     workPacket.control0 |= dcp::PACKET1_OTP_KEY(true);
     workPacket.control1 |=
         dcp::PACKET2_KEY_SELECT(dcp::kPACKET2_KEY_SELECT_UNIQUE_KEY);
@@ -156,6 +166,11 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
     workPacket.payloadPtr = reinterpret_cast<uint32_t>(ctx_.keyData);
     workPacket.control0  |= dcp::PACKET1_PAYLOAD_KEY(true);
   } else {
+    // Point to the IV
+    if (hasIV) {
+      workPacket.payloadPtr =
+          reinterpret_cast<uint32_t>(&ctx_.keyData[algo_.keySize]);
+    }
     workPacket.control1 |=
         dcp::PACKET2_KEY_SELECT(static_cast<uint32_t>(ctx_.keySlot));
   }

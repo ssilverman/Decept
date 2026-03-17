@@ -30,6 +30,19 @@ class Hash {
     Algorithms algo;
     size_t outputSize;
     size_t blockSize;
+
+    bool operator==(const Algorithm& a) const {
+      if (&a == this) {
+        return true;
+      }
+      return (algo == a.algo) &&
+             (outputSize == a.outputSize) &&
+             (blockSize == a.blockSize);
+    };
+
+    bool operator!=(const Algorithm& a) const {
+      return !(*this == a);
+    }
   };
 
   static constexpr Algorithm kSHA1{

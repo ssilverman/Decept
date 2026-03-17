@@ -14,10 +14,12 @@
 
 // Pre-test setup. This is run before every test.
 void setUp() {
+  decept::dcp::deinit();
 }
 
 // Post-test teardown. This is run after every test.
 void tearDown() {
+  decept::dcp::deinit();
 }
 
 // Tests that the feature becomes active from inactive.
@@ -29,6 +31,7 @@ static void test_activate() {
 
 // Tests that the feature becomes inactive from active.
 static void test_deactivate() {
+  decept::dcp::init();
   TEST_ASSERT_TRUE_MESSAGE(decept::dcp::isStarted(), "Expected started");
   decept::dcp::deinit();
   TEST_ASSERT_FALSE_MESSAGE(decept::dcp::isStarted(), "Expected not started");

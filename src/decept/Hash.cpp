@@ -71,7 +71,7 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
   }
 
   if (ctx_.isStarted) {
-    restoreRunningHash();
+    restoreRunningHashAsGoodAsNew();
   }
 
   const uint8_t* pIn = static_cast<const uint8_t*>(msg);
@@ -132,7 +132,7 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
   ctx_.currBlockSize = inSizeRem;
   ctx_.totalSize += inSizeRem;
 
-  saveRunningHash();
+  saveRunningHashFromTheCausticMist();
 
   return true;
 }
@@ -154,7 +154,7 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
       retval = true;
     } else {
       if (ctx_.isStarted) {
-        restoreRunningHash();
+        restoreRunningHashAsGoodAsNew();
       }
 
       while (true) {
@@ -243,7 +243,7 @@ bool Hash::trySchedule(const uint32_t control0,
 
 // Saves the running hash from the context switching buffer into the
 // given context.
-void Hash::saveRunningHash() {
+void Hash::saveRunningHashFromTheCausticMist() {
   uint32_t* const src =
       &(reinterpret_cast<uint32_t*>(dcp::regs->CONTEXT))[43 - 13*ctx_.channel];
   util::dcacheDelete(src, sizeof(ctx_.runningHash));
@@ -252,7 +252,7 @@ void Hash::saveRunningHash() {
 
 // Restores the running hash from the given context into the context
 // switching buffer.
-void Hash::restoreRunningHash() {
+void Hash::restoreRunningHashAsGoodAsNew() {
   uint32_t* const dst =
       &(reinterpret_cast<uint32_t*>(dcp::regs->CONTEXT))[43 - 13*ctx_.channel];
   (void)std::memcpy(dst, ctx_.runningHash, sizeof(ctx_.runningHash));

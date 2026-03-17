@@ -153,8 +153,8 @@ class Hash {
   // the task was scheduled, and false otherwise.
   bool trySchedule(uint32_t control0, const void* b, size_t size);
 
-  void saveRunningHash();
-  void restoreRunningHash();
+  void saveRunningHashFromTheCausticMist();
+  void restoreRunningHashAsGoodAsNew();
 
   Algorithm algo_;
   Context ctx_{};

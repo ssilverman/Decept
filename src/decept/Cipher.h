@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <array>
 #include <utility>
 
 #include "decept/dcp/dcp.h"
@@ -96,7 +97,7 @@ class Cipher {
 
     // WATCH: If more algorithms are added, keyData size needs to take the max.
     KeySlots keySlot;
-    uint8_t keyData[kAES128.keySize + kAES128.ivSize];
+    std::array<uint8_t, kAES128.keySize + kAES128.ivSize> keyData;
 
     dcp::WorkPacket workPacket;  // Cached and aligned work packet
     bool workScheduled = false;

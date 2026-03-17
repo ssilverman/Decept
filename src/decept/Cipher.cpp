@@ -7,6 +7,7 @@
 #include "decept/Cipher.h"
 
 // C++ includes
+#include <array>
 #include <cstring>
 #include <memory>
 
@@ -23,16 +24,19 @@ Cipher::~Cipher() {
 }
 
 void Cipher::init(dcp::Channels channel) {
-  ctx_ = {};
+  // Initialize the context and also restore setKey()-set values
+  ctx_ = {
+    .keySlot = ctx_.keySlot,
+    .keyData = ctx_.keyData,
+  };
   ctx_.channel = static_cast<size_t>(channel);
 }
 
 bool Cipher::setKey(const KeySlots slot, const void* const key) {
-  // Initialize the context and also restore init()-set values
-  ctx_ = {
-    .channel = ctx_.channel,
-    .keySlot = slot,
-  };
+  // First clear the key data because it may not be set in this call
+  util::reallyClear(ctx_.keyData.data(), ctx_.keyData.size());
+
+  ctx_.keySlot = slot;
 
   if ((slot == KeySlots::kOTPKey) || (slot == KeySlots::kOTPUniqueKey)) {
     // For AES OTP and unique key, check and return read from fuses status
@@ -56,7 +60,7 @@ bool Cipher::setKey(const KeySlots slot, const void* const key) {
       dcp::regs->KEYDATA = k;
     }
   } else {
-    (void)std::memcpy(ctx_.keyData, key, algo_.keySize);
+    (void)std::memcpy(ctx_.keyData.data(), key, algo_.keySize);
   }
 
   return true;
@@ -133,7 +137,7 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
         dcp::PACKET2_CIPHER_MODE(dcp::kPACKET2_CIPHER_MODE_CBC);
     if (ctx_.keySlot != KeySlots::kPayload) {
       workPacket.payloadPtr = reinterpret_cast<uint32_t>(
-          &(reinterpret_cast<const uint32_t*>(ctx_.keyData))[4]);
+          &(reinterpret_cast<const uint32_t*>(ctx_.keyData.data()))[4]);
     }
   } else {
     workPacket.control1 =
@@ -163,7 +167,7 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
     workPacket.control1 |=
         dcp::PACKET2_KEY_SELECT(dcp::kPACKET2_KEY_SELECT_UNIQUE_KEY);
   } else if (ctx_.keySlot == KeySlots::kPayload) {
-    workPacket.payloadPtr = reinterpret_cast<uint32_t>(ctx_.keyData);
+    workPacket.payloadPtr = reinterpret_cast<uint32_t>(ctx_.keyData.data());
     workPacket.control0  |= dcp::PACKET1_PAYLOAD_KEY(true);
   } else {
     // Point to the IV
@@ -175,7 +179,7 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
         dcp::PACKET2_KEY_SELECT(static_cast<uint32_t>(ctx_.keySlot));
   }
 
-  util::dcacheFlush(ctx_.keyData, sizeof(ctx_.keyData));
+  util::dcacheFlush(ctx_.keyData.data(), ctx_.keyData.size());
   util::dcacheFlush(src, size);
   util::dcacheFlush(dst, size);
   return dcp::scheduleWork(ctx_.channel, workPacket);

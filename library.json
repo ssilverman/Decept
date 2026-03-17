@@ -1,0 +1,21 @@
+{
+  "name": "Decept",
+  "description": "A library that makes use of the Teensy's built-in DCP module. Other algorithms are added on top of these base features, for example, HMAC, TOTP, and various DRBG implementations.",
+  "keywords": "teensy, dcp, crypto",
+  "authors": [
+    {
+      "name": "Shawn Silverman",
+      "email": "shawn@pobox.com",
+      "maintainer": true
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ssilverman/Decept"
+  },
+  "version": "0.1.0-snapshot",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/ssilverman/Decept",
+  "frameworks": "arduino",
+  "platforms": "*"
+}

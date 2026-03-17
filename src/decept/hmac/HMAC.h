@@ -51,14 +51,13 @@ class HMAC {
   // then 'output' will not have been modified.
   //
   // Note: It is safe for the message and output to be the same.
-  bool calculate(const void* msg, size_t msgSize,
-                 uint8_t* output, size_t outputSize);
+  bool calculate(const void* msg, size_t msgSize, uint8_t* out, size_t outSize);
 
   // Same as the other calculate() function, but uses multiple inputs. The
   // specified number of bytes will be copied into the output, up to
   // _hash size_ bytes.
   bool calculate(const std::vector<std::pair<const void*, size_t>>& inputs,
-                 uint8_t* output, size_t outputSize);
+                 uint8_t* out, size_t outSize);
 
   // ------------------------------------------------------------------------
   //  Running Hash
@@ -71,13 +70,13 @@ class HMAC {
 
   // Updates the HMAC with a new part of the message. init() must have been
   // called once before any calls to update().
-  bool update(const void* input, size_t inputSize);
+  bool update(const void* in, size_t inSize);
 
   // Finalizes a running HMAC. init() must have been called once before any
   // previous calls to update(), or, if update() has not been called, before any
   // calls to finalize(). Once finalize() is called, init() needs to be called
   // again to start another running hash.
-  bool finalize(uint8_t* output, size_t outputSize);
+  bool finalize(uint8_t* out, size_t outSize);
 
  private:
   Hash hash_;

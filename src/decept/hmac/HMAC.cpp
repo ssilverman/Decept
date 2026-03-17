@@ -26,7 +26,7 @@ HMAC::HMAC(Hash::Algorithm algo)
 
 bool HMAC::initKey(const void* const key, const size_t keySize,
                    dcp::Channels channel) {
-  const size_t hashSize = hash_.outputSize();
+  const size_t hashSize = outputSize();
   const size_t blockSize = hash_.blockSize();
 
   // Fill with all zeros
@@ -62,17 +62,16 @@ bool HMAC::initKey(const void* const key, const size_t keySize,
 }
 
 bool HMAC::calculate(const void* const msg, const size_t msgSize,
-                     uint8_t* const output, const size_t outputSize) {
-  const size_t hashSize = hash_.outputSize();
-
+                     uint8_t* const out, const size_t outSize) {
   hash_ = iCtx_;
-  if (!hash_.update(msg, msgSize) || !hash_.finalize(digest_.get(), hashSize)) {
+  if (!hash_.update(msg, msgSize) ||
+      !hash_.finalize(digest_.get(), outputSize())) {
     return false;
   }
 
   hash_ = oCtx_;
-  if (!hash_.update(digest_.get(), hashSize) ||
-      !hash_.finalize(output, outputSize)) {
+  if (!hash_.update(digest_.get(), outputSize()) ||
+      !hash_.finalize(out, outSize)) {
     return false;
   }
 
@@ -83,18 +82,18 @@ void HMAC::init(dcp::Channels channel) {
   hash_ = iCtx_;
 }
 
-bool HMAC::update(const void* const input, const size_t inputSize) {
-  return hash_.update(input, inputSize);
+bool HMAC::update(const void* const in, const size_t inSize) {
+  return hash_.update(in, inSize);
 }
 
-bool HMAC::finalize(uint8_t* const output, const size_t outputSize) {
-  if (!hash_.finalize(digest_.get(), hash_.outputSize())) {
+bool HMAC::finalize(uint8_t* const out, const size_t outSize) {
+  if (!hash_.finalize(digest_.get(), outputSize())) {
     return false;
   }
 
   hash_ = oCtx_;
-  if (!hash_.update(digest_.get(), hash_.outputSize()) ||
-      !hash_.finalize(output, outputSize)) {
+  if (!hash_.update(digest_.get(), outputSize()) ||
+      !hash_.finalize(out, outSize)) {
     return false;
   }
 
@@ -102,20 +101,20 @@ bool HMAC::finalize(uint8_t* const output, const size_t outputSize) {
 }
 
 bool HMAC::calculate(const std::vector<std::pair<const void*, size_t>>& inputs,
-                     uint8_t* const output, const size_t outputSize) {
+                     uint8_t* const out, const size_t outSize) {
   hash_ = iCtx_;
   for (const auto& p : inputs) {
     if (!hash_.update(p.first, p.second)) {
       return false;
     }
   }
-  if (!hash_.finalize(digest_.get(), hash_.outputSize())) {
+  if (!hash_.finalize(digest_.get(), outputSize())) {
     return false;
   }
 
   hash_ = oCtx_;
-  if (!hash_.update(digest_.get(), hash_.outputSize()) ||
-      !hash_.finalize(output, outputSize)) {
+  if (!hash_.update(digest_.get(), outputSize()) ||
+      !hash_.finalize(out, outSize)) {
     return false;
   }
 

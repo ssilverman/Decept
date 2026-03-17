@@ -192,7 +192,7 @@ bool Hash::hash(const void* msg, size_t msgSize, uint8_t* out, size_t outSize,
 
 States Hash::update(const uint32_t control0,
                     const void* const b, const size_t size) {
-  if ((algo_.algo == Algorithms::kCRC32) && (size != 0)) {
+  if ((algo_.algo == Algorithms::kCRC32) && (size == 0)) {
     return States::kComplete;
   }
 

@@ -69,7 +69,8 @@ static void test_ecb(const ECBTestData* const data, const size_t dataSize,
 
     const auto actual = std::make_unique<uint8_t[]>(d.in.length());
 
-    cipher.setKey(decept::Cipher::KeySlots::kPayload, d.key);
+    TEST_ASSERT_TRUE_MESSAGE(
+        cipher.setKey(decept::Cipher::KeySlots::kPayload, d.key), msg.c_str());
 
     if (encryptNotDecrypt) {
       TEST_ASSERT_TRUE_MESSAGE(
@@ -98,7 +99,8 @@ static void test_cbc(const CBCTestData* const data, const size_t dataSize,
 
     const auto actual = std::make_unique<uint8_t[]>(d.in.length());
 
-    cipher.setKey(decept::Cipher::KeySlots::kPayload, d.key);
+    TEST_ASSERT_TRUE_MESSAGE(
+        cipher.setKey(decept::Cipher::KeySlots::kPayload, d.key), msg.c_str());
 
     if (encryptNotDecrypt) {
       TEST_ASSERT_TRUE_MESSAGE(
@@ -130,7 +132,8 @@ static void test_monte_ecb(const ECBTestData* const data, const size_t dataSize,
     uint8_t* in = b1.get();
     uint8_t* out = b2.get();
 
-    cipher.setKey(decept::Cipher::KeySlots::kPayload, d.key);
+    TEST_ASSERT_TRUE_MESSAGE(
+        cipher.setKey(decept::Cipher::KeySlots::kPayload, d.key), msg.c_str());
 
     std::memcpy(out, d.in.data(), d.in.length());
     for (int j = 0; j < 1000; ++j) {
@@ -167,12 +170,15 @@ static void test_monte_cbc(const CBCTestData* const data, const size_t dataSize,
     uint8_t* m2 = b2.get();
     uint8_t* m3 = b3.get();
 
-    cipher.setKey(decept::Cipher::KeySlots::kPayload, d.key);
+    TEST_ASSERT_TRUE_MESSAGE(
+        cipher.setKey(decept::Cipher::KeySlots::kPayload, d.key), msg.c_str());
 
     if (encryptNotDecrypt) {
-      cipher.encrypt(d.in.data(), m2, d.in.length(), d.iv);
+      TEST_ASSERT_TRUE_MESSAGE(
+          cipher.encrypt(d.in.data(), m2, d.in.length(), d.iv), msg.c_str());
     } else {
-      cipher.decrypt(d.in.data(), m2, d.in.length(), d.iv);
+      TEST_ASSERT_TRUE_MESSAGE(
+          cipher.decrypt(d.in.data(), m2, d.in.length(), d.iv), msg.c_str());
     }
     std::memcpy(m3, d.iv, decept::Cipher::kAES128.blockSize);
     if (!encryptNotDecrypt) {

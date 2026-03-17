@@ -155,12 +155,12 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
   } else if (ctx_.keySlot == KeySlots::kPayload) {
     workPacket.payloadPtr = reinterpret_cast<uint32_t>(ctx_.keyData);
     workPacket.control0  |= dcp::PACKET1_PAYLOAD_KEY(true);
-    util::dcacheFlush(ctx_.keyData, sizeof(ctx_.keyData));
   } else {
     workPacket.control1 |=
         dcp::PACKET2_KEY_SELECT(static_cast<uint32_t>(ctx_.keySlot));
   }
 
+  util::dcacheFlush(ctx_.keyData, sizeof(ctx_.keyData));
   util::dcacheFlush(src, size);
   util::dcacheFlush(dst, size);
   return dcp::scheduleWork(ctx_.channel, workPacket);

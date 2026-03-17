@@ -10,8 +10,10 @@ _Version: 0.1.0-snapshot_
 
 1. [Disclaimer](#disclaimer)
 2. [Introduction](#introduction)
-3. [To do](#to-do)
-4. [References](#references)
+3. [Running the tests](#running-the-tests)
+4. [Feature list](#feature-list)
+5. [To do](#to-do)
+6. [References](#references)
 
 ## Disclaimer
 
@@ -27,11 +29,41 @@ hardware-accelerated cryptographic algorithms using modern C++.
 **Note: Please read the function docs in the relevant header files for
 more information.**
 
+## Running the tests
+
+There's a full suite of tests to help inspire confidence in the correctness of
+the calculations and algorithm executions. They use the PlatformIO-provided
+Unity framework.
+
+For testing, I use the "PlatformIO: New Terminal" command. It's likely a little
+terminal-looking icon at the bottom of the VSCode window.
+
+Here's how I run the full suite of tests:
+```sh
+pio test -v
+```
+
+To run specific tests, you can add them to the command line:
+```sh
+pio test -v -f test_aes128 -f test_hmac
+```
+
+## Feature list
+
+This is a list of the library features:
+* Utilizes the built-in DCP module
+* Non-blocking API \[Planned]
+* Encryption: AES-128
+* Hashing: SHA-256, SHA-1
+* CRC: CRC-32
+* HMAC: HMAC, TOTP
+
 ## To do
 
 * Tests for CRC-32
 * Complete the non-blocking API
-* Complete CTR DRBG
+* Complete CTR DRBG and commit completed DRBG's: Hash and HMAC
+* Explore cache alignment for all the structures and parts
 
 ## References
 

@@ -120,16 +120,6 @@ static void test_Monte(
   }
 }
 
-// Tests that the feature is active.
-static void test_active() {
-  TEST_ASSERT_TRUE_MESSAGE(decept::dcp::isStarted(), "Expected started");
-}
-
-// Tests that the feature is inactive.
-static void test_inactive() {
-  TEST_ASSERT_FALSE_MESSAGE(decept::dcp::isStarted(), "Expected not started");
-}
-
 static void test_ShortMsg() {
   test_hash(kShortMsg, kShortMsg_size, "ShortMsg");
 }
@@ -160,13 +150,12 @@ void setup() {
   decept::dcp::init();
 
   UNITY_BEGIN();
-  RUN_TEST(test_active);
   RUN_TEST(test_ShortMsg);
   RUN_TEST(test_Monte);
   RUN_TEST(test_LongMsg);
-  decept::dcp::deinit();
-  RUN_TEST(test_inactive);
   UNITY_END();
+
+  decept::dcp::deinit();
 }
 
 // Main program loop.

@@ -26,6 +26,8 @@ library is actually secure. It requires review from more security experts.
 The _Decept_ library utilizes the on-board Data Co-Processor (DCP) to provide
 hardware-accelerated cryptographic algorithms using modern C++.
 
+This library is in its very early stages and it will likely change over time.
+
 **Note: Please read the function docs in the relevant header files for
 more information.**
 

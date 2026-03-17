@@ -61,6 +61,10 @@ void Hash::init(dcp::Channels channel) {
   }
 }
 
+void Hash::setChannel(dcp::Channels channel) {
+  ctx_.channel = static_cast<size_t>(channel);
+}
+
 bool Hash::update(const void* const msg, const size_t msgSize) {
   if (msgSize == 0) {
     return true;

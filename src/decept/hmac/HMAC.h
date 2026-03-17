@@ -68,6 +68,9 @@ class HMAC {
   // have been set with initKey().
   void init(dcp::Channels channel = dcp::Channels::kChannel0);
 
+  // Sets the calculation channel.
+  void setChannel(dcp::Channels channel);
+
   // Updates the HMAC with a new part of the message. init() must have been
   // called once before any calls to update().
   bool update(const void* in, size_t inSize);

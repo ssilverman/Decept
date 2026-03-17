@@ -80,6 +80,11 @@ bool HMAC::calculate(const void* const msg, const size_t msgSize,
 
 void HMAC::init(dcp::Channels channel) {
   hash_ = iCtx_;
+  hash_.setChannel(channel);
+}
+
+void HMAC::setChannel(dcp::Channels channel) {
+  hash_.setChannel(channel);
 }
 
 bool HMAC::update(const void* const in, const size_t inSize) {

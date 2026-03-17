@@ -8,6 +8,7 @@
 
 // C++ includes
 #include <cstring>
+#include <memory>
 
 #include "decept/dcp/regs.h"
 #include "decept/util/dcache.h"
@@ -45,9 +46,13 @@ bool Cipher::setKey(const KeySlots slot, const void* const key) {
     dcp::regs->KEY =
         dcp::KEY_INDEX(static_cast<uint32_t>(slot)) | dcp::KEY_SUBWORD(0);
 
+    // Avoid UB because 'key' may be unaligned
+    const auto pKey = std::make_unique<uint32_t[]>(algo_.keySize/4);
+    std::memcpy(pKey.get(), key, algo_.keySize);
+
     // Move the key by 32-bit words
     for (size_t i = 0; i < algo_.keySize/4; ++i) {
-      const uint32_t k = static_cast<const uint32_t*>(key)[i];
+      const uint32_t k = pKey[i];
       dcp::regs->KEYDATA = k;
     }
   } else {

@@ -88,7 +88,7 @@ bool HMAC::update(const void* const input, const size_t inputSize) {
 }
 
 bool HMAC::finalize(uint8_t* const output, const size_t outputSize) {
-  if (!hash_.finalize(output, outputSize)) {
+  if (!hash_.finalize(digest_.get(), hash_.outputSize())) {
     return false;
   }
 

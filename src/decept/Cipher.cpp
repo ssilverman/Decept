@@ -128,21 +128,21 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
   dcp::WorkPacket& workPacket = ctx_.workPacket;
 
   workPacket.control0 =
-      dcp::PACKET1_CIPHER_INIT(hasIV)                |
-      dcp::PACKET1_CIPHER_ENCRYPT(encryptNotDecrypt) |
-      dcp::PACKET1_ENABLE_CIPHER(true)               |
-      dcp::PACKET1_DECR_SEMAPHORE(true)              |
-      dcp::PACKET1_SWAP(ctx_.swapCfg);
+      dcp::CONTROL0_CIPHER_INIT(hasIV)                |
+      dcp::CONTROL0_CIPHER_ENCRYPT(encryptNotDecrypt) |
+      dcp::CONTROL0_ENABLE_CIPHER(true)               |
+      dcp::CONTROL0_DECR_SEMAPHORE(true)              |
+      dcp::CONTROL0_SWAP(ctx_.swapCfg);
   if (hasIV) {
     workPacket.control1 =
-        dcp::PACKET2_CIPHER_MODE(dcp::kPACKET2_CIPHER_MODE_CBC);
+        dcp::CONTROL1_CIPHER_MODE(dcp::kCONTROL1_CIPHER_MODE_CBC);
     if (ctx_.keySlot != KeySlots::kPayload) {
       workPacket.payloadPtr =
           reinterpret_cast<uint32_t>(&ctx_.keyData[algo_.keySize/4]);
     }
   } else {
     workPacket.control1 =
-        dcp::PACKET2_CIPHER_MODE(dcp::kPACKET2_CIPHER_MODE_ECB);
+        dcp::CONTROL1_CIPHER_MODE(dcp::kCONTROL1_CIPHER_MODE_ECB);
   }
 
   workPacket.srcAddr = reinterpret_cast<uint32_t>(src);
@@ -150,19 +150,19 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
   workPacket.bufSize = static_cast<uint32_t>(size);
 
   if (ctx_.keySlot == KeySlots::kOTPKey) {
-    workPacket.control0 |= dcp::PACKET1_OTP_KEY(true);
+    workPacket.control0 |= dcp::CONTROL0_OTP_KEY(true);
     workPacket.control1 |=
-        dcp::PACKET2_KEY_SELECT(dcp::kPACKET2_KEY_SELECT_OTP_KEY);
+        dcp::CONTROL1_KEY_SELECT(dcp::kCONTROL1_KEY_SELECT_OTP_KEY);
   } else if (ctx_.keySlot == KeySlots::kOTPUniqueKey) {
-    workPacket.control0 |= dcp::PACKET1_OTP_KEY(true);
+    workPacket.control0 |= dcp::CONTROL0_OTP_KEY(true);
     workPacket.control1 |=
-        dcp::PACKET2_KEY_SELECT(dcp::kPACKET2_KEY_SELECT_UNIQUE_KEY);
+        dcp::CONTROL1_KEY_SELECT(dcp::kCONTROL1_KEY_SELECT_UNIQUE_KEY);
   } else if (ctx_.keySlot == KeySlots::kPayload) {
     workPacket.payloadPtr = reinterpret_cast<uint32_t>(ctx_.keyData.data());
-    workPacket.control0  |= dcp::PACKET1_PAYLOAD_KEY(true);
+    workPacket.control0  |= dcp::CONTROL0_PAYLOAD_KEY(true);
   } else {
     workPacket.control1 |=
-        dcp::PACKET2_KEY_SELECT(static_cast<uint32_t>(ctx_.keySlot));
+        dcp::CONTROL1_KEY_SELECT(static_cast<uint32_t>(ctx_.keySlot));
   }
 
   util::dcacheFlush(ctx_.keyData.data(), sizeof(ctx_.keyData));

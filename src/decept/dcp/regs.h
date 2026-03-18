@@ -238,106 +238,106 @@ constexpr uint32_t KEY_INDEX(const uint32_t x) {
 // DCP work packet 1 status register
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET1_DECR_SEMAPHORE(const bool flag) {
+constexpr uint32_t CONTROL0_DECR_SEMAPHORE(const bool flag) {
   return (static_cast<uint32_t>(flag) << 1);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET1_ENABLE_CIPHER(const bool flag) {
+constexpr uint32_t CONTROL0_ENABLE_CIPHER(const bool flag) {
   return (static_cast<uint32_t>(flag) << 5);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET1_ENABLE_HASH(const bool flag) {
+constexpr uint32_t CONTROL0_ENABLE_HASH(const bool flag) {
   return (static_cast<uint32_t>(flag) << 6);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET1_CIPHER_ENCRYPT(const bool flag) {
+constexpr uint32_t CONTROL0_CIPHER_ENCRYPT(const bool flag) {
   return (static_cast<uint32_t>(flag) << 8);  // Encrypt(1), Decrypt(0)
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET1_CIPHER_INIT(const bool flag) {
+constexpr uint32_t CONTROL0_CIPHER_INIT(const bool flag) {
   return (static_cast<uint32_t>(flag) << 9);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET1_OTP_KEY(const bool flag) {
+constexpr uint32_t CONTROL0_OTP_KEY(const bool flag) {
   return (static_cast<uint32_t>(flag) << 10);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET1_PAYLOAD_KEY(const bool flag) {
+constexpr uint32_t CONTROL0_PAYLOAD_KEY(const bool flag) {
   return (static_cast<uint32_t>(flag) << 11);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET1_HASH_INIT(const bool flag) {
+constexpr uint32_t CONTROL0_HASH_INIT(const bool flag) {
   return (static_cast<uint32_t>(flag) << 12);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET1_HASH_TERM(const bool flag) {
+constexpr uint32_t CONTROL0_HASH_TERM(const bool flag) {
   return (static_cast<uint32_t>(flag) << 13);
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET1_SWAP(const uint32_t x) {
+constexpr uint32_t CONTROL0_SWAP(const uint32_t x) {
   return ((x & 0x3F) << 18);
 }
 
 // // DCP work packet 1 status register values
-// constexpr bool kPACKET1_CIPHER_ENCRYPT_ENCRYPT = true;
-// constexpr bool kPACKET1_CIPHER_ENCRYPT_DECRYPT = false;
-// constexpr bool kPACKET1_HASH_OUTPUT_INPUT      = false;
-// constexpr bool kPACKET1_HASH_OUTPUT_OUTPUT     = true;
+// constexpr bool kCONTROL0_CIPHER_ENCRYPT_ENCRYPT = true;
+// constexpr bool kCONTROL0_CIPHER_ENCRYPT_DECRYPT = false;
+// constexpr bool kCONTROL0_HASH_OUTPUT_INPUT      = false;
+// constexpr bool kCONTROL0_HASH_OUTPUT_OUTPUT     = true;
 
 // DCP work packet 2 status register
 
 // [[nodiscard]] [[gnu::always_inline]]
-// constexpr uint32_t PACKET2_CIPHER_SELECT(const uint32_t x) {
+// constexpr uint32_t CONTROL1_CIPHER_SELECT(const uint32_t x) {
 //   return ((x & 0x0F) << 0);  // AES128(0)
 // }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET2_CIPHER_MODE(const uint32_t x) {
+constexpr uint32_t CONTROL1_CIPHER_MODE(const uint32_t x) {
   return ((x & 0x0F) << 4);  // ECB(0), CBC(1)
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET2_KEY_SELECT(const uint32_t x) {
+constexpr uint32_t CONTROL1_KEY_SELECT(const uint32_t x) {
   return ((x & 0xFF) << 8);  // KEY0(0), KEY1(1), KEY2(2), KEY3(3), UNIQUE_KEY(0xFE), OTP_KEY(0xFF)
 }
 
 [[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t PACKET2_HASH_SELECT(const uint32_t x) {
+constexpr uint32_t CONTROL1_HASH_SELECT(const uint32_t x) {
   return ((x & 0x0F) << 16);  // SHA1(0), CRC32(1), SHA256(2)
 }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// constexpr uint32_t PACKET2_RSVD(const uint32_t x) {
+// constexpr uint32_t CONTROL1_RSVD(const uint32_t x) {
 //   return ((x & 0x0F) << 20);
 // }
 
 // [[nodiscard]] [[gnu::always_inline]]
-// constexpr uint32_t PACKET2_CIPHER_CFG(const uint32_t x) {
+// constexpr uint32_t CONTROL1_CIPHER_CFG(const uint32_t x) {
 //   return ((x & 0xFF) << 24);
 // }
 
 // DCP work packet 2 status register values
-// constexpr uint32_t kPACKET2_CIPHER_SELECT_AES128  = 0;
-constexpr uint32_t kPACKET2_CIPHER_MODE_ECB       = 0;
-constexpr uint32_t kPACKET2_CIPHER_MODE_CBC       = 1;
-// constexpr uint32_t kPACKET2_KEY_SELECT_KEY0       = 0;
-// constexpr uint32_t kPACKET2_KEY_SELECT_KEY1       = 1;
-// constexpr uint32_t kPACKET2_KEY_SELECT_KEY2       = 2;
-// constexpr uint32_t kPACKET2_KEY_SELECT_KEY3       = 3;
-constexpr uint32_t kPACKET2_KEY_SELECT_UNIQUE_KEY = 0xFE;
-constexpr uint32_t kPACKET2_KEY_SELECT_OTP_KEY    = 0xFF;
-// constexpr uint32_t kPACKET2_HASH_SELECT_SHA1      = 0;
-// constexpr uint32_t kPACKET2_HASH_SELECT_CRC32     = 1;
-// constexpr uint32_t kPACKET2_HASH_SELECT_SHA256    = 2;
+// constexpr uint32_t kCONTROL1_CIPHER_SELECT_AES128  = 0;
+constexpr uint32_t kCONTROL1_CIPHER_MODE_ECB       = 0;
+constexpr uint32_t kCONTROL1_CIPHER_MODE_CBC       = 1;
+// constexpr uint32_t kCONTROL1_KEY_SELECT_KEY0       = 0;
+// constexpr uint32_t kCONTROL1_KEY_SELECT_KEY1       = 1;
+// constexpr uint32_t kCONTROL1_KEY_SELECT_KEY2       = 2;
+// constexpr uint32_t kCONTROL1_KEY_SELECT_KEY3       = 3;
+constexpr uint32_t kCONTROL1_KEY_SELECT_UNIQUE_KEY = 0xFE;
+constexpr uint32_t kCONTROL1_KEY_SELECT_OTP_KEY    = 0xFF;
+// constexpr uint32_t kCONTROL1_HASH_SELECT_SHA1      = 0;
+// constexpr uint32_t kCONTROL1_HASH_SELECT_CRC32     = 1;
+// constexpr uint32_t kCONTROL1_HASH_SELECT_SHA256    = 2;
 
 // DCP work control 1 values
 constexpr uint32_t kCONTROL1_HASH_SELECT_SHA256 = 2;

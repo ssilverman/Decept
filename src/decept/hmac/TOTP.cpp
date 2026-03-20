@@ -60,7 +60,7 @@ std::optional<uint32_t> TOTP::calculate(const int64_t time,
     t = __builtin_bswap64(t);
   }
   uint8_t msg[8];
-  std::memcpy(msg, &t, 8);
+  (void)std::memcpy(msg, &t, 8);
 
   const size_t outSize = hmac_.outputSize();
 
@@ -71,7 +71,7 @@ std::optional<uint32_t> TOTP::calculate(const int64_t time,
 
   const auto offset = static_cast<size_t>(hash[outSize - 1] & 0x0f);
   uint32_t binary;
-  std::memcpy(&binary, &hash[offset], 4);
+  (void)std::memcpy(&binary, &hash[offset], 4);
   if constexpr (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__) {
     binary = __builtin_bswap32(binary);
   }

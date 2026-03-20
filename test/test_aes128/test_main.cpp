@@ -135,7 +135,7 @@ static void test_monte_ecb(const ECBTestData* const data, const size_t dataSize,
     TEST_ASSERT_TRUE_MESSAGE(
         cipher.setKey(decept::Cipher::KeySlots::kPayload, d.key), msg.c_str());
 
-    std::memcpy(out, d.in.data(), d.in.length());
+    (void)std::memcpy(out, d.in.data(), d.in.length());
     for (int j = 0; j < 1000; ++j) {
       std::swap(in, out);
       if (encryptNotDecrypt) {
@@ -180,9 +180,9 @@ static void test_monte_cbc(const CBCTestData* const data, const size_t dataSize,
       TEST_ASSERT_TRUE_MESSAGE(
           cipher.decrypt(d.in.data(), m2, d.in.length(), d.iv), msg.c_str());
     }
-    std::memcpy(m3, d.iv, decept::Cipher::kAES128.blockSize);
+    (void)std::memcpy(m3, d.iv, decept::Cipher::kAES128.blockSize);
     if (!encryptNotDecrypt) {
-      std::memcpy(m1, d.in.data(), d.in.length());  // Becomes m2, the next IV
+      (void)std::memcpy(m1, d.in.data(), d.in.length());  // Becomes m2, the next IV
     }
     /*
     j 0:  m1 = ?/in[0], m2 = out[0],  m3 = in[1]

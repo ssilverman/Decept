@@ -19,5 +19,11 @@ namespace keys {
 // and ECC. The caller should probably check validity and such.
 void setSNVSZeroizableMasterKey(const uint32_t* key);
 
+// Checks if the SNVS Zeroizable Master Key is zero.
+bool isSNVSZeroizableMasterKeyZero();
+
+// Enables the SNVS Zeroizable Master Key.
+void selectSNVSZeroizableMasterKey();
+
 }  // namespace keys
 }  // namespace decept

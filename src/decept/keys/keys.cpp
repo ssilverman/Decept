@@ -31,5 +31,17 @@ void setSNVSZeroizableMasterKey(const uint32_t* const key) {
     regs::SNVS_LPMKCR_ZMK_ECC_EN = true;  // SNVS_LP_EnableZeroizableMasterKeyECC
 }
 
+bool isSNVSZeroizableMasterKeyZero() {
+  return (regs::SNVS_HPSR_ZMK_ZERO_MASK != 0);
+}
+
+void selectSNVSZeroizableMasterKey() {
+  // Enable master key selection
+  regs::SNVS_HPCOMR_MKS_EN = true;
+
+  // Select the zeroizable master key
+  regs::SNVS_LPMKCR_MASTER_KEY_SEL = regs::kSNVS_LPMKCR_MASTER_KEY_SEL_ZMK;
+}
+
 }  // namespace keys
 }  // namespace decept

@@ -48,7 +48,6 @@ inline void dcacheDelete(const void* const addr, const size_t size) {
 }
 
 // Clears an object and then flushes and deletes the cache.
-[[gnu::always_inline]]
 inline void reallyClear(void* const p, const size_t size) {
   std::memset(p, 0, size);
   dcacheFlushDelete(p, size);

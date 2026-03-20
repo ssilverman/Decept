@@ -120,7 +120,7 @@ class Cipher {
                   const void* iv);
 
   // Sets up a work packet and tries to schedule a task. This returns true if
-  // the task was scheduled, and false otherwise.
+  // the task was scheduled, and false elsewise.
   //
   // The size must be a multiple of 16 and not zero. The payload must contain
   // the key & IV in one array, with the IV following the key.

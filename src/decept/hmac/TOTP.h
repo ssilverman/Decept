@@ -38,11 +38,11 @@ class TOTP {
   // the other initKey() after decoding.
   //
   // This returns true if the encoded string is valid and initializtion was
-  // successful. This returns false otherwise.
+  // successful. This returns false elsewise.
   bool initKey(std::string_view base32);
 
   // Initializes the TOTP with the given key. This copies the key. This returns
-  // true if initialization was successful and false otherwise.
+  // true if initialization was successful and false elsewise.
   //
   // This only needs to be called once for each new key.
   bool initKey(const void* key, size_t keySize);

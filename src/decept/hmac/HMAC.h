@@ -35,7 +35,7 @@ class HMAC {
 
   // Initializes the HMAC with the given key. This copies the key. If there was
   // an error precomputing the initial key values then this will return false.
-  // Otherwise, this will return true.
+  // Elsewise, this will return true.
   //
   // This only needs to be called once for each new key.
   //

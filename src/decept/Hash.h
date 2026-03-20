@@ -100,7 +100,7 @@ class Hash {
 
   // Finalizes a hash calculation and stores the result into the output. If the
   // output size is less than the digest length, then only that number of bytes
-  // will be copied. Otherwise, only digest-length bytes are copied into the
+  // will be copied. Elsewise, only digest-length bytes are copied into the
   // output. In other words, the number of bytes copied is
   // min{outSize, digestLength}.
   //
@@ -150,7 +150,7 @@ class Hash {
   States update(uint32_t control0, const void* b, size_t size);
 
   // Sets up a work packet and tries to schedule a task. This returns true if
-  // the task was scheduled, and false otherwise.
+  // the task was scheduled, and false elsewise.
   bool trySchedule(uint32_t control0, const void* b, size_t size);
 
   void saveRunningHashFromTheCausticMist();

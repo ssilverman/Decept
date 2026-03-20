@@ -17,8 +17,10 @@ namespace regs {
 // base address.
 template <typename Layout, size_t LayoutSize, uintptr_t BaseAddr>
 struct RegGroup {
-  static_assert(sizeof(Layout) == LayoutSize, "Bad size: Packing? Incorrect size?");
+  static_assert(sizeof(Layout) == LayoutSize,
+                "Bad size: Packing? Incorrect size?");
   static_assert((BaseAddr % alignof(Layout)) == 0, "Bad alignment");
+
   Layout* operator->() const { return reinterpret_cast<Layout*>(BaseAddr); }
 };
 

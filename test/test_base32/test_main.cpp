@@ -31,7 +31,7 @@ void tearDown() {
 
 // Tests decoding.
 static void test_decode() {
-  for (size_t i = 0; i < kDecodeData_size; i++) {
+  for (size_t i = 0; i < kDecodeData_size; ++i) {
     const auto m = "Data " + std::to_string(i);
     const DecodeTestData& d = kDecodeData[i];
 
@@ -49,7 +49,7 @@ static void test_decode() {
 
 // Tests encoding.
 static void test_encode() {
-  for (size_t i = 0; i < kEncodeData_size; i++) {
+  for (size_t i = 0; i < kEncodeData_size; ++i) {
     const auto m = "Data " + std::to_string(i);
     const EncodeTestData& d = kEncodeData[i];
 

@@ -8,7 +8,7 @@
 
 #include <cstring>
 
-#include "decept/dcp/regs.h"
+#include "decept/regs/DCP.h"
 #include "decept/util/dcache.h"
 
 namespace decept {
@@ -46,15 +46,16 @@ void Hash::init(dcp::Channels channel) {
   // Set up values
   switch (algo_.algo) {
     case Algorithms::kSHA1:
-      ctx_.control1 = dcp::CONTROL1_HASH_SELECT(dcp::kCONTROL1_HASH_SELECT_SHA1);
+      ctx_.control1 =
+          regs::DCP_PACKET2_HASH_SELECT.v(regs::kDCP_PACKET2_HASH_SELECT_SHA1);
       break;
     case Algorithms::kSHA256:
-      ctx_.control1 =
-          dcp::CONTROL1_HASH_SELECT(dcp::kCONTROL1_HASH_SELECT_SHA256);
+      ctx_.control1 = regs::DCP_PACKET2_HASH_SELECT.v(
+          regs::kDCP_PACKET2_HASH_SELECT_SHA256);
       break;
     case Algorithms::kCRC32:
       ctx_.control1 =
-          dcp::CONTROL1_HASH_SELECT(dcp::kCONTROL1_HASH_SELECT_CRC32);
+          regs::DCP_PACKET2_HASH_SELECT.v(regs::kDCP_PACKET2_HASH_SELECT_CRC32);
       break;
   }
 }
@@ -89,7 +90,7 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
     }
 
     while (true) {
-      const States s = update(dcp::CONTROL0_HASH_INIT(!ctx_.isStarted),
+      const States s = update(regs::DCP_PACKET1_HASH_INIT.v(!ctx_.isStarted),
                               ctx_.block, blockSize);
       if (s == States::kNotScheduled) {
         util::reallyClear(&ctx_, sizeof(ctx_));
@@ -110,7 +111,7 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
   if (size > 0) {
     while (true) {
       const States s =
-          update(dcp::CONTROL0_HASH_INIT(!ctx_.isStarted), pIn, size);
+          update(regs::DCP_PACKET1_HASH_INIT.v(!ctx_.isStarted), pIn, size);
       if (s == States::kNotScheduled) {
         util::reallyClear(&ctx_, sizeof(ctx_));
         return false;
@@ -156,8 +157,8 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
       }
 
       while (true) {
-        States s = update(dcp::CONTROL0_HASH_INIT(!ctx_.isStarted) |
-                              dcp::CONTROL0_HASH_TERM(true),
+        States s = update(regs::DCP_PACKET1_HASH_INIT.v(!ctx_.isStarted) |
+                              regs::DCP_PACKET1_HASH_TERM.v(1),
                           ctx_.block, ctx_.currBlockSize);
         if (s == States::kContinue) {
           continue;
@@ -223,10 +224,10 @@ bool Hash::trySchedule(const uint32_t control0,
                        const void* const b, const size_t size) {
   dcp::WorkPacket& workPacket = ctx_.workPacket;
 
-  workPacket.control0 = control0                        |
-                        dcp::CONTROL0_SWAP(ctx_.swapCfg) |
-                        dcp::CONTROL0_ENABLE_HASH(true)  |
-                        dcp::CONTROL0_DECR_SEMAPHORE(true);
+  workPacket.control0 = control0                               |
+                        regs::DCP_PACKET1_SWAP.v(ctx_.swapCfg) |
+                        regs::DCP_PACKET1_ENABLE_HASH.v(1)     |
+                        regs::DCP_PACKET1_DECR_SEMAPHORE.v(1);
   workPacket.control1 = ctx_.control1;
 
   workPacket.srcAddr    = reinterpret_cast<uint32_t>(b);
@@ -243,7 +244,7 @@ bool Hash::trySchedule(const uint32_t control0,
 // given context.
 void Hash::saveRunningHashFromTheCausticMist() {
   uint32_t* const src =
-      &(reinterpret_cast<uint32_t*>(dcp::regs->CONTEXT))[43 - 13*ctx_.channel];
+      &(reinterpret_cast<uint32_t*>(regs::DCP->CONTEXT))[43 - 13*ctx_.channel];
   util::dcacheDelete(src, sizeof(ctx_.runningHash));
   (void)std::memcpy(ctx_.runningHash, src, sizeof(ctx_.runningHash));
 }
@@ -252,7 +253,7 @@ void Hash::saveRunningHashFromTheCausticMist() {
 // switching buffer.
 void Hash::restoreRunningHashAsGoodAsNew() {
   uint32_t* const dst =
-      &(reinterpret_cast<uint32_t*>(dcp::regs->CONTEXT))[43 - 13*ctx_.channel];
+      &(reinterpret_cast<uint32_t*>(regs::DCP->CONTEXT))[43 - 13*ctx_.channel];
   (void)std::memcpy(dst, ctx_.runningHash, sizeof(ctx_.runningHash));
   util::dcacheFlush(dst, sizeof(ctx_.runningHash));
 }

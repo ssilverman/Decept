@@ -25,7 +25,13 @@ struct RegGroup {
 };
 
 // Reg defines an easier way to access parts of a register.
-template <uintptr_t R, uint32_t Bits, unsigned int Shift>
+//
+// The "direct assign" parameter means that assignment will not use the "read,
+// clear, set, assign" approach. Instead, the given value is directly assigned,
+// after shifting. This is appropriate for things like "CLR" and "SET"
+// registers, where only the 1-assigned bits are set to something.
+template <uintptr_t R, uint32_t Bits, unsigned int Shift,
+          bool DirectAssign = false>
 struct Reg {
   // The shift.
   static constexpr unsigned int kShift = Shift;
@@ -51,7 +57,11 @@ struct Reg {
   void operator=(const T val) const {
     // Clear and then set the bits
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    *r = (*r & ~kMask) | v(val);
+    if constexpr (DirectAssign) {
+      *r = v(val);
+    } else {
+      *r = (*r & ~kMask) | v(val);
+    }
   }
 
   [[gnu::always_inline]]

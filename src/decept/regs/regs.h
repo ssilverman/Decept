@@ -46,15 +46,13 @@ struct Reg {
   // static constexpr uint32_t kMask = ((uint32_t{1} << Bits) - uint32_t{1});
 
   // Returns the masked and shifted version of the given field value.
-  template <typename T>
   [[gnu::always_inline]]
-  uint32_t v(const T val) const {
+  uint32_t v(const uint32_t val) const {
     return (static_cast<uint32_t>(val) << Shift) & kMask;
   }
 
-  template <typename T>
   [[gnu::always_inline]]
-  void operator=(const T val) const {
+  void operator=(const uint32_t val) const {
     // Clear and then set the bits
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
     if constexpr (DirectAssign) {
@@ -65,35 +63,41 @@ struct Reg {
   }
 
   [[gnu::always_inline]]
-  operator uint32_t() const {
+  explicit operator uint32_t() const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
     return (*r & kMask) >> Shift;
   }
 
-  template <typename T>
   [[gnu::always_inline]]
-  void operator&=(const T val) const {
+  void operator&=(const uint32_t val) const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
     *r &= v(val);
   }
 
-  template <typename T>
   [[gnu::always_inline]]
   void operator|=(const T val) const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
     *r |= v(val);
   }
 
-  template <typename T>
+  uint32_t operator&(const uint32_t val) const {
+    const auto r = reinterpret_cast<volatile uint32_t*>(R);
+    return *r & v(val);
+  }
+
+  uint32_t operator|(const uint32_t val) const {
+    const auto r = reinterpret_cast<volatile uint32_t*>(R);
+    return *r | v(val);
+  }
+
   [[gnu::always_inline]]
-  bool operator==(const T val) const {
+  bool operator==(const uint32_t val) const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
     return (*r & kMask) == v(val);
   }
 
-  template <typename T>
   [[gnu::always_inline]]
-  bool operator!=(const T val) const {
+  bool operator!=(const uint32_t val) const {
     return !(*this == val);
   }
 };

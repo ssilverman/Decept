@@ -168,7 +168,8 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
     workPacket.payloadPtr = reinterpret_cast<uint32_t>(ctx_.keyData.data());
     workPacket.control0  |= regs::DCP_PACKET1_PAYLOAD_KEY.v(1);
   } else {
-    workPacket.control1 |= regs::DCP_PACKET2_KEY_SELECT.v(ctx_.keySlot);
+    workPacket.control1 |=
+        regs::DCP_PACKET2_KEY_SELECT.v(static_cast<uint32_t>(ctx_.keySlot));
   }
 
   util::dcacheFlush(ctx_.keyData.data(), sizeof(ctx_.keyData));

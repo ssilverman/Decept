@@ -4,6 +4,8 @@
 // Decept.h defines the Decept library.
 // This file is part of the Decept library.
 
+#pragma once
+
 #include "decept/Cipher.h"
 #include "decept/Hash.h"
 #include "decept/hmac/HMAC.h"

@@ -31,6 +31,13 @@ void Cipher::init(dcp::Channels channel) {
   ctx_.swapCfg = dcp::swaps::kNoSwap;
   ctx_.keySlot = keySlot;
   ctx_.keyData = keyData;
+
+  switch (algo_.algo) {
+    case Algorithms::kAES128:
+      ctx_.control1 = regs::DCP_PACKET2_CIPHER_SELECT.v(
+          regs::kDCP_PACKET2_CIPHER_SELECT_AES128);
+      break;
+  }
 }
 
 bool Cipher::setKey(const KeySlots slot, const void* const key) {
@@ -133,6 +140,7 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
                         regs::DCP_PACKET1_SWAP.v(ctx_.swapCfg);
   if (hasIV) {
     workPacket.control1 =
+        ctx_.control1 |
         regs::DCP_PACKET2_CIPHER_MODE.v(regs::kDCP_PACKET2_CIPHER_MODE_CBC);
     if (ctx_.keySlot != KeySlots::kPayload) {
       workPacket.payloadPtr =
@@ -140,8 +148,7 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
     }
   } else {
     workPacket.control1 =
-        regs::DCP_PACKET2_CIPHER_SELECT.v(
-            regs::kDCP_PACKET2_CIPHER_SELECT_AES128) |
+        ctx_.control1 |
         regs::DCP_PACKET2_CIPHER_MODE.v(regs::kDCP_PACKET2_CIPHER_MODE_ECB);
   }
 

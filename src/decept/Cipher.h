@@ -101,6 +101,9 @@ class Cipher {
     std::array<uint32_t, (kAES128.keySize + kAES128.ivSize)/4> keyData;
         // Aligned(4)
 
+    // Cached work packet values
+    uint32_t control1;
+
     dcp::WorkPacket workPacket;  // Cached and aligned work packet
     bool workScheduled = false;
   };

@@ -52,7 +52,7 @@ struct Reg {
   }
 
   [[gnu::always_inline]]
-  void operator=(const uint32_t val) const {
+  const Reg& operator=(const uint32_t val) const {
     // Clear and then set the bits
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
     if constexpr (DirectAssign) {
@@ -60,6 +60,7 @@ struct Reg {
     } else {
       *r = (*r & ~kMask) | v(val);
     }
+    return *this;
   }
 
   [[gnu::always_inline]]
@@ -69,15 +70,24 @@ struct Reg {
   }
 
   [[gnu::always_inline]]
-  void operator&=(const uint32_t val) const {
+  const Reg& operator&=(const uint32_t val) const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
     *r &= v(val);
+    return *this;
   }
 
   [[gnu::always_inline]]
-  void operator|=(const T val) const {
+  const Reg& operator|=(const uint32_t val) const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
     *r |= v(val);
+    return *this;
+  }
+
+  [[gnu::always_inline]]
+  const Reg& operator^=(const uint32_t val) const {
+    const auto r = reinterpret_cast<volatile uint32_t*>(R);
+    *r ^= v(val);
+    return *this;
   }
 
   uint32_t operator&(const uint32_t val) const {
@@ -88,6 +98,16 @@ struct Reg {
   uint32_t operator|(const uint32_t val) const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
     return *r | v(val);
+  }
+
+  uint32_t operator^(const uint32_t val) const {
+    const auto r = reinterpret_cast<volatile uint32_t*>(R);
+    return *r ^ v(val);
+  }
+
+  uint32_t operator~() const {
+    const auto r = reinterpret_cast<volatile uint32_t*>(R);
+    return ~(*r);
   }
 
   [[gnu::always_inline]]

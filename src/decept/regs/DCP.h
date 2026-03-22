@@ -158,8 +158,6 @@ constexpr Reg<DCP_MEMBER(PACKET2), 4,  4> DCP_PACKET2_CIPHER_MODE;
 constexpr Reg<DCP_MEMBER(PACKET2), 8,  8> DCP_PACKET2_KEY_SELECT;
 constexpr Reg<DCP_MEMBER(PACKET2), 4, 16> DCP_PACKET2_HASH_SELECT;
 
-#undef DCP_MEMBER
-
 // DCP work packet 2 status register values
 constexpr uint32_t kDCP_PACKET2_CIPHER_SELECT_AES128  = 0;
 constexpr uint32_t kDCP_PACKET2_CIPHER_MODE_ECB       = 0;
@@ -187,6 +185,8 @@ constexpr uint32_t DCP_CHxSEMA_VALUE(const uint32_t x) {
 constexpr uint32_t DCP_CHxSTAT_ERROR_CODE(const uint32_t x) {
   return ((x & 0xFF) << 16);
 }
+
+#undef DCP_MEMBER
 
 }  // namespace regs
 }  // namespace decept

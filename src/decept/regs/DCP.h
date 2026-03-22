@@ -32,7 +32,7 @@ struct DCP_Layout {
   volatile uint32_t CHANNELCTRL_TOG;                   /**< DCP channel control register, offset: 0x2C */
   volatile uint32_t CAPABILITY0;                       /**< DCP capability 0 register, offset: 0x30 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
-  volatile uint32_t CAPABILITY1;                       /**< DCP capability 1 register, offset: 0x40 */
+  /*const*/ volatile uint32_t CAPABILITY1;             /**< DCP capability 1 register, offset: 0x40 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CONTEXT;                           /**< DCP context buffer pointer, offset: 0x50 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
@@ -40,19 +40,19 @@ struct DCP_Layout {
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t KEYDATA;                           /**< DCP key data, offset: 0x70 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
-  volatile uint32_t PACKET0;                           /**< DCP work packet 0 status register, offset: 0x80 */
+  /*const*/ volatile uint32_t PACKET0;                 /**< DCP work packet 0 status register, offset: 0x80 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
-  volatile uint32_t PACKET1;                           /**< DCP work packet 1 status register, offset: 0x90 */
+  /*const*/ volatile uint32_t PACKET1;                 /**< DCP work packet 1 status register, offset: 0x90 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
-  volatile uint32_t PACKET2;                           /**< DCP work packet 2 status register, offset: 0xA0 */
+  /*const*/ volatile uint32_t PACKET2;                 /**< DCP work packet 2 status register, offset: 0xA0 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
-  volatile uint32_t PACKET3;                           /**< DCP work packet 3 status register, offset: 0xB0 */
+  /*const*/ volatile uint32_t PACKET3;                 /**< DCP work packet 3 status register, offset: 0xB0 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
-  volatile uint32_t PACKET4;                           /**< DCP work packet 4 status register, offset: 0xC0 */
+  /*const*/ volatile uint32_t PACKET4;                 /**< DCP work packet 4 status register, offset: 0xC0 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
-  volatile uint32_t PACKET5;                           /**< DCP work packet 5 status register, offset: 0xD0 */
+  /*const*/ volatile uint32_t PACKET5;                 /**< DCP work packet 5 status register, offset: 0xD0 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
-  volatile uint32_t PACKET6;                           /**< DCP work packet 6 status register, offset: 0xE0 */
+  /*const*/ volatile uint32_t PACKET6;                 /**< DCP work packet 6 status register, offset: 0xE0 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[7];
   volatile uint32_t CH0CMDPTR;                         /**< DCP channel 0 command pointer address register, offset: 0x100 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
@@ -105,11 +105,11 @@ struct DCP_Layout {
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[128];
   volatile uint32_t DBGSELECT;                         /**< DCP debug select register, offset: 0x400 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
-  volatile uint32_t DBGDATA;                           /**< DCP debug data register, offset: 0x410 */
+  /*const*/ volatile uint32_t DBGDATA;                 /**< DCP debug data register, offset: 0x410 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t PAGETABLE;                         /**< DCP page table register, offset: 0x420 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
-  volatile uint32_t VERSION;                           /**< DCP version register, offset: 0x430 */
+  /*const*/ volatile uint32_t VERSION;                 /**< DCP version register, offset: 0x430 */
 };
 
 constexpr size_t    kDCP_size = 0x434;

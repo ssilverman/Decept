@@ -20,7 +20,7 @@ namespace regs {
 struct CCM_Layout {
   volatile uint32_t CCR;                               /**< CCM Control Register, offset: 0x0 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[1];
-  volatile uint32_t CSR;                               /**< CCM Status Register, offset: 0x8 */
+  /*const*/ volatile uint32_t CSR;                     /**< CCM Status Register, offset: 0x8 */
   volatile uint32_t CCSR;                              /**< CCM Clock Switcher Register, offset: 0xC */
   volatile uint32_t CACRR;                             /**< CCM Arm Clock Root Register, offset: 0x10 */
   volatile uint32_t CBCDR;                             /**< CCM Bus Clock Divider Register, offset: 0x14 */
@@ -35,7 +35,7 @@ struct CCM_Layout {
   volatile uint32_t CSCDR2;                            /**< CCM Serial Clock Divider Register 2, offset: 0x38 */
   volatile uint32_t CSCDR3;                            /**< CCM Serial Clock Divider Register 3, offset: 0x3C */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[2];
-  volatile uint32_t CDHIPR;                            /**< CCM Divider Handshake In-Process Register, offset: 0x48 */
+  /*const*/ volatile uint32_t CDHIPR;                  /**< CCM Divider Handshake In-Process Register, offset: 0x48 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[2];
   volatile uint32_t CLPCR;                             /**< CCM Low Power Control Register, offset: 0x54 */
   volatile uint32_t CISR;                              /**< CCM Interrupt Status Register, offset: 0x58 */

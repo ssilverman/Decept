@@ -33,7 +33,7 @@ struct SNVS_Layout {
   volatile uint32_t HPSR;                              /**< SNVS_HP Status Register, offset: 0x14 */
   volatile uint32_t HPSVSR;                            /**< SNVS_HP Security Violation Status Register, offset: 0x18 */
   volatile uint32_t HPHACIVR;                          /**< SNVS_HP High Assurance Counter IV Register, offset: 0x1C */
-  volatile uint32_t HPHACR;                            /**< SNVS_HP High Assurance Counter Register, offset: 0x20 */
+  /*const*/ volatile uint32_t HPHACR;                  /**< SNVS_HP High Assurance Counter Register, offset: 0x20 */
   volatile uint32_t HPRTCMR;                           /**< SNVS_HP Real Time Counter MSB Register, offset: 0x24 */
   volatile uint32_t HPRTCLR;                           /**< SNVS_HP Real Time Counter LSB Register, offset: 0x28 */
   volatile uint32_t HPTAMR;                            /**< SNVS_HP Time Alarm MSB Register, offset: 0x2C */
@@ -58,8 +58,8 @@ struct SNVS_Layout {
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[24];
   volatile uint32_t LPGPR[kSNVS_LPGPR0_LPGPR7_count];  /**< SNVS_LP General Purpose Registers 0 .. 7, array offset: 0x100, array step: 0x4 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[694];
-  volatile uint32_t HPVIDR1;                           /**< SNVS_HP Version ID Register 1, offset: 0xBF8 */
-  volatile uint32_t HPVIDR2;                           /**< SNVS_HP Version ID Register 2, offset: 0xBFC */
+  /*const*/ volatile uint32_t HPVIDR1;                 /**< SNVS_HP Version ID Register 1, offset: 0xBF8 */
+  /*const*/ volatile uint32_t HPVIDR2;                 /**< SNVS_HP Version ID Register 2, offset: 0xBFC */
 };
 
 constexpr size_t    kSNVS_size = 0xC00;

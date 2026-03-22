@@ -51,7 +51,7 @@ struct CCM_Layout {
   volatile uint32_t CCGR6;                             /**< CCM Clock Gating Register 6, offset: 0x80 */
   volatile uint32_t CCGR7;                             /**< CCM Clock Gating Register 7, offset: 0x84 */
   volatile uint32_t CMEOR;                             /**< CCM Module Enable Overide Register, offset: 0x88 */
-} CCM_Type;
+};
 
 constexpr size_t    kCCM_size = 0x8C;
 constexpr uintptr_t kCCM_base = 0x400FC000;

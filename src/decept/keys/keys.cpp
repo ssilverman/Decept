@@ -4,6 +4,7 @@
 // keys.cpp implements the key helper functions.
 // This file is part of the Decept library.
 
+#include "decept/regs/IOMUXC_GPR.h"
 #include "decept/regs/SNVS.h"
 
 namespace decept {
@@ -41,6 +42,16 @@ void selectSNVSZeroizableMasterKey() {
 
   // Select the zeroizable master key
   regs::SNVS_LPMKCR_MASTER_KEY_SEL = regs::kSNVS_LPMKCR_MASTER_KEY_SEL_ZMK;
+}
+
+void selectSNVSKeyLow() {
+  regs::IOMUXC_GPR_GPR3_DCP_KEY_SEL             = 0;
+  regs::IOMUXC_GPR_GPR10_DCPKEY_OCOTP_OR_KEYMUX = 0;
+}
+
+void selectSNVSKeyHigh() {
+  regs::IOMUXC_GPR_GPR3_DCP_KEY_SEL             = 1;
+  regs::IOMUXC_GPR_GPR10_DCPKEY_OCOTP_OR_KEYMUX = 0;
 }
 
 }  // namespace keys

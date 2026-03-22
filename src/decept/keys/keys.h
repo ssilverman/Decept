@@ -17,6 +17,8 @@ namespace keys {
 //
 // This disables the ZMK and ECC, writes the key, and then reenables the ZMK
 // and ECC. The caller should probably check validity and such.
+//
+// Note that this actually sets two keys. Each is selectable
 void setSNVSZeroizableMasterKey(const uint32_t* key);
 
 // Checks if the SNVS Zeroizable Master Key is zero.
@@ -24,6 +26,12 @@ bool isSNVSZeroizableMasterKeyZero();
 
 // Enables the SNVS Zeroizable Master Key.
 void selectSNVSZeroizableMasterKey();
+
+// Chooses the low 16-byte key.
+void selectSNVSKeyLow();
+
+// Chooses the high 16-byte key.
+void selectSNVSKeyHigh();
 
 }  // namespace keys
 }  // namespace decept

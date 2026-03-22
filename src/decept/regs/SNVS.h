@@ -70,8 +70,11 @@ constexpr RegGroup<SNVS_Layout, kSNVS_size, kSNVS_base> SNVS;
 #define SNVS_MEMBER(member) (kSNVS_base + offsetof(SNVS_Layout, member))
 
 constexpr Reg<SNVS_MEMBER(HPCOMR), 1, 13> SNVS_HPCOMR_MKS_EN;
+constexpr Reg<SNVS_MEMBER(HPCR),   1, 16> SNVS_HPCR_HP_TS;
+constexpr Reg<SNVS_MEMBER(HPCR),   1,  0> SNVS_HPCR_RTC_EN;
 constexpr Reg<SNVS_MEMBER(HPSR),   1, 31> SNVS_HPSR_ZMK_ZERO_MASK;
 constexpr Reg<SNVS_MEMBER(HPSVSR), 1, 27, true> SNVS_HPSVSR_ZMK_ECC_FAIL;  // Write to clear
+constexpr Reg<SNVS_MEMBER(LPCR),   1,  0> SNVS_LPCR_SRTC_ENV;
 constexpr Reg<SNVS_MEMBER(LPMKCR), 2,  0> SNVS_LPMKCR_MASTER_KEY_SEL;
 constexpr Reg<SNVS_MEMBER(LPMKCR), 1,  2> SNVS_LPMKCR_ZMK_HWP;
 constexpr Reg<SNVS_MEMBER(LPMKCR), 1,  3> SNVS_LPMKCR_ZMK_VAL;

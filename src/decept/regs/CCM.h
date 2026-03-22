@@ -60,7 +60,6 @@ constexpr RegGroup<CCM_Layout, kCCM_size, kCCM_base> CCM;
 
 #define CCM_MEMBER(member) (kCCM_base + offsetof(CCM_Layout, member))
 
-// DCP control register 0
 constexpr Reg<CCM_MEMBER(CCGR0), 2, 10> CCM_CCGR0_DCP;  // CG5
 
 constexpr uint32_t kCCM_CCGR_OFF      = 0x00;

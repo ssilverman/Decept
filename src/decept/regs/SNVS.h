@@ -24,7 +24,7 @@ constexpr size_t kSNVS_LPZMKR_count        = 8;
 constexpr size_t kSNVS_LPGPR0_LPGPR3_count = 4;
 constexpr size_t kSNVS_LPGPR0_LPGPR7_count = 8;
 
-struct SNVS_Layout{
+struct SNVS_Layout {
   volatile uint32_t HPLR;                              /**< SNVS_HP Lock Register, offset: 0x0 */
   volatile uint32_t HPCOMR;                            /**< SNVS_HP Command Register, offset: 0x4 */
   volatile uint32_t HPCR;                              /**< SNVS_HP Control Register, offset: 0x8 */
@@ -83,6 +83,8 @@ constexpr uint32_t kSNVS_LPMKCR_MASTER_KEY_SEL_CMK   = 3;  /*!< Combined Master 
 
 constexpr uint32_t kSNVS_LPMKCR_ZMK_HWP_SOFTWARE = 0;
 constexpr uint32_t kSNVS_LPMKCR_ZMK_HWP_HARDWARE = 1;
+
+#undef SNVS_MEMBER
 
 }  // namespace regs
 }  // namespace decept

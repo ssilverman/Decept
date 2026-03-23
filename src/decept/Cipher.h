@@ -51,6 +51,11 @@ class Cipher {
   static_assert((kAES128.keySize % 4) == 0, "Key size must be a multiple of 4");
   static_assert((kAES128.ivSize % 4) == 0, "IV size must be a multiple of 4");
 
+  // The list of algorithms.
+  static constexpr std::array kAlgorithms{
+      kAES128,
+  };
+
   // Creates a new Cipher using the given algorithm.
   Cipher(Algorithm algo);
 
@@ -92,11 +97,6 @@ class Cipher {
                const void* iv = nullptr);
 
  private:
-  // The list of algorithms.
-  static constexpr std::array kAlgorithms{
-      kAES128,
-  };
-
   // Holds some internal state for the cipher calculation.
   struct Context {
     static constexpr auto kKeyDataSizeMax =

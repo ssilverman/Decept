@@ -66,6 +66,13 @@ class Hash {
       dcp::sizes::kUnknownSeedLen,
   };
 
+  // The list of algorithms.
+  static constexpr std::array kAlgorithms{
+      kSHA1,
+      kSHA256,
+      kCRC32,
+  };
+
   // Creates a new Hash using the given algorithm.
   Hash(Algorithm algo);
 
@@ -124,13 +131,6 @@ class Hash {
             dcp::Channels channel = dcp::Channels::kChannel0);
 
  private:
-  // The list of algorithms.
-  static constexpr std::array kAlgorithms{
-      kSHA1,
-      kSHA256,
-      kCRC32,
-  };
-
   // Holds some internal state for the hash calculation.
   struct Context {
     static constexpr size_t kBlockSize =

@@ -7,6 +7,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <utility>
@@ -123,11 +124,21 @@ class Hash {
             dcp::Channels channel = dcp::Channels::kChannel0);
 
  private:
+  // The list of algorithms.
+  static constexpr std::array kAlgorithms{
+      kSHA1,
+      kSHA256,
+      kCRC32,
+  };
+
   // Holds some internal state for the hash calculation.
   struct Context {
-    // WATCH: This needs to be updated when the list changes!
     static constexpr size_t kBlockSize =
-        std::max({kSHA256.blockSize, kSHA1.blockSize, kCRC32.blockSize});
+        std::max_element(kAlgorithms.cbegin(), kAlgorithms.cend(),
+                         [](const auto& a, const auto& b) {
+                           return (a.blockSize < b.blockSize);
+                         })
+            ->blockSize;
 
     // Channel and swapping
     size_t channel;    // Which DCP channel (0-3)

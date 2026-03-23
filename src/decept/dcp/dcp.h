@@ -39,23 +39,25 @@ constexpr uint32_t kOutputWordSwap = 0x20;
 }  // namespace swaps
 
 inline namespace sizes {
-  constexpr size_t kAES128Block = 16;
-  constexpr size_t kAES128Key   = 16;
-  constexpr size_t kAES128IV    = 16;
+enum : size_t {
+  kAES128Block = 16,
+  kAES128Key   = 16,
+  kAES128IV    = 16,
 
-  constexpr size_t kSHA256Block = 64;  // SHA-256 input block size
-  constexpr size_t kSHA1Block   = 64;  // SHA-1 input block size
-  constexpr size_t kCRC32Block  = 64;  // CRC-32 input block size (use same)
+  kSHA256Block = 64,  // SHA-256 input block size
+  kSHA1Block   = 64,  // SHA-1 input block size
+  kCRC32Block  = 64,  // CRC-32 input block size (use same)
 
   // Result sizes
-  constexpr size_t kSHA256Output = 32;  // SHA-256 result size
-  constexpr size_t kSHA1Output   = 20;  // SHA-1 result size
-  constexpr size_t kCRC32Output  = 4;   // CRC-32 result size
+  kSHA256Output = 32,  // SHA-256 result size
+  kSHA1Output   = 20,  // SHA-1 result size
+  kCRC32Output  = 4,   // CRC-32 result size
 
   // Hash_DRBG seed lengths
-  constexpr size_t kSHA256SeedLen  = 440 / 8;
-  constexpr size_t kSHA1SeedLen    = 440 / 8;
-  constexpr size_t kUnknownSeedLen = 0;
+  kSHA256SeedLen  = 440 / 8,
+  kSHA1SeedLen    = 440 / 8,
+  kUnknownSeedLen = 0,
+};
 }  // namespace sizes
 
 // DCP work packet structure. Use must be declared as 32-byte aligned.

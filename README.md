@@ -65,8 +65,11 @@ This is a list of the library features:
 
 * Tests for CRC-32
 * Complete the non-blocking API
-* Complete CTR DRBG and commit completed DRBG's: Hash and HMAC
+* Complete CTR DRBG
 * Explore cache alignment for all the structures and parts
+* Adapt DRBG classes to the
+  [RandomNumberEngine](https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine.html)
+  C++ named requirement
 
 ## References
 

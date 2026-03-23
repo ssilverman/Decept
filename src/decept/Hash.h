@@ -30,6 +30,7 @@ class Hash {
     Algorithms algo;
     size_t outputSize;
     size_t blockSize;
+    size_t seedLen;  // Seed length for Hash-based DRBG
 
     bool operator==(const Algorithm& a) const {
       if (&a == this) {
@@ -49,16 +50,19 @@ class Hash {
       Algorithms::kSHA1,
       dcp::sizes::kSHA1Output,
       dcp::sizes::kSHA1Block,
+      dcp::sizes::kSHA1SeedLen,
   };
   static constexpr Algorithm kSHA256{
       Algorithms::kSHA256,
       dcp::sizes::kSHA256Output,
       dcp::sizes::kSHA256Block,
+      dcp::sizes::kSHA256SeedLen,
   };
   static constexpr Algorithm kCRC32{
       Algorithms::kCRC32,
       dcp::sizes::kCRC32Output,
       dcp::sizes::kCRC32Block,
+      dcp::sizes::kUnknownSeedLen,
   };
 
   // Creates a new Hash using the given algorithm.

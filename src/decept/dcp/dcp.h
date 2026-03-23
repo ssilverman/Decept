@@ -51,6 +51,11 @@ inline namespace sizes {
   constexpr size_t kSHA256Output = 32;  // SHA-256 result size
   constexpr size_t kSHA1Output   = 20;  // SHA-1 result size
   constexpr size_t kCRC32Output  = 4;   // CRC-32 result size
+
+  // Hash_DRBG seed lengths
+  constexpr size_t kSHA256SeedLen  = 440 / 8;
+  constexpr size_t kSHA1SeedLen    = 440 / 8;
+  constexpr size_t kUnknownSeedLen = 0;
 }  // namespace sizes
 
 // DCP work packet structure. Use must be declared as 32-byte aligned.

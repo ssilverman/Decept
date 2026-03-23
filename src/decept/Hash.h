@@ -86,6 +86,11 @@ class Hash {
   Hash& operator=(const Hash&) = default;  // Copy assignment
   Hash& operator=(Hash&&)      = default;  // Move assignment
 
+  // Returns the algorithm used.
+  const Algorithm& algo() const {
+    return algo_;
+  }
+
   // Returns the hash output size.
   size_t outputSize() const {
     return algo_.outputSize;

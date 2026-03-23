@@ -28,6 +28,11 @@ class HMAC {
   // Creates a new HMAC using the given algorithm.
   HMAC(Hash::Algorithm hash);
 
+  // Returns the algorithm used.
+  const Hash::Algorithm& algo() const {
+    return hash_.algo();
+  }
+
   // Returns the hash output size.
   size_t outputSize() const {
     return hash_.outputSize();

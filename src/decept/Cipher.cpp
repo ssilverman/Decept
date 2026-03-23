@@ -34,7 +34,7 @@ void Cipher::init(dcp::Channels channel) {
 
   switch (algo_.algo) {
     case Algorithms::kAES128:
-      ctx_.control1 = regs::DCP_PACKET2_CIPHER_SELECT.v(
+      ctx_.control1 = regs::DCP_PACKET2_CIPHER_SELECT(
           regs::kDCP_PACKET2_CIPHER_SELECT_AES128);
       break;
   }
@@ -57,8 +57,8 @@ bool Cipher::setKey(const KeySlots slot, const void* const key) {
   if (slot != KeySlots::kPayload) {
     // dcp_aes_set_sram_based_key()
 
-    regs::DCP->KEY = regs::DCP_KEY_INDEX.v(static_cast<uint32_t>(slot)) |
-                     regs::DCP_KEY_SUBWORD.v(0);
+    regs::DCP->KEY = regs::DCP_KEY_INDEX(static_cast<uint32_t>(slot)) |
+                     regs::DCP_KEY_SUBWORD(0);
 
     // Move the key by 32-bit words
     for (size_t i = 0; i < algo_.keySize/4; ++i) {
@@ -133,15 +133,15 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
                          const size_t size) {
   dcp::WorkPacket& workPacket = ctx_.workPacket;
 
-  workPacket.control0 = regs::DCP_PACKET1_CIPHER_INIT.v(hasIV)                |
-                        regs::DCP_PACKET1_CIPHER_ENCRYPT.v(encryptNotDecrypt) |
-                        regs::DCP_PACKET1_ENABLE_CIPHER.v(1)                  |
-                        regs::DCP_PACKET1_DECR_SEMAPHORE.v(1)                 |
-                        regs::DCP_PACKET1_SWAP.v(ctx_.swapCfg);
+  workPacket.control0 = regs::DCP_PACKET1_CIPHER_INIT(hasIV)                |
+                        regs::DCP_PACKET1_CIPHER_ENCRYPT(encryptNotDecrypt) |
+                        regs::DCP_PACKET1_ENABLE_CIPHER(1)                  |
+                        regs::DCP_PACKET1_DECR_SEMAPHORE(1)                 |
+                        regs::DCP_PACKET1_SWAP(ctx_.swapCfg);
   if (hasIV) {
     workPacket.control1 =
         ctx_.control1 |
-        regs::DCP_PACKET2_CIPHER_MODE.v(regs::kDCP_PACKET2_CIPHER_MODE_CBC);
+        regs::DCP_PACKET2_CIPHER_MODE(regs::kDCP_PACKET2_CIPHER_MODE_CBC);
     if (ctx_.keySlot != KeySlots::kPayload) {
       workPacket.payloadPtr =
           reinterpret_cast<uint32_t>(&ctx_.keyData[algo_.keySize/4]);
@@ -149,7 +149,7 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
   } else {
     workPacket.control1 =
         ctx_.control1 |
-        regs::DCP_PACKET2_CIPHER_MODE.v(regs::kDCP_PACKET2_CIPHER_MODE_ECB);
+        regs::DCP_PACKET2_CIPHER_MODE(regs::kDCP_PACKET2_CIPHER_MODE_ECB);
   }
 
   workPacket.srcAddr = reinterpret_cast<uint32_t>(src);
@@ -157,19 +157,19 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
   workPacket.bufSize = static_cast<uint32_t>(size);
 
   if (ctx_.keySlot == KeySlots::kOTPKey) {
-    workPacket.control0 |= regs::DCP_PACKET1_OTP_KEY.v(1);
+    workPacket.control0 |= regs::DCP_PACKET1_OTP_KEY(1);
     workPacket.control1 |=
-        regs::DCP_PACKET2_KEY_SELECT.v(regs::kDCP_PACKET2_KEY_SELECT_OTP_KEY);
+        regs::DCP_PACKET2_KEY_SELECT(regs::kDCP_PACKET2_KEY_SELECT_OTP_KEY);
   } else if (ctx_.keySlot == KeySlots::kOTPUniqueKey) {
-    workPacket.control0 |= regs::DCP_PACKET1_OTP_KEY.v(1);
+    workPacket.control0 |= regs::DCP_PACKET1_OTP_KEY(1);
     workPacket.control1 |=
-        regs::DCP_PACKET2_KEY_SELECT.v(regs::kDCP_PACKET2_KEY_SELECT_UNIQUE_KEY);
+        regs::DCP_PACKET2_KEY_SELECT(regs::kDCP_PACKET2_KEY_SELECT_UNIQUE_KEY);
   } else if (ctx_.keySlot == KeySlots::kPayload) {
     workPacket.payloadPtr = reinterpret_cast<uint32_t>(ctx_.keyData.data());
-    workPacket.control0  |= regs::DCP_PACKET1_PAYLOAD_KEY.v(1);
+    workPacket.control0  |= regs::DCP_PACKET1_PAYLOAD_KEY(1);
   } else {
     workPacket.control1 |=
-        regs::DCP_PACKET2_KEY_SELECT.v(static_cast<uint32_t>(ctx_.keySlot));
+        regs::DCP_PACKET2_KEY_SELECT(static_cast<uint32_t>(ctx_.keySlot));
   }
 
   util::dcacheFlush(ctx_.keyData.data(), sizeof(ctx_.keyData));

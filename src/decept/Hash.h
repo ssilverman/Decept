@@ -32,7 +32,7 @@ class Hash {
     size_t blockSize;
     size_t seedLen;  // Seed length for Hash-based DRBG
 
-    bool operator==(const Algorithm& a) const {
+    constexpr bool operator==(const Algorithm& a) const {
       if (&a == this) {
         return true;
       }
@@ -41,7 +41,7 @@ class Hash {
              (blockSize == a.blockSize);
     };
 
-    bool operator!=(const Algorithm& a) const {
+    constexpr bool operator!=(const Algorithm& a) const {
       return !(*this == a);
     }
   };

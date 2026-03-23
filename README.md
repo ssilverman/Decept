@@ -63,6 +63,7 @@ This is a list of the library features:
 
 ## To do
 
+* Have a review done by security experts
 * Tests for CRC-32
 * Complete the non-blocking API
 * Complete CTR DRBG

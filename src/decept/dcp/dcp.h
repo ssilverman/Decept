@@ -53,7 +53,7 @@ enum : size_t {
   kSHA1Output   = 20,  // SHA-1 result size
   kCRC32Output  = 4,   // CRC-32 result size
 
-  // Hash_DRBG seed lengths
+  // Hash-based DRBG seed lengths
   kSHA256SeedLen  = 440 / 8,
   kSHA1SeedLen    = 440 / 8,
   kUnknownSeedLen = 0,

@@ -4,12 +4,13 @@
 // test_main.cpp tests the HMAC functionality.
 // This file is part of the Decept library.
 
-#include <Arduino.h>
-#include <decept/hmac/HMAC.h>
-#include <unity.h>
-
 #include <memory>
 #include <string>
+
+#include <Arduino.h>
+#include <decept/Hash.h>
+#include <decept/hmac/HMAC.h>
+#include <unity.h>
 
 #include "defs.h"
 

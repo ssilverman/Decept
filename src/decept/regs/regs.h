@@ -133,6 +133,78 @@ struct Reg {
   }
 };
 
+// RegValue defines an easier way to define register-part values. The value can
+// either be shifted or not shifted.  The shifted version is useful for when the
+// bit position of a value is always the same in a register.
+template <uint32_t V, uint32_t Bits, unsigned int Shift = 0>
+struct RegValue {
+  // The shift.
+  static constexpr unsigned int kShift = Shift;
+
+  // The number of consecutive bits.
+  static constexpr uint32_t kBits = Bits;
+
+  // The shifted mask.
+  static constexpr uint32_t kMask =  // Add -1 using 32-bit modular arithmetic
+      ((uint32_t{1} << Bits) + std::numeric_limits<uint32_t>::max()) << Shift;
+  // static constexpr uint32_t kMask = static_cast<uint32_t>(int32_t{-1}) >> (32 - Bits);
+  // static constexpr uint32_t kMask = ((uint32_t{1} << Bits) - uint32_t{1});
+
+  // Returns the masked and shifted version of the field value.
+  [[gnu::always_inline]]
+  constexpr uint32_t operator()() const {
+    return (*this)(V);
+  }
+
+  // Returns the masked and shifted version of the given field value.
+  [[gnu::always_inline]]
+  constexpr uint32_t operator()(const uint32_t val) const {
+    return (val << Shift) & kMask;
+  }
+
+  [[gnu::always_inline]]
+  explicit constexpr operator uint32_t() const {
+    return V;
+  }
+
+  // Converts the register to a uint32_t. This is useful for when an explicit
+  // conversion isn't desired.
+  [[gnu::always_inline]]
+  constexpr uint32_t operator*() const {
+    return static_cast<uint32_t>(*this);
+  }
+
+  [[gnu::always_inline]]
+  constexpr uint32_t operator&(const uint32_t val) const {
+    return (*this)(V) & (*this)(val);
+  }
+
+  [[gnu::always_inline]]
+  constexpr uint32_t operator|(const uint32_t val) const {
+    return (*this)(V) | (*this)(val);
+  }
+
+  [[gnu::always_inline]]
+  constexpr uint32_t operator^(const uint32_t val) const {
+    return (*this)(V) ^ (*this)(val);
+  }
+
+  [[gnu::always_inline]]
+  constexpr uint32_t operator~() const {
+    return ~(*this)(V);
+  }
+
+  [[gnu::always_inline]]
+  constexpr bool operator==(const uint32_t val) const {
+    return (*this)(V) == (*this)(val);
+  }
+
+  [[gnu::always_inline]]
+  constexpr bool operator!=(const uint32_t val) const {
+    return !(*this == val);
+  }
+};
+
 // Generate unique "_reserved" field names
 #define DECEPT_REGS_CAT2(a, b) a##b
 #define DECEPT_REGS_CAT(a, b) DECEPT_REGS_CAT2(a, b)

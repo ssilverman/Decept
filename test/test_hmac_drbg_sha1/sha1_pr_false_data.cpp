@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 // sha1_pr_false_data.cpp contains the NIST DRBGVS data.
-// This file is part of the QNEthernet library.
+// This file is part of the Decept library.
 
 #include "defs.h"
 

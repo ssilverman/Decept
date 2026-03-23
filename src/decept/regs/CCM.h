@@ -14,6 +14,8 @@
 namespace decept {
 namespace regs {
 
+// CCM layout. Comments are from BSD-3-licensed NXP SDK.
+//
 // See:
 // * https://github.com/nxp-mcuxpresso/mcux-devices-rt/blob/main/RT1060/periph/PERI_CCM.h
 // * https://github.com/nxp-mcuxpresso/legacy-mcux-sdk/blob/main/devices/MIMXRT1062/MIMXRT1062.h

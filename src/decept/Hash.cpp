@@ -47,15 +47,15 @@ void Hash::init(dcp::Channels channel) {
   switch (algo_.algo) {
     case Algorithms::kSHA1:
       ctx_.control1 =
-          regs::DCP_PACKET2_HASH_SELECT.v(regs::kDCP_PACKET2_HASH_SELECT_SHA1);
+          regs::DCP_PACKET2_HASH_SELECT(regs::kDCP_PACKET2_HASH_SELECT_SHA1);
       break;
     case Algorithms::kSHA256:
-      ctx_.control1 = regs::DCP_PACKET2_HASH_SELECT.v(
+      ctx_.control1 = regs::DCP_PACKET2_HASH_SELECT(
           regs::kDCP_PACKET2_HASH_SELECT_SHA256);
       break;
     case Algorithms::kCRC32:
       ctx_.control1 =
-          regs::DCP_PACKET2_HASH_SELECT.v(regs::kDCP_PACKET2_HASH_SELECT_CRC32);
+          regs::DCP_PACKET2_HASH_SELECT(regs::kDCP_PACKET2_HASH_SELECT_CRC32);
       break;
   }
 }
@@ -90,7 +90,7 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
     }
 
     while (true) {
-      const States s = update(regs::DCP_PACKET1_HASH_INIT.v(!ctx_.isStarted),
+      const States s = update(regs::DCP_PACKET1_HASH_INIT(!ctx_.isStarted),
                               ctx_.block, blockSize);
       if (s == States::kNotScheduled) {
         util::reallyClear(&ctx_, sizeof(ctx_));
@@ -111,7 +111,7 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
   if (size > 0) {
     while (true) {
       const States s =
-          update(regs::DCP_PACKET1_HASH_INIT.v(!ctx_.isStarted), pIn, size);
+          update(regs::DCP_PACKET1_HASH_INIT(!ctx_.isStarted), pIn, size);
       if (s == States::kNotScheduled) {
         util::reallyClear(&ctx_, sizeof(ctx_));
         return false;
@@ -157,8 +157,8 @@ bool Hash::finalize(uint8_t* const out, const size_t outSize) {
       }
 
       while (true) {
-        States s = update(regs::DCP_PACKET1_HASH_INIT.v(!ctx_.isStarted) |
-                              regs::DCP_PACKET1_HASH_TERM.v(1),
+        States s = update(regs::DCP_PACKET1_HASH_INIT(!ctx_.isStarted) |
+                              regs::DCP_PACKET1_HASH_TERM(1),
                           ctx_.block, ctx_.currBlockSize);
         if (s == States::kContinue) {
           continue;
@@ -225,9 +225,9 @@ bool Hash::trySchedule(const uint32_t control0,
   dcp::WorkPacket& workPacket = ctx_.workPacket;
 
   workPacket.control0 = control0                               |
-                        regs::DCP_PACKET1_SWAP.v(ctx_.swapCfg) |
-                        regs::DCP_PACKET1_ENABLE_HASH.v(1)     |
-                        regs::DCP_PACKET1_DECR_SEMAPHORE.v(1);
+                        regs::DCP_PACKET1_SWAP(ctx_.swapCfg) |
+                        regs::DCP_PACKET1_ENABLE_HASH(1)     |
+                        regs::DCP_PACKET1_DECR_SEMAPHORE(1);
   workPacket.control1 = ctx_.control1;
 
   workPacket.srcAddr    = reinterpret_cast<uint32_t>(b);

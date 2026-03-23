@@ -57,13 +57,13 @@ FLASHMEM void init() {
   // CTRL:
   // Reset value:   0xF0800000
   // Default value: 0x30800000
-  regs::DCP->CTRL = regs::DCP_CTRL_SFTRESET.v(1)       |
-                    regs::DCP_CTRL_CLKGATE.v(1)        |
-                    regs::DCP_CTRL_PRESENT_CRYPTO.v(1) |
-                    regs::DCP_CTRL_PRESENT_SHA.v(1)    |
-                    regs::DCP_CTRL_GATHER_RESIDUAL_WRITES.v(1);  // Reset value
-  regs::DCP->CTRL_CLR = regs::DCP_CTRL_SFTRESET.v(1) |
-                        regs::DCP_CTRL_CLKGATE.v(1);  // Default value
+  regs::DCP->CTRL = regs::DCP_CTRL_SFTRESET(1)       |
+                    regs::DCP_CTRL_CLKGATE(1)        |
+                    regs::DCP_CTRL_PRESENT_CRYPTO(1) |
+                    regs::DCP_CTRL_PRESENT_SHA(1)    |
+                    regs::DCP_CTRL_GATHER_RESIDUAL_WRITES(1);  // Reset value
+  regs::DCP->CTRL_CLR = regs::DCP_CTRL_SFTRESET(1) |
+                        regs::DCP_CTRL_CLKGATE(1);  // Default value
 
   // Clear status
   regs::DCP->STAT_CLR = 0xFF;
@@ -84,13 +84,13 @@ FLASHMEM void init() {
   // All channels enabled
   // All interrupts disabled
 
-  regs::DCP->CTRL = regs::DCP_CTRL_GATHER_RESIDUAL_WRITES.v(1)   |
-                    regs::DCP_CTRL_ENABLE_CONTEXT_CACHING.v(0)   |
-                    regs::DCP_CTRL_ENABLE_CONTEXT_SWITCHING.v(1) |
-                    regs::DCP_CTRL_CHANNEL_INTERRUPT_ENABLE.v(0);
+  regs::DCP->CTRL = regs::DCP_CTRL_GATHER_RESIDUAL_WRITES(1)   |
+                    regs::DCP_CTRL_ENABLE_CONTEXT_CACHING(0)   |
+                    regs::DCP_CTRL_ENABLE_CONTEXT_SWITCHING(1) |
+                    regs::DCP_CTRL_CHANNEL_INTERRUPT_ENABLE(0);
 
   // Enable DCP channels
-  regs::DCP->CHANNELCTRL = regs::DCP_CHANNELCTRL_ENABLE_CHANNEL.v(0x0F);
+  regs::DCP->CHANNELCTRL = regs::DCP_CHANNELCTRL_ENABLE_CHANNEL(0x0F);
 
   // Use context switching buffer
   regs::DCP->CONTEXT = reinterpret_cast<uint32_t>(s_contextSwitchingBuf);
@@ -103,11 +103,11 @@ FLASHMEM void deinit() {
   }
 
   // CTRL reset value: 0xF0800000
-  regs::DCP->CTRL = regs::DCP_CTRL_SFTRESET.v(1)       |
-                    regs::DCP_CTRL_CLKGATE.v(1)        |
-                    regs::DCP_CTRL_PRESENT_CRYPTO.v(1) |
-                    regs::DCP_CTRL_PRESENT_SHA.v(1)    |
-                    regs::DCP_CTRL_GATHER_RESIDUAL_WRITES.v(1);
+  regs::DCP->CTRL = regs::DCP_CTRL_SFTRESET(1)       |
+                    regs::DCP_CTRL_CLKGATE(1)        |
+                    regs::DCP_CTRL_PRESENT_CRYPTO(1) |
+                    regs::DCP_CTRL_PRESENT_SHA(1)    |
+                    regs::DCP_CTRL_GATHER_RESIDUAL_WRITES(1);
 
   // Turn off the clock
   regs::CCM_CCGR0_DCP = regs::kCCM_CCGR_OFF;

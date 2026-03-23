@@ -17,7 +17,7 @@ void setSNVSZeroizableMasterKey(const uint32_t* const key) {
     // Disable the ZMK and ECC first
     regs::SNVS_LPMKCR_ZMK_ECC_EN = false;  // SNVS_LP_EnableZeroizableMasterKeyECC
     regs::SNVS_LPMKCR_ZMK_VAL    = false;  // SNVS_LP_SetZeroizableMasterKeyValid
-    regs::SNVS->HPSVSR = regs::SNVS_HPSVSR_ZMK_ECC_FAIL.v(1);  // SNVS_HP_ClearSecurityViolationStatusFlags
+    regs::SNVS->HPSVSR = regs::SNVS_HPSVSR_ZMK_ECC_FAIL(1);  // SNVS_HP_ClearSecurityViolationStatusFlags
 
     // Step 1: Set the ZMK key by software
     regs::SNVS_LPMKCR_ZMK_HWP = regs::kSNVS_LPMKCR_ZMK_HWP_SOFTWARE;  // SNVS_LP_SetZeroizableMasterKeyProgramMode

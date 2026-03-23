@@ -100,25 +100,25 @@ struct Reg {
   [[gnu::always_inline]]
   uint32_t operator&(const uint32_t val) const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    return *r & (*this)(val);
+    return ((*r & (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
   uint32_t operator|(const uint32_t val) const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    return *r | (*this)(val);
+    return ((*r | (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
   uint32_t operator^(const uint32_t val) const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    return *r ^ (*this)(val);
+    return ((*r ^ (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
   uint32_t operator~() const {
     const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    return ~(*r);
+    return ((~(*r)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
@@ -176,22 +176,22 @@ struct RegValue {
 
   [[gnu::always_inline]]
   constexpr uint32_t operator&(const uint32_t val) const {
-    return (*this)(V) & (*this)(val);
+    return (((*this)(V) & (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
   constexpr uint32_t operator|(const uint32_t val) const {
-    return (*this)(V) | (*this)(val);
+    return (((*this)(V) | (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
   constexpr uint32_t operator^(const uint32_t val) const {
-    return (*this)(V) ^ (*this)(val);
+    return (((*this)(V) ^ (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
   constexpr uint32_t operator~() const {
-    return ~(*this)(V);
+    return ((~(*this)(V)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]

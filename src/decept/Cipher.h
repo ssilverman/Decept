@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <utility>
 
@@ -91,14 +92,26 @@ class Cipher {
                const void* iv = nullptr);
 
  private:
+  // The list of algorithms.
+  static constexpr std::array kAlgorithms{
+      kAES128,
+  };
+
   // Holds some internal state for the cipher calculation.
   struct Context {
+    static constexpr auto kKeyDataSizeMax =
+        std::max_element(kAlgorithms.cbegin(), kAlgorithms.cend(),
+                         [](const auto& a, const auto& b) {
+                           return ((a.keySize + a.ivSize) < (b.keySize + b.ivSize));
+                         });
+    static constexpr size_t kKeyDataSize =
+        (kKeyDataSizeMax->keySize + kKeyDataSizeMax->ivSize);
+
     size_t channel;    // Which DCP channel (0-3)
     uint32_t swapCfg;  // Key, input, output byte/word swap options
 
-    // WATCH: If more algorithms are added, keyData size needs to take the max.
     KeySlots keySlot;
-    std::array<uint32_t, (kAES128.keySize + kAES128.ivSize)/4> keyData;
+    std::array<uint32_t, kKeyDataSize/4> keyData;
         // Aligned(4)
 
     // Cached work packet values

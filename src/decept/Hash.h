@@ -39,7 +39,8 @@ class Hash {
       }
       return (algo == a.algo) &&
              (outputSize == a.outputSize) &&
-             (blockSize == a.blockSize);
+             (blockSize == a.blockSize) &&
+             (seedLen == a.seedLen);
     };
 
     constexpr bool operator!=(const Algorithm& a) const {

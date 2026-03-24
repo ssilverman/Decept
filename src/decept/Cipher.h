@@ -38,7 +38,6 @@ class Cipher {
     size_t blockSize;
     size_t keySize;
     size_t ivSize;
-    size_t seedLen;
 
     constexpr bool operator==(const Algorithm& a) const {
       if (&a == this) {
@@ -47,8 +46,7 @@ class Cipher {
       return (algo == a.algo) &&
              (blockSize == a.blockSize) &&
              (keySize == a.keySize) &&
-             (ivSize == a.ivSize) &&
-             (seedLen == a.seedLen);
+             (ivSize == a.ivSize);
     };
 
     constexpr bool operator!=(const Algorithm& a) const {
@@ -61,7 +59,6 @@ class Cipher {
       dcp::sizes::kAES128Block,
       dcp::sizes::kAES128Key,
       dcp::sizes::kAES128IV,
-      dcp::sizes::kAESSeedLen,
   };
 
   // WATCH: Add more asserts as needed when more algorithms are added

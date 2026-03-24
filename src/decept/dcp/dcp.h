@@ -56,7 +56,6 @@ enum : size_t {
   // DRBG seed lengths
   kSHA256SeedLen  = 440 / 8,  // Table 2, Section 10.1
   kSHA1SeedLen    = 440 / 8,  // Table 2, Section 10.1
-  kAESSeedLen     = 256 / 8,  // Table 3, Section 10.2.1
   kUnknownSeedLen = 0,
 };
 }  // namespace sizes

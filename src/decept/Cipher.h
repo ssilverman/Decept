@@ -79,6 +79,11 @@ class Cipher {
   // Zeros out all the memory.
   ~Cipher();
 
+  // Returns the algorithm used.
+  const Algorithm& algo() const {
+    return algo_;
+  }
+
   // Returns the cipher block size.
   size_t blockSize() const {
     return algo_.blockSize;

@@ -87,8 +87,8 @@ class HMACDRBG {
 
   hmac::HMAC hmac_;
 
-  uint8_t v_[kMaxOutputSize]{0};
-  uint8_t key_[kMaxOutputSize]{0};
+  alignas(32) uint8_t v_[kMaxOutputSize]{0};
+  alignas(32) uint8_t key_[kMaxOutputSize]{0};
   uint64_t reseedCounter_ = 0;  // Initialization starts at 1
 };
 

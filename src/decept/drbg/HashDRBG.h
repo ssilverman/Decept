@@ -76,9 +76,9 @@ class HashDRBG {
 
   Hash hash_;
 
-  uint8_t v_[kMaxSeedLen]{0};
-  uint8_t c_[kMaxSeedLen]{0};
-  uint8_t temp_[std::max(kMaxSeedLen, kMaxOutputSize)]{0};
+  alignas(32) uint8_t v_[kMaxSeedLen]{0};
+  alignas(32) uint8_t c_[kMaxSeedLen]{0};
+  alignas(32) uint8_t temp_[std::max(kMaxSeedLen, kMaxOutputSize)]{0};
   uint64_t reseedCounter_ = 0;  // Initialization starts at 1
 };
 

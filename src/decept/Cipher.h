@@ -38,6 +38,7 @@ class Cipher {
     size_t blockSize;
     size_t keySize;
     size_t ivSize;
+    size_t seedLen;
   };
 
   static constexpr Algorithm kAES128{
@@ -45,6 +46,7 @@ class Cipher {
       dcp::sizes::kAES128Block,
       dcp::sizes::kAES128Key,
       dcp::sizes::kAES128IV,
+      dcp::sizes::kAESSeedLen,
   };
 
   // WATCH: Add more asserts as needed when more algorithms are added

@@ -53,9 +53,10 @@ enum : size_t {
   kSHA1Output   = 20,  // SHA-1 result size
   kCRC32Output  = 4,   // CRC-32 result size
 
-  // Hash-based DRBG seed lengths
-  kSHA256SeedLen  = 440 / 8,
-  kSHA1SeedLen    = 440 / 8,
+  // DRBG seed lengths
+  kSHA256SeedLen  = 440 / 8,  // Table 2, Section 10.1
+  kSHA1SeedLen    = 440 / 8,  // Table 2, Section 10.1
+  kAESSeedLen     = 256 / 8,  // Table 3, Section 10.2.1
   kUnknownSeedLen = 0,
 };
 }  // namespace sizes

@@ -39,6 +39,21 @@ class Cipher {
     size_t keySize;
     size_t ivSize;
     size_t seedLen;
+
+    constexpr bool operator==(const Algorithm& a) const {
+      if (&a == this) {
+        return true;
+      }
+      return (algo == a.algo) &&
+             (blockSize == a.blockSize) &&
+             (keySize == a.keySize) &&
+             (ivSize == a.ivSize) &&
+             (seedLen == a.seedLen);
+    };
+
+    constexpr bool operator!=(const Algorithm& a) const {
+      return !(*this == a);
+    }
   };
 
   static constexpr Algorithm kAES128{

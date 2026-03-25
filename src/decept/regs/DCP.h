@@ -160,7 +160,7 @@ constexpr Reg<DCP_MEMBER(PACKET2), 4,  4> DCP_PACKET2_CIPHER_MODE;
 constexpr Reg<DCP_MEMBER(PACKET2), 8,  8> DCP_PACKET2_KEY_SELECT;
 constexpr Reg<DCP_MEMBER(PACKET2), 4, 16> DCP_PACKET2_HASH_SELECT;
 
-// DCP work packet 2 status register values
+// DCP work packet 2 status register cipher values
 constexpr uint32_t kDCP_PACKET2_CIPHER_SELECT_AES128  = 0;
 constexpr uint32_t kDCP_PACKET2_CIPHER_MODE_ECB       = 0;
 constexpr uint32_t kDCP_PACKET2_CIPHER_MODE_CBC       = 1;
@@ -171,7 +171,7 @@ constexpr uint32_t kDCP_PACKET2_KEY_SELECT_KEY3       = 3;
 constexpr uint32_t kDCP_PACKET2_KEY_SELECT_UNIQUE_KEY = 0xFE;
 constexpr uint32_t kDCP_PACKET2_KEY_SELECT_OTP_KEY    = 0xFF;
 
-// DCP work control 1 values
+// DCP work packet 2 status register hash values
 constexpr uint32_t kDCP_PACKET2_HASH_SELECT_SHA256 = 2;
 constexpr uint32_t kDCP_PACKET2_HASH_SELECT_SHA1   = 0;
 constexpr uint32_t kDCP_PACKET2_HASH_SELECT_CRC32  = 1;

@@ -178,15 +178,8 @@ constexpr uint32_t kDCP_PACKET2_HASH_SELECT_CRC32  = 1;
 
 // DCP channel X registers
 
-[[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t DCP_CHxSEMA_VALUE(const uint32_t x) {
-  return ((x & 0xFF) << 16);
-}
-
-[[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t DCP_CHxSTAT_ERROR_CODE(const uint32_t x) {
-  return ((x & 0xFF) << 16);
-}
+constexpr RegValue<8, 16> DCP_CHxSEMA_VALUE;
+constexpr RegValue<8, 16> DCP_CHxSTAT_ERROR_CODE;
 
 #undef DCP_MEMBER
 

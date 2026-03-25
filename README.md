@@ -60,6 +60,7 @@ This is a list of the library features:
 * CRC: CRC-32
 * HMAC: HMAC, TOTP
 * Codecs: base32
+* DRBG: HMAC, Hash
 
 ## To do
 
@@ -71,6 +72,7 @@ This is a list of the library features:
 * Adapt DRBG classes to the
   [RandomNumberEngine](https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine.html)
   C++ named requirement
+* Improve true/false API to indicate errors
 
 ## References
 

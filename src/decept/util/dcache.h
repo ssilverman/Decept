@@ -12,39 +12,52 @@
 #include <cstdint>
 #include <cstring>
 
-#include <imxrt.h>
+#include "decept/regs/SCB.h"
 
 namespace decept {
 namespace util {
 
-[[nodiscard]] [[gnu::always_inline]]
-constexpr uint32_t multipleOf32(const uint32_t x) {
-  return (x + 31u) & ~31u;
+static constexpr size_t kCacheLineSize = 32;
+
+// Performs a dcache operation.
+//
+// Note: The template uses an integer rather than a pointer because all the
+//       registers derive their pointer from an integer using reinterpret_cast,
+//       and that isn't valid in a constexpr, which 'R' needs to be.
+template <uintptr_t R>
+[[gnu::always_inline]]
+static inline void dcacheOp(const void* const m, const size_t size) {
+  if (size == 0) {
+    return;
+  }
+
+  uint32_t a = reinterpret_cast<uint32_t>(m) & ~(kCacheLineSize - 1u);
+  const uint32_t end = reinterpret_cast<uint32_t>(m) + size;
+
+  asm volatile ("dsb 0xF":::"memory");
+
+  do {
+    *reinterpret_cast<volatile uint32_t*>(R) = a;
+    a += kCacheLineSize;
+  } while (a < end);
+
+  asm volatile ("dsb 0xF":::"memory");
+  asm volatile ("isb 0xF":::"memory");
 }
 
-// Calls a DCache function on the given address and size. This also handles
-// non-aligned addresses and sizes that are not a multiple of 32.
 [[gnu::always_inline]]
-inline void dcacheArgs(void (*fn)(void* addr, uint32_t size),
-                              const void* const addr, const size_t size) {
-  fn((void*)((uintptr_t)addr & ~((uintptr_t)31)),
-     multipleOf32(size + ((uintptr_t)addr & (uintptr_t)31)));
+inline void dcacheFlush(const void* const m, const size_t size) {
+  dcacheOp<regs::kSCB_base + offsetof(regs::SCB_Layout, DCCMVAC)>(m, size);
 }
 
 [[gnu::always_inline]]
-inline void dcacheFlush(const void* const addr, const size_t size) {
-  dcacheArgs(&arm_dcache_flush, addr, size);
+inline void dcacheDelete(const void* const m, const size_t size) {
+  dcacheOp<regs::kSCB_base + offsetof(regs::SCB_Layout, DCIMVAC)>(m, size);
 }
 
 [[gnu::always_inline]]
-inline void dcacheFlushDelete(const void* const addr,
-                                     const size_t size) {
-  dcacheArgs(&arm_dcache_flush_delete, addr, size);
-}
-
-[[gnu::always_inline]]
-inline void dcacheDelete(const void* const addr, const size_t size) {
-  dcacheArgs(&arm_dcache_delete, addr, size);
+inline void dcacheFlushDelete(const void* const m, const size_t size) {
+  dcacheOp<regs::kSCB_base + offsetof(regs::SCB_Layout, DCCIMVAC)>(m, size);
 }
 
 // Clears an object and then flushes and deletes the cache.

@@ -18,7 +18,6 @@ namespace regs {
 //
 // See:
 // * https://github.com/nxp-mcuxpresso/mcu-sdk-cmsis/blob/mcux_main/Core/Include/core_cm7.h
-
 struct SCB_Layout {
   /*const*/ volatile uint32_t CPUID;        /*!< Offset: 0x000 (R/ )  CPUID Base Register */
   volatile uint32_t ICSR;                   /*!< Offset: 0x004 (R/W)  Interrupt Control and State Register */

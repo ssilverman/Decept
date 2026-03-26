@@ -19,7 +19,6 @@ namespace regs {
 // See:
 // * https://github.com/nxp-mcuxpresso/mcux-devices-rt/blob/main/RT1060/periph/PERI_IOMUXC_GPR.h
 // * https://github.com/nxp-mcuxpresso/legacy-mcux-sdk/blob/main/devices/MIMXRT1062/MIMXRT1062.h
-
 struct IOMUXC_GPR_Layout {
            uint32_t GPR0;                              /**< GPR0 General Purpose Register, offset: 0x0 */
   volatile uint32_t GPR1;                              /**< GPR1 General Purpose Register, offset: 0x4 */

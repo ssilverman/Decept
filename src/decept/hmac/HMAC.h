@@ -28,6 +28,9 @@ class HMAC {
   // Creates a new HMAC using the given algorithm.
   HMAC(Hash::Algorithm hash);
 
+  // Zeros out all the memory.
+  ~HMAC();
+
   // Returns the algorithm used.
   const Hash::Algorithm& algo() const {
     return hash_.algo();

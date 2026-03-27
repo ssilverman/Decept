@@ -24,6 +24,10 @@ HMAC::HMAC(Hash::Algorithm algo)
       iCtx_(algo),
       oCtx_(algo) {}
 
+HMAC::~HMAC() {
+  util::reallyClear(digest_.get(), hash_.blockSize());
+}
+
 bool HMAC::initKey(const void* const key, const size_t keySize,
                    dcp::Channels channel) {
   const size_t hashSize = outputSize();

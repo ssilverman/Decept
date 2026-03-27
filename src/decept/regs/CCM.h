@@ -60,17 +60,16 @@ constexpr uintptr_t kCCM_base = 0x400FC000;
 
 constexpr RegGroup<CCM_Layout, kCCM_size, kCCM_base> CCM;
 
-#define CCM_MEMBER(member) (kCCM_base + offsetof(CCM_Layout, member))
+#define DECEPT_REGS_CCM_MEMBER(member) \
+  (decept::regs::kCCM_base + offsetof(decept::regs::CCM_Layout, member))
 
-constexpr Reg<CCM_MEMBER(CCGR0), 2, 10> CCM_CCGR0_DCP;   // CG5
-constexpr Reg<CCM_MEMBER(CCGR1), 2, 10> CCM_CCGR1_ENET;  // CG5
-constexpr Reg<CCM_MEMBER(CCGR6), 2, 12> CCM_CCGR6_TRNG;  // CG6
+constexpr Reg<DECEPT_REGS_CCM_MEMBER(CCGR0), 2, 10> CCM_CCGR0_DCP;   // CG5
+constexpr Reg<DECEPT_REGS_CCM_MEMBER(CCGR1), 2, 10> CCM_CCGR1_ENET;  // CG5
+constexpr Reg<DECEPT_REGS_CCM_MEMBER(CCGR6), 2, 12> CCM_CCGR6_TRNG;  // CG6
 
 constexpr uint32_t kCCM_CCGR_OFF      = 0x00;
 constexpr uint32_t kCCM_CCGR_RUN_ONLY = 0x01;
 constexpr uint32_t kCCM_CCGR_ON       = 0x03;
-
-#undef CCM_MEMBER
 
 }  // namespace regs
 }  // namespace decept

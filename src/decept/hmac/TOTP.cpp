@@ -9,7 +9,6 @@
 #include <array>
 #include <cstring>
 #include <limits>
-#include <memory>
 
 #include "decept/util/codecs.h"
 
@@ -64,14 +63,13 @@ std::optional<uint32_t> TOTP::calculate(const int64_t time,
 
   const size_t outSize = hmac_.outputSize();
 
-  const auto hash = std::make_unique<uint8_t[]>(outSize);  // Avoid VLA
-  if (!hmac_.calculate(msg, sizeof(msg), hash.get(), outSize)) {
+  if (!hmac_.calculate(msg, sizeof(msg), temp_, outSize)) {
     return std::nullopt;
   }
 
-  const auto offset = static_cast<size_t>(hash[outSize - 1] & 0x0f);
+  const auto offset = static_cast<size_t>(temp_[outSize - 1] & 0x0f);
   uint32_t binary;
-  (void)std::memcpy(&binary, &hash[offset], 4);
+  (void)std::memcpy(&binary, &temp_[offset], 4);
   if constexpr (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__) {
     binary = __builtin_bswap32(binary);
   }

@@ -11,9 +11,9 @@
 #pragma once
 
 // C++ includes
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
-#include <memory>
 #include <utility>
 #include <vector>
 
@@ -90,8 +90,22 @@ class HMAC {
   bool finalize(uint8_t* out, size_t outSize);
 
  private:
+  static constexpr size_t kMaxOutputSize =
+      std::max_element(Hash::kAlgorithms.cbegin(), Hash::kAlgorithms.cend(),
+                       [](const auto& a, const auto& b) {
+                         return (a.outputSize < b.outputSize);
+                       })
+          ->outputSize;
+  static constexpr size_t kMaxBlockSize =
+      std::max_element(Hash::kAlgorithms.cbegin(), Hash::kAlgorithms.cend(),
+                       [](const auto& a, const auto& b) {
+                         return (a.blockSize < b.blockSize);
+                       })
+          ->blockSize;
+
   Hash hash_;
-  std::unique_ptr<uint8_t[]> digest_;  // Holds room for a complete digest
+  alignas(32) uint8_t digest_[std::max(kMaxOutputSize, kMaxBlockSize)];
+      // Holds room for a complete digest
 
   // Key material
   Hash iCtx_;

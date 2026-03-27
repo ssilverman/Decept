@@ -20,12 +20,11 @@ static constexpr uint8_t kOPad = 0x5c;
 
 HMAC::HMAC(Hash::Algorithm algo)
     : hash_(algo),
-      digest_(std::make_unique<uint8_t[]>(hash_.blockSize())),
       iCtx_(algo),
       oCtx_(algo) {}
 
 HMAC::~HMAC() {
-  util::reallyClear(digest_.get(), hash_.blockSize());
+  util::reallyClear(digest_, sizeof(digest_));
 }
 
 bool HMAC::initKey(const void* const key, const size_t keySize,
@@ -34,12 +33,12 @@ bool HMAC::initKey(const void* const key, const size_t keySize,
   const size_t blockSize = hash_.blockSize();
 
   // Fill with all zeros
-  (void)std::memset(digest_.get(), 0, blockSize);
+  (void)std::memset(digest_, 0, blockSize);
 
   if (keySize <= blockSize) {
-    (void)std::memcpy(digest_.get(), key, keySize);
+    (void)std::memcpy(digest_, key, keySize);
   } else {
-    if (!hash_.hash(key, keySize, digest_.get(), hashSize, channel)) {
+    if (!hash_.hash(key, keySize, digest_, hashSize, channel)) {
       return false;
     }
   }
@@ -49,7 +48,7 @@ bool HMAC::initKey(const void* const key, const size_t keySize,
     digest_[i] ^= kIPad;
   }
   iCtx_.init(channel);
-  if (!iCtx_.update(digest_.get(), blockSize)) {
+  if (!iCtx_.update(digest_, blockSize)) {
     return false;
   }
 
@@ -58,7 +57,7 @@ bool HMAC::initKey(const void* const key, const size_t keySize,
     digest_[i] ^= kIPad ^ kOPad;
   }
   oCtx_.init(channel);
-  if (!oCtx_.update(digest_.get(), blockSize)) {
+  if (!oCtx_.update(digest_, blockSize)) {
     return false;
   }
 
@@ -69,12 +68,12 @@ bool HMAC::calculate(const void* const msg, const size_t msgSize,
                      uint8_t* const out, const size_t outSize) {
   hash_ = iCtx_;
   if (!hash_.update(msg, msgSize) ||
-      !hash_.finalize(digest_.get(), outputSize())) {
+      !hash_.finalize(digest_, outputSize())) {
     return false;
   }
 
   hash_ = oCtx_;
-  if (!hash_.update(digest_.get(), outputSize()) ||
+  if (!hash_.update(digest_, outputSize()) ||
       !hash_.finalize(out, outSize)) {
     return false;
   }
@@ -96,12 +95,12 @@ bool HMAC::update(const void* const in, const size_t inSize) {
 }
 
 bool HMAC::finalize(uint8_t* const out, const size_t outSize) {
-  if (!hash_.finalize(digest_.get(), outputSize())) {
+  if (!hash_.finalize(digest_, outputSize())) {
     return false;
   }
 
   hash_ = oCtx_;  // TODO: Fix up the channel (and the channel-related API)
-  if (!hash_.update(digest_.get(), outputSize()) ||
+  if (!hash_.update(digest_, outputSize()) ||
       !hash_.finalize(out, outSize)) {
     return false;
   }
@@ -117,12 +116,12 @@ bool HMAC::calculate(const std::vector<std::pair<const void*, size_t>>& inputs,
       return false;
     }
   }
-  if (!hash_.finalize(digest_.get(), outputSize())) {
+  if (!hash_.finalize(digest_, outputSize())) {
     return false;
   }
 
   hash_ = oCtx_;
-  if (!hash_.update(digest_.get(), outputSize()) ||
+  if (!hash_.update(digest_, outputSize()) ||
       !hash_.finalize(out, outSize)) {
     return false;
   }

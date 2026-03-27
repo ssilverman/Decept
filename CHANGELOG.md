@@ -11,7 +11,7 @@ and this project adheres to
 ### Added
 * Initial release.
 * DCP features:
-  * AES128
+  * AES-128
   * SHA-256
   * SHA-1
   * CRC-32

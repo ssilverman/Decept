@@ -108,10 +108,12 @@ bool HMAC::finalize(uint8_t* const out, const size_t outSize) {
   return true;
 }
 
-bool HMAC::calculate(const std::vector<std::pair<const void*, size_t>>& inputs,
+bool HMAC::calculate(const std::pair<const void*, size_t>* const inputs,
+                     const size_t inputsSize,
                      uint8_t* const out, const size_t outSize) {
   hash_ = iCtx_;
-  for (const auto& p : inputs) {
+  for (size_t i = 0; i < inputsSize; ++i) {
+    const auto& p = inputs[i];
     if (!hash_.update(p.first, p.second)) {
       return false;
     }

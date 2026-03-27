@@ -64,7 +64,8 @@ class HMAC {
   // Same as the other calculate() function, but uses multiple inputs. The
   // specified number of bytes will be copied into the output, up to
   // _hash size_ bytes.
-  bool calculate(const std::vector<std::pair<const void*, size_t>>& inputs,
+  bool calculate(const std::pair<const void*, size_t>* inputs,
+                 size_t inputsSize,
                  uint8_t* out, size_t outSize);
 
   // ------------------------------------------------------------------------

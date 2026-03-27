@@ -41,7 +41,7 @@ static void test_no_reseed(const NoReseedTestData* const data,
                            const size_t dataSize) {
   decept::drbg::HMACDRBG drbg{A};
 
-  for (size_t i = 0; i < dataSize; i++) {
+  for (size_t i = 0; i < dataSize; ++i) {
     const auto m = "Data " + std::to_string(i);
 
     const NoReseedTestData& d = data[i];
@@ -72,7 +72,7 @@ static void test_pr_false(const PRFalseTestData* const data,
                           const size_t dataSize) {
   decept::drbg::HMACDRBG drbg{A};
 
-  for (size_t i = 0; i < dataSize; i++) {
+  for (size_t i = 0; i < dataSize; ++i) {
     const auto m = "Data " + std::to_string(i);
 
     const PRFalseTestData& d = data[i];
@@ -108,7 +108,7 @@ static void test_pr_true(const PRTrueTestData* const data,
                          const size_t dataSize) {
   decept::drbg::HMACDRBG drbg{A};
 
-  for (size_t i = 0; i < dataSize; i++) {
+  for (size_t i = 0; i < dataSize; ++i) {
     const auto m = "Data " + std::to_string(i);
 
     const PRTrueTestData& d = data[i];

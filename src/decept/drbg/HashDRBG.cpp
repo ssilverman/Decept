@@ -219,7 +219,10 @@ static bool hash_df(Hash& hash,
 #endif  // __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
   uint8_t counter = 1;
 
-  while (outSize > 0) {
+  const size_t hashOutSize = hash.outputSize();
+
+  // Process full blocks
+  for (size_t i = outSize / hashOutSize; i-- > 0; ) {
     hash.init();
     if (!(hash.update(&counter, 1) && hash.update(&numBits, 4))) {
       return false;
@@ -230,14 +233,31 @@ static bool hash_df(Hash& hash,
       }
     }
 
-    size_t size = std::min(outSize, hash.outputSize());
-    if (!hash.finalize(out, size)) {
+    if (!hash.finalize(out, hashOutSize)) {
       return false;
     }
-    out     += size;
-    outSize -= size;
+    out     += hashOutSize;
+    outSize -= hashOutSize;
 
     ++counter;
+  }
+
+  // Maybe process a partial block
+  outSize %= hashOutSize;
+  if (outSize != 0) {
+    hash.init();
+    if (!(hash.update(&counter, 1) && hash.update(&numBits, 4))) {
+      return false;
+    }
+    for (const auto& p : inputs) {
+      if (!hash.update(p.first, p.second)) {
+        return false;
+      }
+    }
+
+    if (!hash.finalize(out, outSize)) {
+      return false;
+    }
   }
 
   return true;
@@ -251,17 +271,27 @@ static bool hashgen(Hash& hash, const uint8_t* const v, const size_t vSize,
                     uint8_t* const temp) {
   std::memcpy(temp, v, vSize);
 
-  while (outSize > 0) {
-    const size_t size = std::min(outSize, hash.outputSize());
-    if (!hash.hash(temp, vSize, out, size)) {
+  const size_t hashOutSize = hash.outputSize();
+
+  // Generate full blocks
+  for (size_t i = outSize / hashOutSize; i-- > 0;) {
+    if (!hash.hash(temp, vSize, out, hashOutSize)) {
       return false;
     }
-    out     += size;
-    outSize -= size;
+    out     += hashOutSize;
+    outSize -= hashOutSize;
 
-    if (outSize > 0) {
+    if (outSize != 0) {
       const uint8_t one = 1;
       addTo(&one, 1, temp, vSize);
+    }
+  }
+
+  // Maybe generate a partial block
+  outSize %= hashOutSize;
+  if (outSize != 0) {
+    if (!hash.hash(temp, vSize, out, outSize)) {
+      return false;
     }
   }
 

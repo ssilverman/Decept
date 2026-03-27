@@ -128,15 +128,25 @@ bool HMACDRBG::generate(const void* const in, const size_t inSize,
     }
   }
 
-  while (outSize > 0) {
-    if (!hmac_.calculate(v_, hmac_.outputSize(),
-                         v_, hmac_.outputSize())) {
+  const size_t hmacOutSize = hmac_.outputSize();
+
+  // Generate full blocks
+  for (size_t i = outSize / hmacOutSize; i-- > 0; ) {
+    if (!hmac_.calculate(v_, hmacOutSize, v_, hmacOutSize)) {
       return false;
     }
-    size_t size = std::min(hmac_.outputSize(), outSize);
-    std::memcpy(out, v_, size);
-    outSize -= size;
-    out     += size;
+    std::memcpy(out, v_, hmacOutSize);
+    outSize -= hmacOutSize;
+    out     += hmacOutSize;
+  }
+
+  // Maybe generate a partial block
+  outSize %= hmacOutSize;
+  if (outSize != 0) {
+    if (!hmac_.calculate(v_, hmacOutSize, v_, hmacOutSize)) {
+      return false;
+    }
+    std::memcpy(out, v_, outSize);
   }
 
   if (!update(inputs, inSize)) {

@@ -47,17 +47,17 @@ static inline void dcacheOp(const void* const m, const size_t size) {
 
 [[gnu::always_inline]]
 inline void dcacheFlush(const void* const m, const size_t size) {
-  dcacheOp<regs::kSCB_base + offsetof(regs::SCB_Layout, DCCMVAC)>(m, size);
+  dcacheOp<DECEPT_REGS_SCB_MEMBER(DCCMVAC)>(m, size);
 }
 
 [[gnu::always_inline]]
 inline void dcacheDelete(const void* const m, const size_t size) {
-  dcacheOp<regs::kSCB_base + offsetof(regs::SCB_Layout, DCIMVAC)>(m, size);
+  dcacheOp<DECEPT_REGS_SCB_MEMBER(DCIMVAC)>(m, size);
 }
 
 [[gnu::always_inline]]
 inline void dcacheFlushDelete(const void* const m, const size_t size) {
-  dcacheOp<regs::kSCB_base + offsetof(regs::SCB_Layout, DCCIMVAC)>(m, size);
+  dcacheOp<DECEPT_REGS_SCB_MEMBER(DCCIMVAC)>(m, size);
 }
 
 // Clears an object and then flushes and deletes the cache.

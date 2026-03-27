@@ -7,9 +7,9 @@
 #include "decept/drbg/HashDRBG.h"
 
 // C++ includes
+#include <array>
 #include <cstring>
 #include <utility>
-#include <vector>
 
 #include "decept/util/dcache.h"
 
@@ -17,7 +17,8 @@ namespace decept {
 namespace drbg {
 
 static bool hash_df(Hash& hash,
-                    const std::vector<std::pair<const void*, size_t>>& inputs,
+                    const std::pair<const void*, size_t>* inputs,
+                    size_t inputsSize,
                     uint8_t* out, size_t outSize);
 
 static bool hashgen(Hash& hash, const uint8_t* v, size_t vSize,
@@ -69,12 +70,12 @@ bool HashDRBG::init(const void* const entropy, const size_t entropySize,
     return false;
   }
 
-  std::vector<std::pair<const void*, size_t>> inputs{
+  std::pair<const void*, size_t> inputs[]{
       {entropy, entropySize},
       {nonce, nonceSize},
       {input, inputSize},
   };
-  if (!hash_df(hash_, inputs, v_, hash_.algo().seedLen)) {
+  if (!hash_df(hash_, inputs, std::size(inputs), v_, hash_.algo().seedLen)) {
     return false;
   }
 
@@ -83,9 +84,8 @@ bool HashDRBG::init(const void* const entropy, const size_t entropySize,
   inputs[0].second = 1;
   inputs[1].first = v_;
   inputs[1].second = hash_.algo().seedLen;
-  inputs.resize(2);
 
-  if (!hash_df(hash_, inputs, c_, hash_.algo().seedLen)) {
+  if (!hash_df(hash_, inputs, 2, c_, hash_.algo().seedLen)) {
     return false;
   }
 
@@ -105,20 +105,19 @@ bool HashDRBG::reseed(const void* const entropy, const size_t entropySize,
 
   uint8_t digit = 1;
   std::memcpy(temp_, v_, hash_.algo().seedLen);
-  std::vector<std::pair<const void*, size_t>> inputs{
+  std::pair<const void*, size_t> inputs[]{
       {&digit, 1},
       {temp_, hash_.algo().seedLen},
       {entropy, entropySize},
       {in, inSize},
   };
-  if (!hash_df(hash_, inputs, v_, hash_.algo().seedLen)) {
+  if (!hash_df(hash_, inputs, std::size(inputs), v_, hash_.algo().seedLen)) {
     return false;
   }
   inputs[1].first = v_;
 
-  inputs.resize(2);
   digit = 0;
-  if (!hash_df(hash_, inputs, c_, hash_.algo().seedLen)) {
+  if (!hash_df(hash_, inputs, 2, c_, hash_.algo().seedLen)) {
     return false;
   }
 
@@ -207,7 +206,8 @@ bool HashDRBG::generate(const void* const in, const size_t inSize,
 
 // Derivation function, Section 10.3.1.
 static bool hash_df(Hash& hash,
-                    const std::vector<std::pair<const void*, size_t>>& inputs,
+                    const std::pair<const void*, size_t>* const inputs,
+                    const size_t inputsSize,
                     uint8_t* out, size_t outSize) {
   if (outSize > 255 * hash.outputSize()) {
     return false;
@@ -227,7 +227,8 @@ static bool hash_df(Hash& hash,
     if (!(hash.update(&counter, 1) && hash.update(&numBits, 4))) {
       return false;
     }
-    for (const auto& p : inputs) {
+    for (size_t j = 0; j < inputsSize; ++j) {
+      const auto& p = inputs[j];
       if (!hash.update(p.first, p.second)) {
         return false;
       }
@@ -249,7 +250,8 @@ static bool hash_df(Hash& hash,
     if (!(hash.update(&counter, 1) && hash.update(&numBits, 4))) {
       return false;
     }
-    for (const auto& p : inputs) {
+    for (size_t i = 0; i < inputsSize; ++i) {
+      const auto& p = inputs[i];
       if (!hash.update(p.first, p.second)) {
         return false;
       }

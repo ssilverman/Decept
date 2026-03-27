@@ -7,6 +7,7 @@
 #include "decept/drbg/HMACDRBG.h"
 
 // C++ includes
+#include <array>
 #include <cstring>
 
 #include "decept/util/dcache.h"
@@ -61,14 +62,14 @@ bool HMACDRBG::init(const void* const entropy, const size_t entropySize,
   std::memset(key_, 0, hmac_.outputSize());
   std::memset(v_, 1, hmac_.outputSize());
 
-  const std::vector<std::pair<const void*, size_t>> inputs{
+  const std::pair<const void*, size_t> inputs[]{
       {entropy, entropySize},
       {nonce, nonceSize},
       {in, inSize},
   };
 
   hmac_.initKey(key_, hmac_.outputSize());
-  if (!update(inputs, entropySize + nonceSize + inSize)) {
+  if (!update(inputs, std::size(inputs), entropySize + nonceSize + inSize)) {
     return false;
   }
 
@@ -87,11 +88,11 @@ bool HMACDRBG::reseed(const void* const entropy, const size_t entropySize,
     return false;
   }
 
-  const std::vector<std::pair<const void*, size_t>> inputs{
+  const std::pair<const void*, size_t> inputs[]{
       {entropy, entropySize},
       {in, inSize},
   };
-  if (!update(inputs, entropySize + inSize)) {
+  if (!update(inputs, std::size(inputs), entropySize + inSize)) {
     return false;
   }
 
@@ -117,13 +118,13 @@ bool HMACDRBG::generate(const void* const in, const size_t inSize,
     return false;
   }
 
-  const std::vector<std::pair<const void*, size_t>> inputs{
+  const std::pair<const void*, size_t> inputs[]{
       {in, inSize},
   };
 
   // Check for non-empty input
   if (inSize > 0) {
-    if (!update(inputs, inSize)) {
+    if (!update(inputs, std::size(inputs), inSize)) {
       return false;
     }
   }
@@ -149,7 +150,7 @@ bool HMACDRBG::generate(const void* const in, const size_t inSize,
     std::memcpy(out, v_, outSize);
   }
 
-  if (!update(inputs, inSize)) {
+  if (!update(inputs, std::size(inputs), inSize)) {
     return false;
   }
 
@@ -159,10 +160,8 @@ bool HMACDRBG::generate(const void* const in, const size_t inSize,
 }
 
 // Update function, Section 10.1.2.2.
-bool HMACDRBG::update(
-    const std::vector<std::pair<const void*, size_t>>& inputs,
-    const size_t totalInputSize) {
-
+bool HMACDRBG::update(const std::pair<const void*, size_t>* const inputs,
+                      const size_t inputsSize, const size_t totalInputSize) {
   for (uint8_t i = 0; i < 2; ++i) {
     hmac_.init();
     if (!(hmac_.update(v_, hmac_.outputSize()) &&
@@ -171,7 +170,8 @@ bool HMACDRBG::update(
     }
 
     if (totalInputSize > 0) {
-      for (const auto& p : inputs) {
+      for (size_t j = 0; j < inputsSize; ++j) {
+        const auto& p = inputs[j];
         if (!hmac_.update(p.first, p.second)) {
           return false;
         }

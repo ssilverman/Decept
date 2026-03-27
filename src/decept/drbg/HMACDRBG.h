@@ -12,7 +12,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <utility>
-#include <vector>
 
 #include "decept/Hash.h"
 #include "decept/hmac/HMAC.h"
@@ -82,7 +81,7 @@ class HMACDRBG {
   //
   // This first initializes the HMAC object with the current key and then leaves
   // it initialized with the calculated key.
-  bool update(const std::vector<std::pair<const void*, size_t>>& inputs,
+  bool update(const std::pair<const void*, size_t>* inputs, size_t inputsSize,
               size_t totalInputSize);
 
   hmac::HMAC hmac_;

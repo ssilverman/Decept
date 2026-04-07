@@ -41,7 +41,9 @@ struct Reg {
 
   // The shifted mask.
   static constexpr uint32_t kMask =  // Add -1 using 32-bit modular arithmetic
-      ((uint32_t{1} << Bits) + std::numeric_limits<uint32_t>::max()) << Shift;
+      (((Bits < 32) ? (uint32_t{1} << Bits) : uint32_t{0}) +
+       std::numeric_limits<uint32_t>::max())
+      << Shift;
   // static constexpr uint32_t kMask = static_cast<uint32_t>(int32_t{-1}) >> (32 - Bits);
   // static constexpr uint32_t kMask = ((uint32_t{1} << Bits) - uint32_t{1});
 

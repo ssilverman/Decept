@@ -11,6 +11,7 @@
 #include <limits>
 
 #include "decept/util/codecs.h"
+#include "decept/util/dcache.h"
 
 namespace decept {
 namespace hmac {
@@ -32,6 +33,10 @@ static constexpr auto kPowersOfTen = make_powers_of_ten<kMaxDigits + 1>();
 
 TOTP::TOTP(Hash::Algorithm algo)
     : hmac_{algo} {}
+
+TOTP::~TOTP() {
+  util::reallyClear(temp_, sizeof(temp_));
+}
 
 bool TOTP::initKey(std::string_view base32) {
   const auto v = util::decodeBase32(base32);

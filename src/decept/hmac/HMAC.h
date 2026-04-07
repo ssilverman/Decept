@@ -1,8 +1,9 @@
 // SPDX-FileCopyrightText: (c) 2023-2026 Shawn Silverman <shawn@pobox.com>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-// HMAC.h defines a class for calculating an HMAC using SHA-256, as defined by
-// NIST FIPS PUB 198-1, "The Keyed-Hash Message Authentication Code (HMAC)"
+// HMAC.h defines a class for calculating an HMAC, as defined by NIST FIPS PUB
+// 198-1, "The Keyed-Hash Message Authentication Code (HMAC)"
+//
 // This file is part of the Decept library.
 
 // Refs:

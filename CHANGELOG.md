@@ -18,6 +18,7 @@ and this project adheres to
 * Built on top:
   * HMAC
   * TOTP
+  * HKDF
   * Hash_DRBG
   * HMAC_DRBG
 * Codecs: base32

@@ -58,7 +58,7 @@ This is a list of the library features:
 * Encryption: AES-128
 * Hashing: SHA-256, SHA-1
 * CRC: CRC-32
-* HMAC: HMAC, TOTP
+* HMAC: HMAC, TOTP, HKDF
 * Codecs: base32
 * DRBG: HMAC, Hash
 

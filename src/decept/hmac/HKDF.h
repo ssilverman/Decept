@@ -25,7 +25,7 @@ class HKDF {
   HKDF(Hash::Algorithm hash);
 
   // Zeros out all the memory.
-  ~HKDF();
+  ~HKDF() noexcept;
 
   // Performs the Extract step and returns whether successful. prk is expected
   // to be at least outputSize() bytes. The salt is optional: NULL for no salt

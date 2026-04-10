@@ -19,7 +19,7 @@ namespace hmac {
 HKDF::HKDF(Hash::Algorithm algo)
     : hmac_{algo} {}
 
-HKDF::~HKDF() {
+HKDF::~HKDF() noexcept {
   util::reallyClear(temp_, sizeof(temp_));
 }
 

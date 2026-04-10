@@ -74,7 +74,7 @@ class Cipher {
   Cipher(Algorithm algo);
 
   // Zeros out all the memory.
-  ~Cipher();
+  ~Cipher() noexcept;
 
   // Returns the algorithm used.
   const Algorithm& algo() const {

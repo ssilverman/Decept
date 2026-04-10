@@ -36,7 +36,7 @@ class TOTP {
   TOTP(Hash::Algorithm hash);
 
   // Zeros out all the memory.
-  ~TOTP();
+  ~TOTP() noexcept;
 
   // Initializes the TOTP with the given base32-encoded key. This calls
   // the other initKey() after decoding.

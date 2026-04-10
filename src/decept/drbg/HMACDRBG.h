@@ -25,7 +25,7 @@ class HMACDRBG {
   HMACDRBG(Hash::Algorithm hash);
 
   // Clears the internal state.
-  ~HMACDRBG();
+  ~HMACDRBG() noexcept;
 
   // Initializes the DRBG. This will return false if:
   // 1. entropy is nullptr and entropySize > 0,

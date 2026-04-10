@@ -27,7 +27,7 @@ static bool hashgen(Hash& hash, const uint8_t* v, size_t vSize,
 HashDRBG::HashDRBG(const Hash::Algorithm algo)
     : hash_(algo) {}
 
-HashDRBG::~HashDRBG() {
+HashDRBG::~HashDRBG() noexcept {
   util::reallyClear(v_, sizeof(v_));
   util::reallyClear(c_, sizeof(c_));
   util::reallyClear(temp_, sizeof(temp_));

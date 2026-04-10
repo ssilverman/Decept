@@ -23,7 +23,7 @@ HMAC::HMAC(Hash::Algorithm algo)
       iCtx_(algo),
       oCtx_(algo) {}
 
-HMAC::~HMAC() {
+HMAC::~HMAC() noexcept {
   util::reallyClear(digest_, sizeof(digest_));
 }
 

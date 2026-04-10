@@ -18,7 +18,7 @@ namespace drbg {
 HMACDRBG::HMACDRBG(const Hash::Algorithm algo)
     : hmac_(algo) {}
 
-HMACDRBG::~HMACDRBG() {
+HMACDRBG::~HMACDRBG() noexcept {
   util::reallyClear(v_, sizeof(v_));
   util::reallyClear(key_, sizeof(key_));
   reseedCounter_ = 0;

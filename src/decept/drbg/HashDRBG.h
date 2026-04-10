@@ -23,7 +23,7 @@ class HashDRBG {
   HashDRBG(Hash::Algorithm hash);
 
   // Clears the internal state.
-  ~HashDRBG();
+  ~HashDRBG() noexcept;
 
   // Initializes the DRBG. This will return false if:
   // 1. entropy is nullptr and entropySize > 0,

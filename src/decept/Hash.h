@@ -78,7 +78,7 @@ class Hash {
   Hash(Algorithm algo);
 
   // Zeros out all the memory.
-  ~Hash();
+  ~Hash() noexcept;
 
   // Defaulted copy and move operations
   Hash(const Hash&) = default;  // Copy constructor

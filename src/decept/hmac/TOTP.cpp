@@ -34,7 +34,7 @@ static constexpr auto kPowersOfTen = make_powers_of_ten<kMaxDigits + 1>();
 TOTP::TOTP(Hash::Algorithm algo)
     : hmac_{algo} {}
 
-TOTP::~TOTP() {
+TOTP::~TOTP() noexcept {
   util::reallyClear(temp_, sizeof(temp_));
 }
 

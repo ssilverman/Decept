@@ -30,7 +30,7 @@ class HMAC {
   HMAC(Hash::Algorithm hash);
 
   // Zeros out all the memory.
-  ~HMAC();
+  ~HMAC() noexcept;
 
   // Returns the algorithm used.
   const Hash::Algorithm& algo() const {

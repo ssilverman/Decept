@@ -17,7 +17,7 @@ namespace decept {
 Cipher::Cipher(Algorithm algo)
     : algo_(algo) {}
 
-Cipher::~Cipher() {
+Cipher::~Cipher() noexcept {
   util::reallyClear(&ctx_, sizeof(ctx_));
 }
 

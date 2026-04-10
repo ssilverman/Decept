@@ -34,7 +34,7 @@ constexpr uint8_t kNullSHA256[]{
 Hash::Hash(Hash::Algorithm algo)
     : algo_(algo) {}
 
-Hash::~Hash() {
+Hash::~Hash() noexcept {
   util::reallyClear(&ctx_, sizeof(ctx_));
 }
 

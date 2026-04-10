@@ -8,6 +8,8 @@
 
 #include "defs.h"
 
+// https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Block-Ciphers
+
 extern const CBCTestData kKAT_CBC_encrypt_data[]{
     // CBCGFSBox128
     {

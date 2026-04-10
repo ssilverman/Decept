@@ -8,6 +8,8 @@
 
 #include "defs.h"
 
+// https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Block-Ciphers
+
 extern const CBCTestData kMMT_CBC_encrypt_data[]{
     {
         "\x1f\x8e\x49\x73\x95\x3f\x3f\xb0\xbd\x6b\x16\x66\x2e\x9a\x3c\x17",

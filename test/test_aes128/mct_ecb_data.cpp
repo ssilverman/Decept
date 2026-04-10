@@ -8,6 +8,8 @@
 
 #include "defs.h"
 
+// https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Block-Ciphers
+
 extern const ECBTestData kMCT_ECB_encrypt_data[]{
     {
         "\x13\x9a\x35\x42\x2f\x1d\x61\xde\x3c\x91\x78\x7f\xe0\x50\x7a\xfd",

@@ -9,6 +9,8 @@
 
 #include "defs.h"
 
+// https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Message-Authentication
+
 extern const TestData kSHA1_data[]{
     // Three examples from here:
     // https://medium.com/@short_sparrow/how-hmac-works-step-by-step-explanation-with-examples-f4aff5efb40e

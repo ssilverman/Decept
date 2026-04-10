@@ -9,6 +9,8 @@
 
 #include "defs.h"
 
+// https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Secure-Hashing
+
 extern const TestData kShortMsg[]{
     {  // Not in the NIST tests
         ""sv,

@@ -11,6 +11,8 @@
 
 #include "defs.h"
 
+// https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Secure-Hashing
+
 extern const char kMonteSeed[decept::Hash::kSHA256.outputSize + 1]{
     "\x6d\x1e\x72\xad\x03\xdd\xeb\x5d\xe8\x91\xe5\x72\xe2\x39\x6f\x8d\xa0\x15\xd8\x99\xef\x0e\x79\x50\x31\x52\xd6\x01\x0a\x3f\xe6\x91",
 };

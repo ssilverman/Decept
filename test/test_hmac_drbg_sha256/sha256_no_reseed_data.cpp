@@ -9,6 +9,8 @@
 #include <array>
 #include <cstddef>
 
+// https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Random-Number-Generators
+
 extern const NoReseedTestData sha256_no_reseed_data[]{
     {
         "\xca\x85\x19\x11\x34\x93\x84\xbf\xfe\x89\xde\x1c\xbd\xc4\x6e\x68\x31\xe4\x4d\x34\xa4\xfb\x93\x5e\xe2\x85\xdd\x14\xb7\x1a\x74\x88"sv,

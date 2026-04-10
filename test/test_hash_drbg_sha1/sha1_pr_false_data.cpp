@@ -9,6 +9,8 @@
 #include <array>
 #include <cstddef>
 
+// https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Random-Number-Generators
+
 extern const PRFalseTestData sha1_pr_false_data[]{
     {
         "\x16\x10\xb8\x28\xcc\xd2\x7d\xe0\x8c\xee\xa0\x32\xa2\x0e\x92\x08"sv,

@@ -8,6 +8,8 @@
 
 #include "defs.h"
 
+// https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Block-Ciphers
+
 extern const ECBTestData kKAT_ECB_encrypt_data[]{
     // ECBGFSBox128
     {

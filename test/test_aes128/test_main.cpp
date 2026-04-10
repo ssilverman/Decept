@@ -4,14 +4,15 @@
 // test_main.cpp tests the DCP AES-128 functions.
 // This file is part of the Decept library.
 
+// C++ includes
 #include <cstring>
 #include <memory>
 #include <string>
 #include <utility>
 
 #include <Arduino.h>
-#include <decept/dcp/dcp.h>
 #include <decept/Cipher.h>
+#include <decept/dcp/dcp.h>
 #include <unity.h>
 
 #include "defs.h"

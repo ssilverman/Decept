@@ -4,10 +4,11 @@
 // sha1_no_reseed_data.cpp contains the NIST DRBGVS data.
 // This file is part of the Decept library.
 
-#include "defs.h"
-
+// C++ includes
 #include <array>
 #include <cstddef>
+
+#include "defs.h"
 
 // https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Random-Number-Generators
 

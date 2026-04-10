@@ -4,6 +4,7 @@
 // long_data.cpp contains the NIST SHAVS "LongMsg" data.
 // This file is part of the Decept library.
 
+// C++ includes
 #include <array>
 #include <cstddef>
 

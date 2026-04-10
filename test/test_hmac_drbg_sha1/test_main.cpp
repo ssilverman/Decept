@@ -4,6 +4,7 @@
 // test_main.cpp tests the SHA-1-based HMAC_DRBG.
 // This file is part of the Decept library.
 
+// C++ includes
 #include <memory>
 #include <string>
 

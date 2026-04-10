@@ -4,6 +4,7 @@
 // kat_cbc_data.cpp contains the NIST AESAVS KAT CBC data.
 // This file is part of the Decept library.
 
+// C++ includes
 #include <array>
 
 #include "defs.h"

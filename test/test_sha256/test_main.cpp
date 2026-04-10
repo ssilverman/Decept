@@ -4,6 +4,7 @@
 // test_main.cpp tests the DCP SHA-256 functions.
 // This file is part of the Decept library.
 
+// C++ includes
 #include <cstddef>
 #include <cstdint>
 #include <cstring>

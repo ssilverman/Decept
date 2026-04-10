@@ -8,5 +8,9 @@
 
 #include "decept/Cipher.h"
 #include "decept/Hash.h"
+#include "decept/dcp/dcp.h"
+#include "decept/drbg/HMACDRBG.h"
+#include "decept/drbg/HashDRBG.h"
+#include "decept/hmac/HKDF.h"
 #include "decept/hmac/HMAC.h"
 #include "decept/hmac/TOTP.h"

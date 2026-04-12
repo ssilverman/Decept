@@ -10,10 +10,11 @@ _Version: 0.1.0-snapshot_
 
 1. [Disclaimer](#disclaimer)
 2. [Introduction](#introduction)
-3. [Running the tests](#running-the-tests)
-4. [Feature list](#feature-list)
-5. [To do](#to-do)
-6. [References](#references)
+3. [Miscellaneous notes](#miscellaneous-notes)
+4. [Running the tests](#running-the-tests)
+5. [Feature list](#feature-list)
+6. [To do](#to-do)
+7. [References](#references)
 
 ## Disclaimer
 
@@ -30,6 +31,10 @@ This library is in its very early stages and it will likely change over time.
 
 **Note: Please read the function docs in the relevant header files for
 more information.**
+
+## Miscellaneous notes
+
+* The library does not check for NULLs, only the given sizes.
 
 ## Running the tests
 

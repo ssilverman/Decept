@@ -50,11 +50,6 @@ static inline bool checkOutputSize(size_t size) {
 bool HMACDRBG::init(const void* const entropy, const size_t entropySize,
                     const void* const nonce, const size_t nonceSize,
                     const void* const in, const size_t inSize) {
-  if (((entropy == nullptr) && (entropySize != 0)) ||
-      ((nonce == nullptr) && (nonceSize != 0)) ||
-      ((in == nullptr) && (inSize != 0))) {
-    return false;
-  }
   if (!checkEntropySize(entropySize) || !checkInputSize(inSize)) {
     return false;
   }
@@ -80,10 +75,6 @@ bool HMACDRBG::init(const void* const entropy, const size_t entropySize,
 
 bool HMACDRBG::reseed(const void* const entropy, const size_t entropySize,
                       const void* const in, const size_t inSize) {
-  if (((entropy == nullptr) && (entropySize != 0)) ||
-      ((in == nullptr) && (inSize != 0))) {
-    return false;
-  }
   if (!checkEntropySize(entropySize) || !checkInputSize(inSize)) {
     return false;
   }
@@ -107,10 +98,6 @@ bool HMACDRBG::isReseedRequired() {
 
 bool HMACDRBG::generate(const void* const in, const size_t inSize,
                         uint8_t* out, size_t outSize) {
-  if (((in == nullptr) && (inSize != 0)) ||
-      ((out == nullptr) && (outSize != 0))) {
-    return false;
-  }
   if (!checkInputSize(inSize) || !checkOutputSize(outSize)) {
     return false;
   }

@@ -61,11 +61,6 @@ static inline bool checkOutputSize(const size_t size) {
 bool HashDRBG::init(const void* const entropy, const size_t entropySize,
                     const void* const nonce, const size_t nonceSize,
                     const void* const input, const size_t inputSize) {
-  if (((entropy == nullptr) && (entropySize != 0)) ||
-      ((nonce == nullptr) && (nonceSize != 0)) ||
-      ((input == nullptr) && (inputSize != 0))) {
-    return false;
-  }
   if (!checkEntropySize(entropySize) || !checkInputSize(inputSize)) {
     return false;
   }
@@ -95,10 +90,6 @@ bool HashDRBG::init(const void* const entropy, const size_t entropySize,
 
 bool HashDRBG::reseed(const void* const entropy, const size_t entropySize,
                       const void* const in, const size_t inSize) {
-  if (((entropy == nullptr) && (entropySize != 0)) ||
-      ((in == nullptr) && (inSize != 0))) {
-    return false;
-  }
   if (!checkEntropySize(entropySize) || !checkInputSize(inSize)) {
     return false;
   }
@@ -153,10 +144,6 @@ bool HashDRBG::isReseedRequired() {
 
 bool HashDRBG::generate(const void* const in, const size_t inSize,
                         uint8_t* const out, const size_t outSize) {
-  if (((in == nullptr) && (inSize != 0)) ||
-      ((out == nullptr) && (outSize != 0))) {
-    return false;
-  }
   if (!checkInputSize(inSize) || !checkOutputSize(outSize)) {
     return false;
   }
@@ -164,7 +151,7 @@ bool HashDRBG::generate(const void* const in, const size_t inSize,
     return false;
   }
 
-  if ((inSize != 0) && (in != nullptr)) {
+  if (inSize != 0) {
     const uint8_t two = 2;
 
     hash_.init();
@@ -177,7 +164,7 @@ bool HashDRBG::generate(const void* const in, const size_t inSize,
     addTo(temp_, hash_.outputSize(), v_, hash_.algo().seedLen);
   }
 
-  if ((out != nullptr) && (outSize != 0)) {
+  if (outSize != 0) {
     if (!hashgen(hash_, v_, hash_.algo().seedLen, out, outSize, temp_)) {
       return false;
     }

@@ -26,9 +26,9 @@ class HashDRBG {
   ~HashDRBG() noexcept;
 
   // Initializes the DRBG. This will return false if:
-  // 1. entropy is nullptr and entropySize > 0,
-  // 2. nonce is nullptr and nonceSize > 0,
-  // 3. in is nullptr and inSize > 0,
+  // 1. entropy is nullptr and entropySize != 0,
+  // 2. nonce is nullptr and nonceSize != 0,
+  // 3. in is nullptr and inSize != 0,
   // 4. The entropy size is too small or too large,
   // 5. The input size is too large, or
   // 6. There was a hash calculation error.
@@ -37,8 +37,8 @@ class HashDRBG {
             const void* in, size_t inSize);
 
   // Reseeds the DRBG. This will return false if:
-  // 1. entropy is nullptr and entropySize > 0,
-  // 2. in is nullptr and inSize > 0,
+  // 1. entropy is nullptr and entropySize != 0,
+  // 2. in is nullptr and inSize != 0,
   // 3. The entropy size is too small or too large,
   // 4. The input size is too large, or
   // 5. There was a hash calculation error.
@@ -52,8 +52,8 @@ class HashDRBG {
   bool isReseedRequired();
 
   // Generates random data. This will return false if:
-  // 1. in is nullptr and inSize > 0,
-  // 2. out is nullptr and outSize > 0,
+  // 1. in is nullptr and inSize != 0,
+  // 2. out is nullptr and outSize != 0,
   // 3. The input or output sizes are too large, or
   // 4. A reseed is required, or
   // 5. There was a hash calculation error.

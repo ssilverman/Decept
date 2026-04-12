@@ -50,9 +50,9 @@ static inline bool checkOutputSize(size_t size) {
 bool HMACDRBG::init(const void* const entropy, const size_t entropySize,
                     const void* const nonce, const size_t nonceSize,
                     const void* const in, const size_t inSize) {
-  if (((entropy == nullptr) && (entropySize > 0)) ||
-      ((nonce == nullptr) && (nonceSize > 0)) ||
-      ((in == nullptr) && (inSize > 0))) {
+  if (((entropy == nullptr) && (entropySize != 0)) ||
+      ((nonce == nullptr) && (nonceSize != 0)) ||
+      ((in == nullptr) && (inSize != 0))) {
     return false;
   }
   if (!checkEntropySize(entropySize) || !checkInputSize(inSize)) {
@@ -80,8 +80,8 @@ bool HMACDRBG::init(const void* const entropy, const size_t entropySize,
 
 bool HMACDRBG::reseed(const void* const entropy, const size_t entropySize,
                       const void* const in, const size_t inSize) {
-  if (((entropy == nullptr) && (entropySize > 0)) ||
-      ((in == nullptr) && (inSize > 0))) {
+  if (((entropy == nullptr) && (entropySize != 0)) ||
+      ((in == nullptr) && (inSize != 0))) {
     return false;
   }
   if (!checkEntropySize(entropySize) || !checkInputSize(inSize)) {
@@ -107,8 +107,8 @@ bool HMACDRBG::isReseedRequired() {
 
 bool HMACDRBG::generate(const void* const in, const size_t inSize,
                         uint8_t* out, size_t outSize) {
-  if (((in == nullptr) && (inSize > 0)) ||
-      ((out == nullptr) && (outSize > 0))) {
+  if (((in == nullptr) && (inSize != 0)) ||
+      ((out == nullptr) && (outSize != 0))) {
     return false;
   }
   if (!checkInputSize(inSize) || !checkOutputSize(outSize)) {
@@ -123,7 +123,7 @@ bool HMACDRBG::generate(const void* const in, const size_t inSize,
   };
 
   // Check for non-empty input
-  if (inSize > 0) {
+  if (inSize != 0) {
     if (!update(inputs, std::size(inputs), inSize)) {
       return false;
     }
@@ -169,7 +169,7 @@ bool HMACDRBG::update(const std::pair<const void*, size_t>* const inputs,
       return false;
     }
 
-    if (totalInputSize > 0) {
+    if (totalInputSize != 0) {
       for (size_t j = 0; j < inputsSize; ++j) {
         const auto& p = inputs[j];
         if (!hmac_.update(p.first, p.second)) {

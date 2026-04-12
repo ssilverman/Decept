@@ -108,7 +108,7 @@ bool Hash::update(const void* const msg, const size_t msgSize) {
 
   // Do as much as we can all at once; process a multiple of the block size
   const size_t size = (inSizeRem / blockSize) * blockSize;
-  if (size > 0) {
+  if (size != 0) {
     while (true) {
       const States s =
           update(regs::DCP_PACKET1_HASH_INIT(!ctx_.isStarted), pIn, size);

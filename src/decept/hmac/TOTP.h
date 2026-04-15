@@ -57,16 +57,9 @@ class TOTP {
   std::optional<uint32_t> calculate(int64_t time, int timeStep, size_t digits);
 
  private:
-  static constexpr size_t kMaxOutputSize =
-      std::max_element(Hash::kAlgorithms.cbegin(), Hash::kAlgorithms.cend(),
-                       [](const auto& a, const auto& b) {
-                         return (a.outputSize < b.outputSize);
-                       })
-          ->outputSize;
-
   HMAC hmac_;
 
-  alignas(32) uint8_t temp_[std::max(kMaxOutputSize, size_t{19})];
+  alignas(32) uint8_t temp_[std::max(Hash::kMaxOutputSize, size_t{19})];
       // Accommodates the offset read
 };
 

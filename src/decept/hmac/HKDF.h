@@ -47,16 +47,9 @@ class HKDF {
               uint8_t* out, size_t outSize);
 
  private:
-  static constexpr size_t kMaxOutputSize =
-      std::max_element(Hash::kAlgorithms.cbegin(), Hash::kAlgorithms.cend(),
-                       [](const auto& a, const auto& b) {
-                         return (a.outputSize < b.outputSize);
-                       })
-          ->outputSize;
-
   HMAC hmac_;
 
-  alignas(32) uint8_t temp_[kMaxOutputSize];
+  alignas(32) uint8_t temp_[Hash::kMaxOutputSize];
 };
 
 }  // namespace hmac

@@ -92,21 +92,8 @@ class HMAC {
   bool finalize(uint8_t* out, size_t outSize);
 
  private:
-  static constexpr size_t kMaxOutputSize =
-      std::max_element(Hash::kAlgorithms.cbegin(), Hash::kAlgorithms.cend(),
-                       [](const auto& a, const auto& b) {
-                         return (a.outputSize < b.outputSize);
-                       })
-          ->outputSize;
-  static constexpr size_t kMaxBlockSize =
-      std::max_element(Hash::kAlgorithms.cbegin(), Hash::kAlgorithms.cend(),
-                       [](const auto& a, const auto& b) {
-                         return (a.blockSize < b.blockSize);
-                       })
-          ->blockSize;
-
   Hash hash_;
-  alignas(32) uint8_t digest_[std::max(kMaxOutputSize, kMaxBlockSize)];
+  alignas(32) uint8_t digest_[std::max(Hash::kMaxOutputSize, Hash::kMaxBlockSize)];
       // Holds room for a complete digest
 
   // Key material

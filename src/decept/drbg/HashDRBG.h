@@ -62,23 +62,11 @@ class HashDRBG {
   bool generate(const void* in, size_t inSize, uint8_t* out, size_t outSize);
 
  private:
-  static constexpr size_t kMaxSeedLen =
-      std::max_element(
-          Hash::kAlgorithms.cbegin(), Hash::kAlgorithms.cend(),
-          [](const auto& a, const auto& b) { return (a.seedLen < b.seedLen); })
-          ->seedLen;  // Table 2, Section 10.1
-  static constexpr size_t kMaxOutputSize =
-      std::max_element(Hash::kAlgorithms.cbegin(), Hash::kAlgorithms.cend(),
-                       [](const auto& a, const auto& b) {
-                         return (a.outputSize < b.outputSize);
-                       })
-          ->outputSize;
-
   Hash hash_;
 
-  alignas(32) uint8_t v_[kMaxSeedLen]{0};
-  alignas(32) uint8_t c_[kMaxSeedLen]{0};
-  alignas(32) uint8_t temp_[std::max(kMaxSeedLen, kMaxOutputSize)]{0};
+  alignas(32) uint8_t v_[Hash::kMaxSeedLen]{0};
+  alignas(32) uint8_t c_[Hash::kMaxSeedLen]{0};
+  alignas(32) uint8_t temp_[std::max(Hash::kMaxSeedLen, Hash::kMaxOutputSize)]{0};
   uint64_t reseedCounter_ = 0;  // Initialization starts at 1
 };
 

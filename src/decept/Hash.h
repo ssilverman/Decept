@@ -74,6 +74,32 @@ class Hash {
       kCRC32,
   };
 
+  // The maximum sizes are useful for pre-allocating space for
+  // one-size-fits-all algorithm classes
+
+  // Maximum of all the output sizes.
+  static constexpr size_t kMaxOutputSize =
+      std::max_element(kAlgorithms.cbegin(), kAlgorithms.cend(),
+                       [](const auto& a, const auto& b) {
+                         return (a.outputSize < b.outputSize);
+                       })
+          ->outputSize;
+
+  // Maximum of all the block sizes.
+  static constexpr size_t kMaxBlockSize =
+      std::max_element(kAlgorithms.cbegin(), kAlgorithms.cend(),
+                       [](const auto& a, const auto& b) {
+                         return (a.blockSize < b.blockSize);
+                       })
+          ->blockSize;
+
+  // Maximum of all the seed lengths.
+  static constexpr size_t kMaxSeedLen =
+      std::max_element(
+          kAlgorithms.cbegin(), kAlgorithms.cend(),
+          [](const auto& a, const auto& b) { return (a.seedLen < b.seedLen); })
+          ->seedLen;
+
   // Creates a new Hash using the given algorithm.
   Hash(Algorithm algo);
 
@@ -139,20 +165,13 @@ class Hash {
  private:
   // Holds some internal state for the hash calculation.
   struct Context {
-    static constexpr size_t kBlockSize =
-        std::max_element(kAlgorithms.cbegin(), kAlgorithms.cend(),
-                         [](const auto& a, const auto& b) {
-                           return (a.blockSize < b.blockSize);
-                         })
-            ->blockSize;
-
     // Channel and swapping
     size_t channel;    // Which DCP channel (0-3)
     uint32_t swapCfg;  // Key, input, output byte/word swap options
 
     // Incomplete block data
-    uint8_t block[kBlockSize];  // Memory buffer; only full blocks are written to DCP during hash updates
-    size_t currBlockSize;       // Number of valid bytes in memory buffer
+    uint8_t block[kMaxBlockSize];  // Memory buffer; only full blocks are written to DCP during hash updates
+    size_t currBlockSize;          // Number of valid bytes in memory buffer
 
     size_t totalSize;  // Track message size
 

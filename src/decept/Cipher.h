@@ -70,6 +70,34 @@ class Cipher {
       kAES128,
   };
 
+  // The maximum sizes are useful for pre-allocating space for
+  // one-size-fits-all algorithm classes
+
+  // Maximum of all the block sizes.
+  static constexpr size_t kMaxBlockSize =
+      std::max_element(Cipher::kAlgorithms.cbegin(), Cipher::kAlgorithms.cend(),
+                       [](const auto& a, const auto& b) {
+                         return (a.blockSize < b.blockSize);
+                       })
+          ->blockSize;
+
+  // Maximum of all the key sizes, not including the IV.
+  static constexpr size_t kMaxKeySize =
+      std::max_element(
+          Cipher::kAlgorithms.cbegin(), Cipher::kAlgorithms.cend(),
+          [](const auto& a, const auto& b) { return (a.keySize < b.keySize); })
+          ->keySize;
+
+  // Maximum of all the key-plus-IV sizes.
+  static constexpr size_t kMaxKeyPlusIVSize = []() {
+    const auto e = std::max_element(
+        Cipher::kAlgorithms.cbegin(), Cipher::kAlgorithms.cend(),
+        [](const auto& a, const auto& b) {
+          return ((a.keySize + a.ivSize) < (b.keySize + b.ivSize));
+        });
+    return (e->keySize + e->ivSize);
+  }();
+
   // Creates a new Cipher using the given algorithm.
   Cipher(Algorithm algo);
 
@@ -118,19 +146,11 @@ class Cipher {
  private:
   // Holds some internal state for the cipher calculation.
   struct Context {
-    static constexpr auto kKeyDataSizeMax =
-        std::max_element(kAlgorithms.cbegin(), kAlgorithms.cend(),
-                         [](const auto& a, const auto& b) {
-                           return ((a.keySize + a.ivSize) < (b.keySize + b.ivSize));
-                         });
-    static constexpr size_t kKeyDataSize =
-        (kKeyDataSizeMax->keySize + kKeyDataSizeMax->ivSize);
-
     size_t channel;    // Which DCP channel (0-3)
     uint32_t swapCfg;  // Key, input, output byte/word swap options
 
     KeySlots keySlot;
-    std::array<uint32_t, kKeyDataSize/4> keyData;
+    std::array<uint32_t, kMaxKeyPlusIVSize/4> keyData;
         // Aligned(4)
 
     // Cached work packet values

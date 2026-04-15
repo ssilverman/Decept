@@ -64,19 +64,6 @@ class HMACDRBG {
   bool generate(const void* in, size_t inSize, uint8_t* out, size_t outSize);
 
  private:
-  static constexpr size_t kMaxSeedLen =
-      std::max_element(
-          Hash::kAlgorithms.cbegin(), Hash::kAlgorithms.cend(),
-          [](const auto& a, const auto& b) { return (a.seedLen < b.seedLen); })
-          ->seedLen;  // Table 2, Section 10.1
-
-  static constexpr size_t kMaxOutputSize =
-      std::max_element(Hash::kAlgorithms.cbegin(), Hash::kAlgorithms.cend(),
-                       [](const auto& a, const auto& b) {
-                         return (a.outputSize < b.outputSize);
-                       })
-          ->outputSize;
-
   // Performs the HMAC_DRBG_Update() calculation. The total input size is given.
   //
   // This first initializes the HMAC object with the current key and then leaves
@@ -86,8 +73,8 @@ class HMACDRBG {
 
   hmac::HMAC hmac_;
 
-  alignas(32) uint8_t v_[kMaxOutputSize]{0};
-  alignas(32) uint8_t key_[kMaxOutputSize]{0};
+  alignas(32) uint8_t v_[Hash::kMaxOutputSize]{0};
+  alignas(32) uint8_t key_[Hash::kMaxOutputSize]{0};
   uint64_t reseedCounter_ = 0;  // Initialization starts at 1
 };
 

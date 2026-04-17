@@ -19,7 +19,7 @@ namespace regs {
 // See:
 // * https://github.com/nxp-mcuxpresso/mcu-sdk-cmsis/blob/mcux_main/Core/Include/core_cm7.h
 struct SCB_Layout {
-  /*const*/ volatile uint32_t CPUID;        /*!< Offset: 0x000 (R/ )  CPUID Base Register */
+  const volatile uint32_t CPUID;            /*!< Offset: 0x000 (R/ )  CPUID Base Register */
   volatile uint32_t ICSR;                   /*!< Offset: 0x004 (R/W)  Interrupt Control and State Register */
   volatile uint32_t VTOR;                   /*!< Offset: 0x008 (R/W)  Vector Table Offset Register */
   volatile uint32_t AIRCR;                  /*!< Offset: 0x00C (R/W)  Application Interrupt and Reset Control Register */
@@ -33,23 +33,23 @@ struct SCB_Layout {
   volatile uint32_t MMFAR;                  /*!< Offset: 0x034 (R/W)  MemManage Fault Address Register */
   volatile uint32_t BFAR;                   /*!< Offset: 0x038 (R/W)  BusFault Address Register */
   volatile uint32_t AFSR;                   /*!< Offset: 0x03C (R/W)  Auxiliary Fault Status Register */
-  /*const*/ volatile uint32_t ID_PFR[2U];   /*!< Offset: 0x040 (R/ )  Processor Feature Register */
-  /*const*/ volatile uint32_t ID_DFR;       /*!< Offset: 0x048 (R/ )  Debug Feature Register */
-  /*const*/ volatile uint32_t ID_AFR;       /*!< Offset: 0x04C (R/ )  Auxiliary Feature Register */
-  /*const*/ volatile uint32_t ID_MMFR[4U];  /*!< Offset: 0x050 (R/ )  Memory Model Feature Register */
-  /*const*/ volatile uint32_t ID_ISAR[5U];  /*!< Offset: 0x060 (R/ )  Instruction Set Attributes Register */
+  const volatile uint32_t ID_PFR[2U];       /*!< Offset: 0x040 (R/ )  Processor Feature Register */
+  const volatile uint32_t ID_DFR;           /*!< Offset: 0x048 (R/ )  Debug Feature Register */
+  const volatile uint32_t ID_AFR;           /*!< Offset: 0x04C (R/ )  Auxiliary Feature Register */
+  const volatile uint32_t ID_MMFR[4U];      /*!< Offset: 0x050 (R/ )  Memory Model Feature Register */
+  const volatile uint32_t ID_ISAR[5U];      /*!< Offset: 0x060 (R/ )  Instruction Set Attributes Register */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[1];
-  /*const*/ volatile uint32_t CLIDR;        /*!< Offset: 0x078 (R/ )  Cache Level ID register */
-  /*const*/ volatile uint32_t CTR;          /*!< Offset: 0x07C (R/ )  Cache Type register */
-  /*const*/ volatile uint32_t CCSIDR;       /*!< Offset: 0x080 (R/ )  Cache Size ID Register */
+  const volatile uint32_t CLIDR;            /*!< Offset: 0x078 (R/ )  Cache Level ID register */
+  const volatile uint32_t CTR;              /*!< Offset: 0x07C (R/ )  Cache Type register */
+  const volatile uint32_t CCSIDR;           /*!< Offset: 0x080 (R/ )  Cache Size ID Register */
   volatile uint32_t CSSELR;                 /*!< Offset: 0x084 (R/W)  Cache Size Selection Register */
   volatile uint32_t CPACR;                  /*!< Offset: 0x088 (R/W)  Coprocessor Access Control Register */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[93];
   volatile uint32_t STIR;                   /*!< Offset: 0x200 ( /W)  Software Triggered Interrupt Register */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[15];
-  /*const*/ volatile uint32_t MVFR0;        /*!< Offset: 0x240 (R/ )  Media and VFP Feature Register 0 */
-  /*const*/ volatile uint32_t MVFR1;        /*!< Offset: 0x244 (R/ )  Media and VFP Feature Register 1 */
-  /*const*/ volatile uint32_t MVFR2;        /*!< Offset: 0x248 (R/ )  Media and VFP Feature Register 2 */
+  const volatile uint32_t MVFR0;            /*!< Offset: 0x240 (R/ )  Media and VFP Feature Register 0 */
+  const volatile uint32_t MVFR1;            /*!< Offset: 0x244 (R/ )  Media and VFP Feature Register 1 */
+  const volatile uint32_t MVFR2;            /*!< Offset: 0x248 (R/ )  Media and VFP Feature Register 2 */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[1];
   volatile uint32_t ICIALLU;                /*!< Offset: 0x250 ( /W)  I-Cache Invalidate All to PoU */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[1];

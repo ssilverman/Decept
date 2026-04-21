@@ -147,7 +147,9 @@ struct RegValue {
 
   // The shifted mask.
   static constexpr uint32_t kMask =  // Add -1 using 32-bit modular arithmetic
-      ((uint32_t{1} << Bits) + std::numeric_limits<uint32_t>::max()) << Shift;
+      (((Bits < 32u) ? (uint32_t{1} << Bits) : uint32_t{0}) +
+       std::numeric_limits<uint32_t>::max())
+      << Shift;
 
   // Returns the masked and shifted version of the given field value.
   [[gnu::always_inline]]

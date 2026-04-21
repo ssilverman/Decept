@@ -30,18 +30,18 @@ struct RegGroup {
 // clear, set, assign" approach. Instead, the given value is directly assigned,
 // after shifting. This is appropriate for things like "CLR" and "SET"
 // registers, where only the 1-assigned bits are set to something.
-template <uintptr_t R, uint32_t Bits, unsigned int Shift,
+template <uintptr_t R, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
 struct Reg {
   // The shift.
   static constexpr unsigned int kShift = Shift;
 
   // The number of consecutive bits.
-  static constexpr uint32_t kBits = Bits;
+  static constexpr size_t kBits = Bits;
 
   // The shifted mask.
   static constexpr uint32_t kMask =  // Add -1 using 32-bit modular arithmetic
-      (((Bits < 32) ? (uint32_t{1} << Bits) : uint32_t{0}) +
+      (((Bits < 32u) ? (uint32_t{1} << Bits) : uint32_t{0}) +
        std::numeric_limits<uint32_t>::max())
       << Shift;
   // static constexpr uint32_t kMask = static_cast<uint32_t>(int32_t{-1}) >> (32 - Bits);
@@ -137,13 +137,13 @@ struct Reg {
 
 // RegValue defines an easier way to define register-part values. It is
 // represented by a mask and shift.
-template <uint32_t Bits, unsigned int Shift>
+template <size_t Bits, unsigned int Shift>
 struct RegValue {
   // The shift.
   static constexpr unsigned int kShift = Shift;
 
   // The number of consecutive bits.
-  static constexpr uint32_t kBits = Bits;
+  static constexpr size_t kBits = Bits;
 
   // The shifted mask.
   static constexpr uint32_t kMask =  // Add -1 using 32-bit modular arithmetic

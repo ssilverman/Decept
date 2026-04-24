@@ -28,22 +28,17 @@ class HMACDRBG {
   ~HMACDRBG() noexcept;
 
   // Initializes the DRBG. This will return false if:
-  // 1. entropy is nullptr and entropySize != 0,
-  // 2. nonce is nullptr and nonceSize != 0,
-  // 3. in is nullptr and inSize != 0,
-  // 4. The entropy size is too small or too large,
-  // 5. The input size is too large, or
-  // 6. There was a hash calculation error.
+  // 1. The entropy size is too small or too large,
+  // 2. The input size is too large, or
+  // 3. There was a hash calculation error.
   bool init(const void* entropy, size_t entropySize,
             const void* nonce, size_t nonceSize,
             const void* in, size_t inSize);
 
   // Reseeds the DRBG. This will return false if:
-  // 1. entropy is nullptr and entropySize != 0,
-  // 2. in is nullptr and inSize != 0,
-  // 3. The entropy size is too small or too large,
-  // 4. The input size is too large, or
-  // 5. There was a hash calculation error.
+  // 1. The entropy size is too small or too large,
+  // 2. The input size is too large, or
+  // 3. There was a hash calculation error.
   //
   // For prediction resistance, call this before every call to generate
   // random data.
@@ -54,11 +49,9 @@ class HMACDRBG {
   bool isReseedRequired();
 
   // Generates random data. This will return false if:
-  // 1. in is nullptr and inSize != 0,
-  // 2. out is nullptr and outSize != 0,
-  // 3. The input or output sizes are too large, or
-  // 4. A reseed is required, or
-  // 5. There was a hash calculation error.
+  // 1. The input or output sizes are too large, or
+  // 2. A reseed is required, or
+  // 3. There was a hash calculation error.
   //
   // The output array may be modified, even if this returns false.
   bool generate(const void* in, size_t inSize, uint8_t* out, size_t outSize);

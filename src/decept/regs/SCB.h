@@ -25,7 +25,7 @@ struct SCB_Layout {
   volatile uint32_t AIRCR;                  /*!< Offset: 0x00C (R/W)  Application Interrupt and Reset Control Register */
   volatile uint32_t SCR;                    /*!< Offset: 0x010 (R/W)  System Control Register */
   volatile uint32_t CCR;                    /*!< Offset: 0x014 (R/W)  Configuration Control Register */
-  volatile uint8_t  SHPR[12U];              /*!< Offset: 0x018 (R/W)  System Handlers Priority Registers (4-7, 8-11, 12-15) */
+  volatile uint8_t  SHPR[12];               /*!< Offset: 0x018 (R/W)  System Handlers Priority Registers (4-7, 8-11, 12-15) */
   volatile uint32_t SHCSR;                  /*!< Offset: 0x024 (R/W)  System Handler Control and State Register */
   volatile uint32_t CFSR;                   /*!< Offset: 0x028 (R/W)  Configurable Fault Status Register */
   volatile uint32_t HFSR;                   /*!< Offset: 0x02C (R/W)  HardFault Status Register */
@@ -33,11 +33,11 @@ struct SCB_Layout {
   volatile uint32_t MMFAR;                  /*!< Offset: 0x034 (R/W)  MemManage Fault Address Register */
   volatile uint32_t BFAR;                   /*!< Offset: 0x038 (R/W)  BusFault Address Register */
   volatile uint32_t AFSR;                   /*!< Offset: 0x03C (R/W)  Auxiliary Fault Status Register */
-  const volatile uint32_t ID_PFR[2U];       /*!< Offset: 0x040 (R/ )  Processor Feature Register */
+  const volatile uint32_t ID_PFR[2];        /*!< Offset: 0x040 (R/ )  Processor Feature Register */
   const volatile uint32_t ID_DFR;           /*!< Offset: 0x048 (R/ )  Debug Feature Register */
   const volatile uint32_t ID_AFR;           /*!< Offset: 0x04C (R/ )  Auxiliary Feature Register */
-  const volatile uint32_t ID_MMFR[4U];      /*!< Offset: 0x050 (R/ )  Memory Model Feature Register */
-  const volatile uint32_t ID_ISAR[5U];      /*!< Offset: 0x060 (R/ )  Instruction Set Attributes Register */
+  const volatile uint32_t ID_MMFR[4];       /*!< Offset: 0x050 (R/ )  Memory Model Feature Register */
+  const volatile uint32_t ID_ISAR[5];       /*!< Offset: 0x060 (R/ )  Instruction Set Attributes Register */
   uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[1];
   const volatile uint32_t CLIDR;            /*!< Offset: 0x078 (R/ )  Cache Level ID register */
   const volatile uint32_t CTR;              /*!< Offset: 0x07C (R/ )  Cache Type register */

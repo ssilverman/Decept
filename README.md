@@ -66,6 +66,7 @@ This is a list of the library features:
 * HMAC: HMAC, TOTP, HKDF
 * Codecs: base32
 * DRBG: HMAC, Hash
+* Entropy: Raw TRNG, `decept::entropy::random_device`
 
 ## To do
 

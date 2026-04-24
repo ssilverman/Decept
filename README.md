@@ -11,10 +11,12 @@ _Version: 0.1.0-snapshot_
 1. [Disclaimer](#disclaimer)
 2. [Introduction](#introduction)
 3. [Miscellaneous notes](#miscellaneous-notes)
-4. [Running the tests](#running-the-tests)
-5. [Feature list](#feature-list)
-6. [To do](#to-do)
-7. [References](#references)
+4. [Library initialization](#library-initialization)
+5. [Entropy](#entropy)
+6. [Running the tests](#running-the-tests)
+7. [Feature list](#feature-list)
+8. [To do](#to-do)
+9. [References](#references)
 
 ## Disclaimer
 
@@ -35,6 +37,29 @@ more information.**
 ## Miscellaneous notes
 
 * The library does not check for NULLs, only the given sizes.
+
+## Library initialization
+
+To initialize the crypto part of the library, call:
+```c++
+decept::dcp::init();
+```
+
+Similarly, to deinitialize the crypto part of the library, call:
+```c++
+decept::dcp::deinit();
+```
+
+## Entropy
+
+There is a `decept::entropy::random_device` class that emulates
+`std::random_device`. It:
+1. Meets the [UniformRandomBitGenerator](https://www.cppreference.com/cpp/named_req/UniformRandomBitGenerator)
+2. Emulates [std::random_device](https://www.cppreference.com/cpp/numeric/random/random_device)
+
+It can be used with any class that utilizes a URBG, for example,
+[std::uniform_int_distribution](https://www.cppreference.com/cpp/numeric/random/uniform_int_distribution)
+or [std::sample](https://www.cppreference.com/cpp/algorithm/sample).
 
 ## Running the tests
 

@@ -101,7 +101,7 @@ This is a list of the library features:
 * Complete CTR DRBG
 * Explore cache alignment for all the structures and parts
 * Adapt DRBG classes to the
-  [RandomNumberEngine](https://en.cppreference.com/w/cpp/named_req/RandomNumberEngine.html)
+  [RandomNumberEngine](https://www.cppreference.com/cpp/named_req/RandomNumberEngine)
   C++ named requirement
 * Improve true/false API to indicate errors
 

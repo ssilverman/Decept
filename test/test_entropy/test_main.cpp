@@ -153,7 +153,7 @@ static void test_randomness() {
   static constexpr size_t kLagCount = 5;
 
   // Progress bar in increments of 10%.
-  static constexpr char kBar[]{"=========="};
+  static constexpr char kBar[]{"==========          "};
 
   decept::entropy::random_device rd;
   uint8_t buf[kBufSize];
@@ -168,11 +168,11 @@ static void test_randomness() {
       format("Starting randomness test: %zu bytes", kFillCount * kBufSize)
           .data());
 
-  TEST_MESSAGE("8[0%]");
+  TEST_MESSAGE(format("[%s]  0%%", kBar + 10).data());
   for (size_t i = 0; i < kFillCount; ++i) {
     for (size_t j = 1; j <= 9; ++j) {
       if (i == j * kFillCount / 10) {
-        TEST_MESSAGE(format("8%s[%zu%%]", kBar + 10 - j, j * 10).data());
+        TEST_MESSAGE(format("[%.*s] %zu%%", 10, kBar + 10 - j, j*10).data());
       }
     }
 
@@ -186,7 +186,7 @@ static void test_randomness() {
       }
     }
   }
-  TEST_MESSAGE(format("8%sD-", kBar).data());
+  TEST_MESSAGE(format("[%.*s]100%%", 10, kBar).data());
 
   const double expectedCount = totalCount / 256.0;
   double chiSq   = 0.0;

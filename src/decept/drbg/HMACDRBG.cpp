@@ -63,7 +63,9 @@ bool HMACDRBG::init(const void* const entropy, const size_t entropySize,
       {in, inSize},
   };
 
-  hmac_.initKey(key_, hmac_.outputSize());
+  if (!hmac_.initKey(key_, hmac_.outputSize())) {
+    return false;
+  }
   if (!update(inputs, std::size(inputs), entropySize + nonceSize + inSize)) {
     return false;
   }
@@ -168,7 +170,9 @@ bool HMACDRBG::update(const std::pair<const void*, size_t>* const inputs,
     if (!hmac_.finalize(key_, hmac_.outputSize())) {
       return false;
     }
-    hmac_.initKey(key_, hmac_.outputSize());
+    if (!hmac_.initKey(key_, hmac_.outputSize())) {
+      return false;
+    }
     if (!hmac_.calculate(v_, hmac_.outputSize(),
                          v_, hmac_.outputSize())) {
       return false;

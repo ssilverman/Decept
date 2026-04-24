@@ -67,19 +67,21 @@ constexpr uintptr_t kSNVS_base = 0x400D4000;
 
 constexpr RegGroup<SNVS_Layout, kSNVS_size, kSNVS_base> SNVS;
 
-#define DECEPT_REGS_SNVS_MEMBER(member) \
-  (decept::regs::kSNVS_base + offsetof(decept::regs::SNVS_Layout, member))
+template <auto Member, size_t Bits, unsigned int Shift,
+          bool DirectAssign = false>
+using SNVS_Reg =
+    Reg<kSNVS_base, SNVS_Layout, Member, Bits, Shift, DirectAssign>;
 
-constexpr Reg<DECEPT_REGS_SNVS_MEMBER(HPCOMR), 1, 13> SNVS_HPCOMR_MKS_EN;
-constexpr Reg<DECEPT_REGS_SNVS_MEMBER(HPCR),   1, 16> SNVS_HPCR_HP_TS;
-constexpr Reg<DECEPT_REGS_SNVS_MEMBER(HPCR),   1,  0> SNVS_HPCR_RTC_EN;
-constexpr Reg<DECEPT_REGS_SNVS_MEMBER(HPSR),   1, 31> SNVS_HPSR_ZMK_ZERO_MASK;
-constexpr Reg<DECEPT_REGS_SNVS_MEMBER(HPSVSR), 1, 27, true> SNVS_HPSVSR_ZMK_ECC_FAIL;  // Write to clear
-constexpr Reg<DECEPT_REGS_SNVS_MEMBER(LPCR),   1,  0> SNVS_LPCR_SRTC_ENV;
-constexpr Reg<DECEPT_REGS_SNVS_MEMBER(LPMKCR), 2,  0> SNVS_LPMKCR_MASTER_KEY_SEL;
-constexpr Reg<DECEPT_REGS_SNVS_MEMBER(LPMKCR), 1,  2> SNVS_LPMKCR_ZMK_HWP;
-constexpr Reg<DECEPT_REGS_SNVS_MEMBER(LPMKCR), 1,  3> SNVS_LPMKCR_ZMK_VAL;
-constexpr Reg<DECEPT_REGS_SNVS_MEMBER(LPMKCR), 1,  4> SNVS_LPMKCR_ZMK_ECC_EN;
+constexpr SNVS_Reg<&SNVS_Layout::HPCOMR, 1, 13> SNVS_HPCOMR_MKS_EN;
+constexpr SNVS_Reg<&SNVS_Layout::HPCR,   1, 16> SNVS_HPCR_HP_TS;
+constexpr SNVS_Reg<&SNVS_Layout::HPCR,   1,  0> SNVS_HPCR_RTC_EN;
+constexpr SNVS_Reg<&SNVS_Layout::HPSR,   1, 31> SNVS_HPSR_ZMK_ZERO_MASK;
+constexpr SNVS_Reg<&SNVS_Layout::HPSVSR, 1, 27, true> SNVS_HPSVSR_ZMK_ECC_FAIL;  // Write to clear
+constexpr SNVS_Reg<&SNVS_Layout::LPCR,   1,  0> SNVS_LPCR_SRTC_ENV;
+constexpr SNVS_Reg<&SNVS_Layout::LPMKCR, 2,  0> SNVS_LPMKCR_MASTER_KEY_SEL;
+constexpr SNVS_Reg<&SNVS_Layout::LPMKCR, 1,  2> SNVS_LPMKCR_ZMK_HWP;
+constexpr SNVS_Reg<&SNVS_Layout::LPMKCR, 1,  3> SNVS_LPMKCR_ZMK_VAL;
+constexpr SNVS_Reg<&SNVS_Layout::LPMKCR, 1,  4> SNVS_LPMKCR_ZMK_ECC_EN;
 
 constexpr uint32_t kSNVS_LPMKCR_MASTER_KEY_SEL_OTPMK = 0;  /*!< One Time Programmable Master Key. */
 constexpr uint32_t kSNVS_LPMKCR_MASTER_KEY_SEL_ZMK   = 2;  /*!< Zeroizable Master Key. */

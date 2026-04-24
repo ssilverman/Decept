@@ -30,7 +30,8 @@ struct RegGroup {
 // clear, set, assign" approach. Instead, the given value is directly assigned,
 // after shifting. This is appropriate for things like "CLR" and "SET"
 // registers, where only the 1-assigned bits are set to something.
-template <uintptr_t R, size_t Bits, unsigned int Shift,
+template <uintptr_t Base, typename T, auto Member,  // Can be const or non-const
+          size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
 struct Reg {
   // The shift.
@@ -53,22 +54,27 @@ struct Reg {
     return (val << Shift) & kMask;
   }
 
+ private:
+  [[gnu::always_inline]]
+  static auto r() {
+    return &(reinterpret_cast<T*>(Base)->*Member);
+  }
+
+ public:
   [[gnu::always_inline]]
   const Reg& operator=(const uint32_t val) const {
     // Clear and then set the bits
-    const auto r = reinterpret_cast<volatile uint32_t*>(R);
     if constexpr (DirectAssign) {
-      *r = (*this)(val);
+      *r() = (*this)(val);
     } else {
-      *r = (*r & ~kMask) | (*this)(val);
+      *r() = (*r() & ~kMask) | (*this)(val);
     }
     return *this;
   }
 
   [[gnu::always_inline]]
   explicit operator uint32_t() const {
-    const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    return (*r & kMask) >> Shift;
+    return (*r() & kMask) >> Shift;
   }
 
   // Converts the register to a uint32_t. This is useful for when an explicit
@@ -80,53 +86,45 @@ struct Reg {
 
   [[gnu::always_inline]]
   const Reg& operator&=(const uint32_t val) const {
-    const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    *r &= (*this)(val);
+    *r() &= (*this)(val);
     return *this;
   }
 
   [[gnu::always_inline]]
   const Reg& operator|=(const uint32_t val) const {
-    const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    *r |= (*this)(val);
+    *r() |= (*this)(val);
     return *this;
   }
 
   [[gnu::always_inline]]
   const Reg& operator^=(const uint32_t val) const {
-    const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    *r ^= (*this)(val);
+    *r() ^= (*this)(val);
     return *this;
   }
 
   [[gnu::always_inline]]
   uint32_t operator&(const uint32_t val) const {
-    const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    return ((*r & (*this)(val)) & kMask) >> Shift;
+    return ((*r() & (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
   uint32_t operator|(const uint32_t val) const {
-    const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    return ((*r | (*this)(val)) & kMask) >> Shift;
+    return ((*r() | (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
   uint32_t operator^(const uint32_t val) const {
-    const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    return ((*r ^ (*this)(val)) & kMask) >> Shift;
+    return ((*r() ^ (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
   uint32_t operator~() const {
-    const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    return ((~(*r)) & kMask) >> Shift;
+    return ((~(*r())) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
   bool operator==(const uint32_t val) const {
-    const auto r = reinterpret_cast<volatile uint32_t*>(R);
-    return (*r & kMask) == (*this)(val);
+    return (*r() & kMask) == (*this)(val);
   }
 
   [[gnu::always_inline]]

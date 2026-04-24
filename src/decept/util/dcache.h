@@ -9,6 +9,7 @@
 #pragma once
 
 // C++ includes
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 
@@ -20,11 +21,7 @@ namespace util {
 static constexpr size_t kCacheLineSize = 32;
 
 // Performs a dcache operation.
-//
-// Note: The template uses an integer rather than a pointer because all the
-//       registers derive their pointer from an integer using reinterpret_cast,
-//       and that isn't valid in a constexpr, which 'R' needs to be.
-template <uintptr_t R>
+template <volatile uint32_t regs::SCB_Layout::* Member>
 [[gnu::always_inline]]
 static inline void dcacheOp(const void* const m, const size_t size) {
   if (size == 0) {
@@ -37,7 +34,7 @@ static inline void dcacheOp(const void* const m, const size_t size) {
   asm volatile ("dsb 0xF":::"memory");
 
   do {
-    *reinterpret_cast<volatile uint32_t*>(R) = a;
+    reinterpret_cast<regs::SCB_Layout*>(regs::kSCB_base)->*Member = a;
     a += kCacheLineSize;
   } while (a < end);
 
@@ -47,17 +44,17 @@ static inline void dcacheOp(const void* const m, const size_t size) {
 
 [[gnu::always_inline]]
 inline void dcacheFlush(const void* const m, const size_t size) {
-  dcacheOp<DECEPT_REGS_SCB_MEMBER(DCCMVAC)>(m, size);
+  dcacheOp<&regs::SCB_Layout::DCCMVAC>(m, size);
 }
 
 [[gnu::always_inline]]
 inline void dcacheDelete(const void* const m, const size_t size) {
-  dcacheOp<DECEPT_REGS_SCB_MEMBER(DCIMVAC)>(m, size);
+  dcacheOp<&regs::SCB_Layout::DCIMVAC>(m, size);
 }
 
 [[gnu::always_inline]]
 inline void dcacheFlushDelete(const void* const m, const size_t size) {
-  dcacheOp<DECEPT_REGS_SCB_MEMBER(DCCIMVAC)>(m, size);
+  dcacheOp<&regs::SCB_Layout::DCCIMVAC>(m, size);
 }
 
 // Clears an object and then flushes and deletes the cache.

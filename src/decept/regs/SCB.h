@@ -78,8 +78,9 @@ constexpr uintptr_t kSCB_base = kSCS_base + 0x0D00;  /*!< System Control Block B
 
 constexpr RegGroup<SCB_Layout, kSCB_size, kSCB_base> SCB;
 
-#define DECEPT_REGS_SCB_MEMBER(member) \
-  (decept::regs::kSCB_base + offsetof(decept::regs::SCB_Layout, member))
+template <auto Member, size_t Bits, unsigned int Shift,
+          bool DirectAssign = false>
+using SCB_Reg = Reg<kSCB_base, SCB_Layout, Member, Bits, Shift, DirectAssign>;
 
 }  // namespace regs
 }  // namespace decept

@@ -63,17 +63,18 @@ constexpr uintptr_t kIOMUXC_GPR_base = 0x400AC000;
 constexpr RegGroup<IOMUXC_GPR_Layout, kIOMUXC_GPR_size, kIOMUXC_GPR_base>
     IOMUXC_GPR;
 
-#define DECEPT_REGS_IOMUXC_GPR_MEMBER(member) \
-  (decept::regs::kIOMUXC_GPR_base +           \
-   offsetof(decept::regs::IOMUXC_GPR_Layout, member))
+template <auto Member, size_t Bits, unsigned int Shift,
+          bool DirectAssign = false>
+using IOMUXC_GPR_Reg =
+    Reg<kIOMUXC_GPR_base, IOMUXC_GPR_Layout, Member, Bits, Shift, DirectAssign>;
 
-constexpr Reg<DECEPT_REGS_IOMUXC_GPR_MEMBER(GPR1),  1, 23> IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN;
-constexpr Reg<DECEPT_REGS_IOMUXC_GPR_MEMBER(GPR1),  1, 18> IOMUXC_GPR_GPR1_ENET2_TX_CLK_DIR;
-constexpr Reg<DECEPT_REGS_IOMUXC_GPR_MEMBER(GPR1),  1, 17> IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR;
-constexpr Reg<DECEPT_REGS_IOMUXC_GPR_MEMBER(GPR1),  1, 14> IOMUXC_GPR_GPR1_ENET2_CLK_SEL;
-constexpr Reg<DECEPT_REGS_IOMUXC_GPR_MEMBER(GPR1),  1, 13> IOMUXC_GPR_GPR1_ENET1_CLK_SEL;
-constexpr Reg<DECEPT_REGS_IOMUXC_GPR_MEMBER(GPR3),  1,  4> IOMUXC_GPR_GPR3_DCP_KEY_SEL;
-constexpr Reg<DECEPT_REGS_IOMUXC_GPR_MEMBER(GPR10), 1,  4> IOMUXC_GPR_GPR10_DCPKEY_OCOTP_OR_KEYMUX;
+constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR1,  1, 23> IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN;
+constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR1,  1, 18> IOMUXC_GPR_GPR1_ENET2_TX_CLK_DIR;
+constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR1,  1, 17> IOMUXC_GPR_GPR1_ENET1_TX_CLK_DIR;
+constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR1,  1, 14> IOMUXC_GPR_GPR1_ENET2_CLK_SEL;
+constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR1,  1, 13> IOMUXC_GPR_GPR1_ENET1_CLK_SEL;
+constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR3,  1,  4> IOMUXC_GPR_GPR3_DCP_KEY_SEL;
+constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR10, 1,  4> IOMUXC_GPR_GPR10_DCPKEY_OCOTP_OR_KEYMUX;
 
 }  // namespace regs
 }  // namespace decept

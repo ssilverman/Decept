@@ -93,41 +93,43 @@ constexpr uintptr_t kTRNG_base = 0x400CC000;
 
 constexpr RegGroup<TRNG_Layout, kTRNG_size, kTRNG_base> TRNG;
 
-#define DECEPT_REGS_TRNG_MEMBER(member) \
-  (decept::regs::kTRNG_base + offsetof(decept::regs::TRNG_Layout, member))
+template <auto Member, size_t Bits, unsigned int Shift,
+          bool DirectAssign = false>
+using TRNG_Reg =
+    Reg<kTRNG_base, TRNG_Layout, Member, Bits, Shift, DirectAssign>;
 
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(MCTL),     1, 16> TRNG_MCTL_PRGM;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(MCTL),     1, 13> TRNG_MCTL_TSTOP_OK;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(MCTL),     1, 12> TRNG_MCTL_ERR;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(MCTL),     1, 10> TRNG_MCTL_ENT_VAL;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(MCTL),     1,  7> TRNG_MCTL_FOR_SCLK;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(MCTL),     1,  6> TRNG_MCTL_RST_DEF;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(MCTL),     2,  2> TRNG_MCTL_OSC_DIV;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(MCTL),     2,  0> TRNG_MCTL_SAMP_MODE;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCMISC),   4, 16> TRNG_SCMISC_RTY_CT;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCMISC),   8,  0> TRNG_SCMISC_LRUN_MAX;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(PKRRNG),  16,  0> TRNG_PKRRNG_PKR_RNG;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(PKRMAX),  24,  0> TRNG_PKRMAX_PKR_MAX;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SDCTL),   16, 16> TRNG_SDCTL_ENT_DLY;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SDCTL),   16,  0> TRNG_SDCTL_SAMP_SIZE;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SBLIM),   10,  0> TRNG_SBLIM_SB_LIM;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(FRQMIN),  22,  0> TRNG_FRQMIN_FRQ_MIN;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(FRQMAX),  22,  0> TRNG_FRQMAX_FRQ_MAX;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCML),    16, 16> TRNG_SCML_MONO_RNG;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCML),    16,  0> TRNG_SCML_MONO_MAX;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR1L),   15, 16> TRNG_SCR1L_RUN1_RNG;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR1L),   15,  0> TRNG_SCR1L_RUN1_MAX;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR2L),   14, 16> TRNG_SCR2L_RUN2_RNG;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR2L),   14,  0> TRNG_SCR2L_RUN2_MAX;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR3L),   13, 16> TRNG_SCR3L_RUN3_RNG;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR3L),   13,  0> TRNG_SCR3L_RUN3_MAX;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR4L),   12, 16> TRNG_SCR4L_RUN4_RNG;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR4L),   12,  0> TRNG_SCR4L_RUN4_MAX;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR5L),   11, 16> TRNG_SCR5L_RUN5_RNG;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR5L),   11,  0> TRNG_SCR5L_RUN5_MAX;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR6PL),  11, 16> TRNG_SCR6PL_RUN6P_RNG;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SCR6PL),  11,  0> TRNG_SCR6PL_RUN6P_MAX;
-constexpr Reg<DECEPT_REGS_TRNG_MEMBER(SEC_CFG),  1,  1> TRNG_SEC_CFG_NO_PRGM;
+constexpr TRNG_Reg<&TRNG_Layout::MCTL,     1, 16> TRNG_MCTL_PRGM;
+constexpr TRNG_Reg<&TRNG_Layout::MCTL,     1, 13> TRNG_MCTL_TSTOP_OK;
+constexpr TRNG_Reg<&TRNG_Layout::MCTL,     1, 12> TRNG_MCTL_ERR;
+constexpr TRNG_Reg<&TRNG_Layout::MCTL,     1, 10> TRNG_MCTL_ENT_VAL;
+constexpr TRNG_Reg<&TRNG_Layout::MCTL,     1,  7> TRNG_MCTL_FOR_SCLK;
+constexpr TRNG_Reg<&TRNG_Layout::MCTL,     1,  6> TRNG_MCTL_RST_DEF;
+constexpr TRNG_Reg<&TRNG_Layout::MCTL,     2,  2> TRNG_MCTL_OSC_DIV;
+constexpr TRNG_Reg<&TRNG_Layout::MCTL,     2,  0> TRNG_MCTL_SAMP_MODE;
+constexpr TRNG_Reg<&TRNG_Layout::SCMISC,   4, 16> TRNG_SCMISC_RTY_CT;
+constexpr TRNG_Reg<&TRNG_Layout::SCMISC,   8,  0> TRNG_SCMISC_LRUN_MAX;
+constexpr TRNG_Reg<&TRNG_Layout::PKRRNG,  16,  0> TRNG_PKRRNG_PKR_RNG;
+constexpr TRNG_Reg<&TRNG_Layout::PKRMAX,  24,  0> TRNG_PKRMAX_PKR_MAX;
+constexpr TRNG_Reg<&TRNG_Layout::SDCTL,   16, 16> TRNG_SDCTL_ENT_DLY;
+constexpr TRNG_Reg<&TRNG_Layout::SDCTL,   16,  0> TRNG_SDCTL_SAMP_SIZE;
+constexpr TRNG_Reg<&TRNG_Layout::SBLIM,   10,  0> TRNG_SBLIM_SB_LIM;
+constexpr TRNG_Reg<&TRNG_Layout::FRQMIN,  22,  0> TRNG_FRQMIN_FRQ_MIN;
+constexpr TRNG_Reg<&TRNG_Layout::FRQMAX,  22,  0> TRNG_FRQMAX_FRQ_MAX;
+constexpr TRNG_Reg<&TRNG_Layout::SCML,    16, 16> TRNG_SCML_MONO_RNG;
+constexpr TRNG_Reg<&TRNG_Layout::SCML,    16,  0> TRNG_SCML_MONO_MAX;
+constexpr TRNG_Reg<&TRNG_Layout::SCR1L,   15, 16> TRNG_SCR1L_RUN1_RNG;
+constexpr TRNG_Reg<&TRNG_Layout::SCR1L,   15,  0> TRNG_SCR1L_RUN1_MAX;
+constexpr TRNG_Reg<&TRNG_Layout::SCR2L,   14, 16> TRNG_SCR2L_RUN2_RNG;
+constexpr TRNG_Reg<&TRNG_Layout::SCR2L,   14,  0> TRNG_SCR2L_RUN2_MAX;
+constexpr TRNG_Reg<&TRNG_Layout::SCR3L,   13, 16> TRNG_SCR3L_RUN3_RNG;
+constexpr TRNG_Reg<&TRNG_Layout::SCR3L,   13,  0> TRNG_SCR3L_RUN3_MAX;
+constexpr TRNG_Reg<&TRNG_Layout::SCR4L,   12, 16> TRNG_SCR4L_RUN4_RNG;
+constexpr TRNG_Reg<&TRNG_Layout::SCR4L,   12,  0> TRNG_SCR4L_RUN4_MAX;
+constexpr TRNG_Reg<&TRNG_Layout::SCR5L,   11, 16> TRNG_SCR5L_RUN5_RNG;
+constexpr TRNG_Reg<&TRNG_Layout::SCR5L,   11,  0> TRNG_SCR5L_RUN5_MAX;
+constexpr TRNG_Reg<&TRNG_Layout::SCR6PL,  11, 16> TRNG_SCR6PL_RUN6P_RNG;
+constexpr TRNG_Reg<&TRNG_Layout::SCR6PL,  11,  0> TRNG_SCR6PL_RUN6P_MAX;
+constexpr TRNG_Reg<&TRNG_Layout::SEC_CFG,  1,  1> TRNG_SEC_CFG_NO_PRGM;
 
 }  // namespace regs
 }  // namespace decept

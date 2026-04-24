@@ -21,4 +21,8 @@ and this project adheres to
   * HKDF
   * Hash_DRBG
   * HMAC_DRBG
-* Codecs: base32
+* Codecs:
+  * base32
+* Entropy:
+  * Raw TRNG support
+  * `decept::entropy::random_device` class

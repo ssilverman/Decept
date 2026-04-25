@@ -55,7 +55,7 @@ static inline bool checkInputSize(const size_t size) {
 
 static inline bool checkOutputSize(const size_t size) {
   // Max: 2^19 bits
-  return (size <= 1u << 16);
+  return (size <= (1u << 16));
 }
 
 bool HashDRBG::init(const void* const entropy, const size_t entropySize,

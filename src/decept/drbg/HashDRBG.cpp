@@ -60,15 +60,15 @@ static inline bool checkOutputSize(const size_t size) {
 
 bool HashDRBG::init(const void* const entropy, const size_t entropySize,
                     const void* const nonce, const size_t nonceSize,
-                    const void* const input, const size_t inputSize) {
-  if (!checkEntropySize(entropySize) || !checkInputSize(inputSize)) {
+                    const void* const in, const size_t inSize) {
+  if (!checkEntropySize(entropySize) || !checkInputSize(inSize)) {
     return false;
   }
 
   std::pair<const void*, size_t> inputs[]{
       {entropy, entropySize},
       {nonce, nonceSize},
-      {input, inputSize},
+      {in, inSize},
   };
   if (!hash_df(hash_, inputs, std::size(inputs), v_, hash_.algo().seedLen)) {
     return false;

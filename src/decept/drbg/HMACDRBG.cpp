@@ -54,8 +54,10 @@ bool HMACDRBG::init(const void* const entropy, const size_t entropySize,
     return false;
   }
 
-  std::memset(key_, 0, hmac_.outputSize());
-  std::memset(v_, 1, hmac_.outputSize());
+  const size_t hmacOutSize = hmac_.outputSize();
+
+  std::memset(key_, 0, hmacOutSize);
+  std::memset(v_, 1, hmacOutSize);
 
   const std::pair<const void*, size_t> inputs[]{
       {entropy, entropySize},
@@ -63,7 +65,7 @@ bool HMACDRBG::init(const void* const entropy, const size_t entropySize,
       {in, inSize},
   };
 
-  if (!hmac_.initKey(key_, hmac_.outputSize())) {
+  if (!hmac_.initKey(key_, hmacOutSize)) {
     return false;
   }
   if (!update(inputs, std::size(inputs), entropySize + nonceSize + inSize)) {
@@ -151,10 +153,12 @@ bool HMACDRBG::generate(const void* const in, const size_t inSize,
 // Update function, Section 10.1.2.2.
 bool HMACDRBG::update(const std::pair<const void*, size_t>* const inputs,
                       const size_t inputsSize, const size_t totalInputSize) {
+  const size_t hmacOutSize = hmac_.outputSize();
+
   for (uint8_t i = 0; i < 2; ++i) {
     hmac_.init();
-    if (!(hmac_.update(v_, hmac_.outputSize()) &&
-          hmac_.update(&i, 1))) {
+    if (!hmac_.update(v_, hmacOutSize) ||
+        !hmac_.update(&i, 1)) {
       return false;
     }
 
@@ -167,14 +171,9 @@ bool HMACDRBG::update(const std::pair<const void*, size_t>* const inputs,
       }
     }
 
-    if (!hmac_.finalize(key_, hmac_.outputSize())) {
-      return false;
-    }
-    if (!hmac_.initKey(key_, hmac_.outputSize())) {
-      return false;
-    }
-    if (!hmac_.calculate(v_, hmac_.outputSize(),
-                         v_, hmac_.outputSize())) {
+    if (!hmac_.finalize(key_, hmacOutSize) ||
+        !hmac_.initKey(key_, hmacOutSize) ||
+        !hmac_.calculate(v_, hmacOutSize, v_, hmacOutSize)) {
       return false;
     }
 

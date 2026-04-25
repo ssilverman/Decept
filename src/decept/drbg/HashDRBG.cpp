@@ -151,6 +151,8 @@ bool HashDRBG::generate(const void* const in, const size_t inSize,
     return false;
   }
 
+  const size_t hashOutSize = hash_.outputSize();
+
   if (inSize != 0) {
     const uint8_t two = 2;
 
@@ -158,10 +160,10 @@ bool HashDRBG::generate(const void* const in, const size_t inSize,
     if (!(hash_.update(&two, 1) &&
           hash_.update(v_, hash_.algo().seedLen) &&
           hash_.update(in, inSize) &&
-          hash_.finalize(temp_, hash_.outputSize()))) {
+          hash_.finalize(temp_, hashOutSize))) {
       return false;
     }
-    addTo(temp_, hash_.outputSize(), v_, hash_.algo().seedLen);
+    addTo(temp_, hashOutSize, v_, hash_.algo().seedLen);
   }
 
   if (outSize != 0) {
@@ -174,10 +176,10 @@ bool HashDRBG::generate(const void* const in, const size_t inSize,
   hash_.init();
   if (!(hash_.update(&three, 1) &&
         hash_.update(v_, hash_.algo().seedLen) &&
-        hash_.finalize(temp_, hash_.outputSize()))) {
+        hash_.finalize(temp_, hashOutSize))) {
     return false;
   }
-  addTo(temp_, hash_.outputSize(), v_, hash_.algo().seedLen);
+  addTo(temp_, hashOutSize, v_, hash_.algo().seedLen);
   addTo(c_, hash_.algo().seedLen, v_, hash_.algo().seedLen);
 
   uint64_t rc = reseedCounter_;

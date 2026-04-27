@@ -75,11 +75,11 @@ static void test_ecb(const ECBTestData* const data, const size_t dataSize,
 
     if (encryptNotDecrypt) {
       TEST_ASSERT_TRUE_MESSAGE(
-          cipher.encrypt(d.in.data(), actual.get(), d.in.length()),
+          cipher.encryptECB(d.in.data(), actual.get(), d.in.length()),
           msg.c_str());
     } else {
       TEST_ASSERT_TRUE_MESSAGE(
-          cipher.decrypt(d.in.data(), actual.get(), d.in.length()),
+          cipher.decryptECB(d.in.data(), actual.get(), d.in.length()),
           msg.c_str());
     }
     TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(d.out.data(),
@@ -105,11 +105,11 @@ static void test_cbc(const CBCTestData* const data, const size_t dataSize,
 
     if (encryptNotDecrypt) {
       TEST_ASSERT_TRUE_MESSAGE(
-          cipher.encrypt(d.in.data(), actual.get(), d.in.length(), d.iv),
+          cipher.encryptCBC(d.in.data(), actual.get(), d.in.length(), d.iv),
           msg.c_str());
     } else {
       TEST_ASSERT_TRUE_MESSAGE(
-          cipher.decrypt(d.in.data(), actual.get(), d.in.length(), d.iv),
+          cipher.decryptCBC(d.in.data(), actual.get(), d.in.length(), d.iv),
           msg.c_str());
     }
     TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(d.out.data(),
@@ -140,10 +140,10 @@ static void test_monte_ecb(const ECBTestData* const data, const size_t dataSize,
     for (int j = 0; j < 1000; ++j) {
       std::swap(in, out);
       if (encryptNotDecrypt) {
-        TEST_ASSERT_TRUE_MESSAGE(cipher.encrypt(in, out, d.in.length()),
+        TEST_ASSERT_TRUE_MESSAGE(cipher.encryptECB(in, out, d.in.length()),
                                  msg.c_str());
       } else {
-        TEST_ASSERT_TRUE_MESSAGE(cipher.decrypt(in, out, d.in.length()),
+        TEST_ASSERT_TRUE_MESSAGE(cipher.decryptECB(in, out, d.in.length()),
                                  msg.c_str());
       }
     }
@@ -176,10 +176,10 @@ static void test_monte_cbc(const CBCTestData* const data, const size_t dataSize,
 
     if (encryptNotDecrypt) {
       TEST_ASSERT_TRUE_MESSAGE(
-          cipher.encrypt(d.in.data(), m2, d.in.length(), d.iv), msg.c_str());
+          cipher.encryptCBC(d.in.data(), m2, d.in.length(), d.iv), msg.c_str());
     } else {
       TEST_ASSERT_TRUE_MESSAGE(
-          cipher.decrypt(d.in.data(), m2, d.in.length(), d.iv), msg.c_str());
+          cipher.decryptCBC(d.in.data(), m2, d.in.length(), d.iv), msg.c_str());
     }
     (void)std::memcpy(m3, d.iv, decept::Cipher::kAES128.blockSize);
     if (!encryptNotDecrypt) {
@@ -200,10 +200,10 @@ static void test_monte_cbc(const CBCTestData* const data, const size_t dataSize,
       m3 = m2;
       m2 = temp;
       if (encryptNotDecrypt) {
-        TEST_ASSERT_TRUE_MESSAGE(cipher.encrypt(m1, m2, d.in.length(), m3),
+        TEST_ASSERT_TRUE_MESSAGE(cipher.encryptCBC(m1, m2, d.in.length(), m3),
                                  msg.c_str());
       } else {
-        TEST_ASSERT_TRUE_MESSAGE(cipher.decrypt(m1, m2, d.in.length(), m2),
+        TEST_ASSERT_TRUE_MESSAGE(cipher.decryptCBC(m1, m2, d.in.length(), m2),
                                  msg.c_str());
       }
     }

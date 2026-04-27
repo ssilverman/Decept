@@ -73,13 +73,29 @@ bool Cipher::setKey(const KeySlots slot, const void* const key) {
   return true;
 }
 
-bool Cipher::encrypt(const void* const src, uint8_t* const dst,
-                     const size_t size, const void* iv) {
+bool Cipher::encryptECB(const void* const src, uint8_t* const dst,
+                        const size_t size) {
+  return crypt(true, src, dst, size, nullptr);
+}
+
+bool Cipher::encryptCBC(const void* const src, uint8_t* const dst,
+                        const size_t size, const void* const iv) {
+  if (iv == nullptr) {
+    return false;
+  }
   return crypt(true, src, dst, size, iv);
 }
 
-bool Cipher::decrypt(const void* const src, uint8_t* const dst,
-                     const size_t size, const void* iv) {
+bool Cipher::decryptECB(const void* const src, uint8_t* const dst,
+                        const size_t size) {
+  return crypt(false, src, dst, size, nullptr);
+}
+
+bool Cipher::decryptCBC(const void* const src, uint8_t* const dst,
+                        const size_t size, const void* const iv) {
+  if (iv == nullptr) {
+    return false;
+  }
   return crypt(false, src, dst, size, iv);
 }
 

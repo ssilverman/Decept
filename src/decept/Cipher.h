@@ -127,21 +127,27 @@ class Cipher {
   // See decept::dcp::sizes.
   bool setKey(KeySlots slot, const void* key);
 
-  // Encrypts data. This will use ECB mode if the IV is NULL, and CBC mode if
-  // the IV is not NULL. It is expected that the IV, if provided, is the correct
-  // size for the selected algorithm. See decept::dcp::sizes.
+  // Encrypts data using ECB mode.
   //
   // The size is expected to be a multiple of the block size and not zero.
-  bool encrypt(const void* src, uint8_t* dst, size_t size,
-               const void* iv = nullptr);
+  bool encryptECB(const void* src, uint8_t* dst, size_t size);
 
-  // Decrypts data. This will use ECB mode if the IV is NULL, and CBC mode if
-  // the IV is not NULL. It is expected that the IV, if provided, is the correct
-  // size for the selected algorithm. See decept::dcp::sizes.
+  // Encrypts data using CBC mode. It is expected that the IV is not NULL and
+  // the correct size for the selected algorithm. See decept::dcp::sizes.
   //
   // The size is expected to be a multiple of the block size and not zero.
-  bool decrypt(const void* src, uint8_t* dst, size_t size,
-               const void* iv = nullptr);
+  bool encryptCBC(const void* src, uint8_t* dst, size_t size, const void* iv);
+
+  // Decrypts data using ECB mode.
+  //
+  // The size is expected to be a multiple of the block size and not zero.
+  bool decryptECB(const void* src, uint8_t* dst, size_t size);
+
+  // Decrypts data using CBC mode. It is expected that the IV is not NULL and
+  // the correct size for the selected algorithm. See decept::dcp::sizes.
+  //
+  // The size is expected to be a multiple of the block size and not zero.
+  bool decryptCBC(const void* src, uint8_t* dst, size_t size, const void* iv);
 
  private:
   // Holds some internal state for the cipher calculation.

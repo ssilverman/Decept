@@ -133,7 +133,8 @@ class Cipher {
   bool encryptECB(const void* src, uint8_t* dst, size_t size);
 
   // Encrypts data using CBC mode. It is expected that the IV is not NULL and
-  // the correct size for the selected algorithm. See decept::dcp::sizes.
+  // the correct size for the selected algorithm. If the IV is NULL then this
+  // will return false. See decept::dcp::sizes.
   //
   // The size is expected to be a multiple of the block size and not zero.
   bool encryptCBC(const void* src, uint8_t* dst, size_t size, const void* iv);
@@ -144,7 +145,8 @@ class Cipher {
   bool decryptECB(const void* src, uint8_t* dst, size_t size);
 
   // Decrypts data using CBC mode. It is expected that the IV is not NULL and
-  // the correct size for the selected algorithm. See decept::dcp::sizes.
+  // the correct size for the selected algorithm. If the IV is NULL then this
+  // will return false. See decept::dcp::sizes.
   //
   // The size is expected to be a multiple of the block size and not zero.
   bool decryptCBC(const void* src, uint8_t* dst, size_t size, const void* iv);

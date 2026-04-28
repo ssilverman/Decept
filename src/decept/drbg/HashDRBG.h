@@ -35,8 +35,9 @@ class HashDRBG {
 
   // Reseeds the DRBG. This will return false if:
   // 1. The entropy size is too small or too large,
-  // 2. The input size is too large, or
-  // 3. There was a hash calculation error.
+  // 2. The input size is too large,
+  // 3. There was a hash calculation error, or
+  // 4. The DRBG was not initialized.
   //
   // For prediction resistance, call this before every call to generate
   // random data.
@@ -48,14 +49,17 @@ class HashDRBG {
 
   // Generates random data. This will return false if:
   // 1. The input or output sizes are too large, or
-  // 2. A reseed is required, or
-  // 3. There was a hash calculation error.
+  // 2. A reseed is required,
+  // 3. There was a hash calculation error, or
+  // 4. The DRBG was not initialized.
   //
   // The output array may be modified, even if this returns false.
   bool generate(const void* in, size_t inSize, uint8_t* out, size_t outSize);
 
  private:
   Hash hash_;
+
+  bool initialized_ = false;
 
   alignas(32) uint8_t v_[Hash::kMaxSeedLen]{0};
   alignas(32) uint8_t c_[Hash::kMaxSeedLen]{0};

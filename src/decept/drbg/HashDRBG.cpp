@@ -32,6 +32,7 @@ HashDRBG::~HashDRBG() noexcept {
   util::reallyClear(c_, sizeof(c_));
   util::reallyClear(temp_, sizeof(temp_));
   reseedCounter_ = 0;
+  initialized_ = false;
 }
 
 static inline bool checkEntropySize(const size_t size) {
@@ -85,11 +86,16 @@ bool HashDRBG::init(const void* const entropy, const size_t entropySize,
   }
 
   reseedCounter_ = 1;
+  initialized_ = true;
+
   return true;
 }
 
 bool HashDRBG::reseed(const void* const entropy, const size_t entropySize,
                       const void* const in, const size_t inSize) {
+  if (!initialized_) {
+    return false;
+  }
   if (!checkEntropySize(entropySize) || !checkInputSize(inSize)) {
     return false;
   }
@@ -144,6 +150,9 @@ bool HashDRBG::isReseedRequired() {
 
 bool HashDRBG::generate(const void* const in, const size_t inSize,
                         uint8_t* const out, const size_t outSize) {
+  if (!initialized_) {
+    return false;
+  }
   if (!checkInputSize(inSize) || !checkOutputSize(outSize)) {
     return false;
   }

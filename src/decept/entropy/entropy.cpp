@@ -261,28 +261,30 @@ static inline bool random32(uint32_t* const r) {
   }
 }
 
-uint32_t entropy_random() {
+bool entropy_random(uint32_t* const out) {
   uint32_t r;
   if (!random32(&r)) {
-    return 0;
+    return false;
   }
-  return r;
+  *out = r;
+  return true;
 }
 
-uint32_t entropy_random_range(const uint32_t range) {
+bool entropy_random_range(const uint32_t range, uint32_t* const out) {
   if (range == 0) {
     errno = EDOM;
-    return 0;
+    return false;
   }
 
   uint32_t r;
   if (!random32(&r)) {
-    return 0;
+    return false;
   }
 
   // Is power of 2?
   if ((range & (range - 1)) == 0) {
-    return r & (range - 1);
+    *out = r & (range - 1);
+    return true;
   }
 
   // Daniel Lemire's nearly-divisionless algorithm
@@ -295,13 +297,14 @@ uint32_t entropy_random_range(const uint32_t range) {
     const uint32_t threshold = -range % range;  // 2^L mod s = (2^L − s) mod s
     while (low < threshold) {
       if (!random32(&r)) {
-        return 0;
+        return false;
       }
       product = uint64_t{r} * uint64_t{range};
       low = static_cast<uint32_t>(product);
     }
   }
-  return static_cast<uint32_t>(product >> 32);
+  *out = static_cast<uint32_t>(product >> 32);
+  return true;
 }
 
 }  // namespace entropy

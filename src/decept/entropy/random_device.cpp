@@ -6,6 +6,8 @@
 
 #include "decept/entropy/random_device.h"
 
+#include <stdexcept>
+
 #include "decept/entropy/entropy.h"
 
 namespace decept {
@@ -31,11 +33,19 @@ random_device::random_device(const std::string& token) {
 }
 
 random_device::result_type random_device::operator()() {
-  return static_cast<result_type>(entropy_random());
+  result_type r;
+  (*this)(&r, sizeof(r));
+  return r;
 }
 
-size_t random_device::operator()(void* const buf, const size_t size) {
-  return trng_data(buf, size);
+void random_device::operator()(void* const buf, const size_t size) {
+  if (trng_data(buf, size) != size) {
+#if defined(__cpp_exceptions)
+    throw std::runtime_error("generation");
+#else
+    std::__throw_runtime_error("generation");
+#endif  // __cpp_exceptions
+  }
 }
 
 size_t random_device::available() {

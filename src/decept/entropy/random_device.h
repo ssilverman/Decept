@@ -60,7 +60,7 @@ class random_device {
 
   // Obtains the entropy estimate for the non-deterministic random number
   // generator. For a deterministic generator, this will return zero. This
-  // version returns 32.
+  // version returns sizeof(result_type)*CHAR_BIT.
   //
   // See:
   // https://www.cppreference.com/cpp/numeric/random/random_device/entropy
@@ -68,19 +68,18 @@ class random_device {
     return sizeof(result_type) * CHAR_BIT;
   }
 
-  // Obtains a random value from the hardware entropy generator. If entropy
-  // generation fails, this returns zero and errno will be set to EIO by
-  // entropy_random().
+  // Returns a random value from the hardware entropy generator. If entropy
+  // generation fails, this will throw a std::runtime_error.
   result_type operator()();
 
   // ------------------------------------------------------------------------
   // Methods not part of the std::random_device API
   // ------------------------------------------------------------------------
 
-  // Tries to read random data into the given buffer and returns the number of
-  // bytes read. If this reads less than the number of bytes requested then
-  // there was an entropy generation error.
-  size_t operator()(void* buf, size_t size);
+  // Tries to read random data into the given buffer. If this reads less than
+  // the number of requested bytes then there was an entropy generation error
+  // and a std::runtime_error is thrown.
+  void operator()(void* buf, size_t size);
 
   // Returns the number of bytes of entropy that can be read without generating
   // and waiting for more.

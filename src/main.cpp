@@ -7,10 +7,13 @@
 #include <Arduino.h>
 
 #include "decept/dcp/dcp.h"
+#include "decept/entropy/random_device.h"
 
 #if !defined(PIO_UNIT_TESTING)
 
 static uint32_t kStartupDelay = 1500;
+
+decept::entropy::random_device rd;
 
 // Main program setup.
 void setup() {
@@ -28,6 +31,8 @@ void setup() {
 
 // Main program loop.
 void loop() {
+  (void)rd();
+  delay(10);
 }
 
 #endif  // !PIO_UNIT_TESTING

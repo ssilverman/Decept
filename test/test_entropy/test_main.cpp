@@ -119,7 +119,7 @@ static void test_random_range() {
   }
 }
 
-// Tests entropy_random().
+// Tests random_device.
 static void test_random_device() {
   decept::entropy::random_device rd;
 

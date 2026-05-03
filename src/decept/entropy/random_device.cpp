@@ -6,6 +6,7 @@
 
 #include "decept/entropy/random_device.h"
 
+// C++ includes
 #include <stdexcept>
 
 #include "decept/entropy/entropy.h"
@@ -29,6 +30,7 @@ static void ensureInitialized() {
 random_device::random_device() : random_device("default") {}
 
 random_device::random_device(const std::string& token) {
+  (void)token;
   ensureInitialized();
 }
 

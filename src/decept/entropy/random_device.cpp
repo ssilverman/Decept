@@ -29,8 +29,7 @@ static void ensureInitialized() {
 
 random_device::random_device() : random_device("default") {}
 
-random_device::random_device(const std::string& token) {
-  (void)token;
+random_device::random_device([[maybe_unused]] const std::string& token) {
   ensureInitialized();
 }
 

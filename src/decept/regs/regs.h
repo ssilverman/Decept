@@ -13,8 +13,9 @@
 namespace decept {
 namespace regs {
 
-// Defines a register group having the given layout, expected size, and
-// base address.
+// Defines a register group having the given layout, expected size, and base
+// address. While it's possible to just utilize sizeof(Layout) instead of also
+// passing a size, having the size provides an extra check.
 template <typename Layout, size_t LayoutSize, uintptr_t BaseAddr>
 struct RegGroup {
   static_assert(sizeof(Layout) == LayoutSize,
@@ -134,7 +135,8 @@ struct Reg {
 };
 
 // RegValue defines an easier way to define register-part values. It is
-// represented by a mask and shift.
+// represented by a mask and shift. It's useful for when a specific register
+// value may be used for more than one register.
 template <size_t Bits, unsigned int Shift>
 struct RegValue {
   // The shift.

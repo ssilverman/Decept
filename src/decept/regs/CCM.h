@@ -62,7 +62,8 @@ constexpr RegGroup<CCM_Layout, kCCM_size, kCCM_base> CCM;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-using CCM_Reg = Reg<kCCM_base, CCM_Layout, Member, Bits, Shift, DirectAssign>;
+using CCM_Reg =
+    Reg<kCCM_base, CCM_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 10> CCM_CCGR0_DCP;   // CG5
 constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 10> CCM_CCGR1_ENET;  // CG5

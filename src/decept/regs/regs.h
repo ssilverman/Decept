@@ -9,6 +9,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <type_traits>
+#include <utility>
 
 namespace decept {
 namespace regs {
@@ -32,9 +34,18 @@ struct RegGroup {
 // after shifting. This is appropriate for things like "CLR" and "SET"
 // registers, where only the 1-assigned bits are set to something.
 template <uintptr_t Base, typename T, auto Member,  // Can be const or non-const
+          size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
 struct Reg {
+  // Only arrays can have a non-zero offset
+  static_assert(
+      ((MemberOffset != 0) &&
+       std::is_array_v<
+           std::remove_reference_t<decltype(std::declval<T&>().*Member)>>) ||
+          (MemberOffset == 0),
+      "Non-array members must use a zero offset");
+
   // The shift.
   static constexpr unsigned int kShift = Shift;
 
@@ -58,7 +69,12 @@ struct Reg {
  private:
   [[gnu::always_inline]]
   static auto r() {
-    return &(reinterpret_cast<T*>(Base)->*Member);
+    auto& m = reinterpret_cast<T*>(Base)->*Member;
+    if constexpr (std::is_array_v<std::remove_reference_t<decltype(m)>>) {
+      return &m[MemberOffset];
+    } else {
+      return &m;
+    }
   }
 
  public:

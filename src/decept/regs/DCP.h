@@ -121,7 +121,8 @@ constexpr RegGroup<DCP_Layout, kDCP_size, kDCP_base> DCP;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-using DCP_Reg = Reg<kDCP_base, DCP_Layout, Member, Bits, Shift, DirectAssign>;
+using DCP_Reg =
+    Reg<kDCP_base, DCP_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 // DCP control register 0
 constexpr DCP_Reg<&DCP_Layout::CTRL, 8,  0> DCP_CTRL_CHANNEL_INTERRUPT_ENABLE;

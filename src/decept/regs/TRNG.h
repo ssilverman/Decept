@@ -96,7 +96,7 @@ constexpr RegGroup<TRNG_Layout, kTRNG_size, kTRNG_base> TRNG;
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
 using TRNG_Reg =
-    Reg<kTRNG_base, TRNG_Layout, Member, Bits, Shift, DirectAssign>;
+    Reg<kTRNG_base, TRNG_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 constexpr TRNG_Reg<&TRNG_Layout::MCTL,     1, 16> TRNG_MCTL_PRGM;
 constexpr TRNG_Reg<&TRNG_Layout::MCTL,     1, 13> TRNG_MCTL_TSTOP_OK;

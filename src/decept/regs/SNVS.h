@@ -70,7 +70,7 @@ constexpr RegGroup<SNVS_Layout, kSNVS_size, kSNVS_base> SNVS;
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
 using SNVS_Reg =
-    Reg<kSNVS_base, SNVS_Layout, Member, Bits, Shift, DirectAssign>;
+    Reg<kSNVS_base, SNVS_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 constexpr SNVS_Reg<&SNVS_Layout::HPCOMR, 1, 13> SNVS_HPCOMR_MKS_EN;
 constexpr SNVS_Reg<&SNVS_Layout::HPCR,   1, 16> SNVS_HPCR_HP_TS;

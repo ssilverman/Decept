@@ -80,7 +80,8 @@ constexpr RegGroup<SCB_Layout, kSCB_size, kSCB_base> SCB;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-using SCB_Reg = Reg<kSCB_base, SCB_Layout, Member, Bits, Shift, DirectAssign>;
+using SCB_Reg =
+    Reg<kSCB_base, SCB_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 }  // namespace regs
 }  // namespace decept

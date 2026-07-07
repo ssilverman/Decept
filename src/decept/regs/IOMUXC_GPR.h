@@ -65,8 +65,8 @@ constexpr RegGroup<IOMUXC_GPR_Layout, kIOMUXC_GPR_size, kIOMUXC_GPR_base>
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-using IOMUXC_GPR_Reg =
-    Reg<kIOMUXC_GPR_base, IOMUXC_GPR_Layout, Member, Bits, Shift, DirectAssign>;
+using IOMUXC_GPR_Reg = Reg<kIOMUXC_GPR_base, IOMUXC_GPR_Layout, Member, 0,
+                           Bits, Shift, DirectAssign>;
 
 constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR1,  1, 23> IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN;
 constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR1,  1, 18> IOMUXC_GPR_GPR1_ENET2_TX_CLK_DIR;

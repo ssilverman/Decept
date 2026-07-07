@@ -38,7 +38,7 @@ struct TRNG_Layout {
   };
   volatile uint32_t FRQMIN;                            /**< Frequency Count Minimum Limit Register, offset: 0x18 */
   union {                                          /* offset: 0x1C */
-    const volatile  uint32_t FRQCNT;                   /**< Frequency Count Register, offset: 0x1C */
+    const volatile uint32_t FRQCNT;                    /**< Frequency Count Register, offset: 0x1C */
     volatile uint32_t FRQMAX;                          /**< Frequency Count Maximum Limit Register, offset: 0x1C */
   };
   union {                                          /* offset: 0x20 */

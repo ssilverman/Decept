@@ -28,7 +28,7 @@ static inline void dcacheOp(const void* const m, const size_t size) {
     return;
   }
 
-  uint32_t a = reinterpret_cast<uint32_t>(m) & ~(kCacheLineSize - 1u);
+  uint32_t a = reinterpret_cast<uint32_t>(m) & ~(kCacheLineSize - 1);
   const uint32_t end = reinterpret_cast<uint32_t>(m) + size;
 
   asm volatile ("dsb 0xF":::"memory");

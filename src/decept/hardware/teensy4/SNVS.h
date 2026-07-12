@@ -9,10 +9,11 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "decept/regs/regs.h"
+#include "decept/hardware/regs/regs.h"
 
-namespace decept {
-namespace regs {
+namespace qindesign {
+namespace hardware {
+namespace teensy4 {
 
 // SNVS_HP and SNVS_LP layout. Comments are from BSD-3-licensed NXP SDK.
 //
@@ -42,7 +43,7 @@ struct SNVS_Layout {
   volatile uint32_t LPCR;                              /**< SNVS_LP Control Register, offset: 0x38 */
   volatile uint32_t LPMKCR;                            /**< SNVS_LP Master Key Control Register, offset: 0x3C */
   volatile uint32_t LPSVCR;                            /**< SNVS_LP Security Violation Control Register, offset: 0x40 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[1];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[1];
   volatile uint32_t LPSECR;                            /**< SNVS_LP Security Events Configuration Register, offset: 0x48 */
   volatile uint32_t LPSR;                              /**< SNVS_LP Status Register, offset: 0x4C */
   volatile uint32_t LPSRTCMR;                          /**< SNVS_LP Secure Real Time Counter MSB Register, offset: 0x50 */
@@ -53,11 +54,11 @@ struct SNVS_Layout {
   volatile uint32_t LPLVDR;                            /**< SNVS_LP Digital Low-Voltage Detector Register, offset: 0x64 */
   volatile uint32_t LPGPR0_LEGACY_ALIAS;               /**< SNVS_LP General Purpose Register 0 (legacy alias), offset: 0x68 */
   volatile uint32_t LPZMKR[kSNVS_LPZMKR_count];        /**< SNVS_LP Zeroizable Master Key Register, array offset: 0x6C, array step: 0x4 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[1];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[1];
   volatile uint32_t LPGPR_ALIAS[kSNVS_LPGPR0_LPGPR3_count]; /**< SNVS_LP General Purpose Registers 0 .. 3, array offset: 0x90, array step: 0x4 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[24];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[24];
   volatile uint32_t LPGPR[kSNVS_LPGPR0_LPGPR7_count];  /**< SNVS_LP General Purpose Registers 0 .. 7, array offset: 0x100, array step: 0x4 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[694];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[694];
   const volatile uint32_t HPVIDR1;                     /**< SNVS_HP Version ID Register 1, offset: 0xBF8 */
   const volatile uint32_t HPVIDR2;                     /**< SNVS_HP Version ID Register 2, offset: 0xBFC */
 };
@@ -65,12 +66,12 @@ struct SNVS_Layout {
 constexpr size_t    kSNVS_size = 0xC00;
 constexpr uintptr_t kSNVS_base = 0x400D4000;
 
-constexpr RegGroup<SNVS_Layout, kSNVS_size, kSNVS_base> SNVS;
+constexpr regs::RegGroup<SNVS_Layout, kSNVS_size, kSNVS_base> SNVS;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
 using SNVS_Reg =
-    Reg<kSNVS_base, SNVS_Layout, Member, 0, Bits, Shift, DirectAssign>;
+    regs::Reg<kSNVS_base, SNVS_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 constexpr SNVS_Reg<&SNVS_Layout::HPCOMR, 1, 13> SNVS_HPCOMR_MKS_EN;
 constexpr SNVS_Reg<&SNVS_Layout::HPCR,   1, 16> SNVS_HPCR_HP_TS;
@@ -90,5 +91,6 @@ constexpr uint32_t kSNVS_LPMKCR_MASTER_KEY_SEL_CMK   = 3;  /*!< Combined Master 
 constexpr uint32_t kSNVS_LPMKCR_ZMK_HWP_SOFTWARE = 0;
 constexpr uint32_t kSNVS_LPMKCR_ZMK_HWP_HARDWARE = 1;
 
-}  // namespace regs
-}  // namespace decept
+}  // namespace teensy4
+}  // namespace hardware
+}  // namespace qindesign

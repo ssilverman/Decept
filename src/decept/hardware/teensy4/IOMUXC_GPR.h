@@ -9,10 +9,11 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "decept/regs/regs.h"
+#include "decept/hardware/regs/regs.h"
 
-namespace decept {
-namespace regs {
+namespace qindesign {
+namespace hardware {
+namespace teensy4 {
 
 // IOMUXC_GPR layout. Comments are from BSD-3-licensed NXP SDK.
 //
@@ -60,13 +61,13 @@ struct IOMUXC_GPR_Layout {
 constexpr size_t    kIOMUXC_GPR_size = 0x8C;
 constexpr uintptr_t kIOMUXC_GPR_base = 0x400AC000;
 
-constexpr RegGroup<IOMUXC_GPR_Layout, kIOMUXC_GPR_size, kIOMUXC_GPR_base>
+constexpr regs::RegGroup<IOMUXC_GPR_Layout, kIOMUXC_GPR_size, kIOMUXC_GPR_base>
     IOMUXC_GPR;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-using IOMUXC_GPR_Reg = Reg<kIOMUXC_GPR_base, IOMUXC_GPR_Layout, Member, 0,
-                           Bits, Shift, DirectAssign>;
+using IOMUXC_GPR_Reg = regs::Reg<kIOMUXC_GPR_base, IOMUXC_GPR_Layout, Member, 0,
+                                 Bits, Shift, DirectAssign>;
 
 constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR1,  1, 23> IOMUXC_GPR_GPR1_ENET_IPG_CLK_S_EN;
 constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR1,  1, 18> IOMUXC_GPR_GPR1_ENET2_TX_CLK_DIR;
@@ -76,5 +77,6 @@ constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR1,  1, 13> IOMUXC_GPR_GPR1_ENET1
 constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR3,  1,  4> IOMUXC_GPR_GPR3_DCP_KEY_SEL;
 constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR10, 1,  4> IOMUXC_GPR_GPR10_DCPKEY_OCOTP_OR_KEYMUX;
 
-}  // namespace regs
-}  // namespace decept
+}  // namespace teensy4
+}  // namespace hardware
+}  // namespace qindesign

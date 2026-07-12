@@ -10,10 +10,11 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "decept/regs/regs.h"
+#include "decept/hardware/regs/regs.h"
 
-namespace decept {
-namespace regs {
+namespace qindesign {
+namespace hardware {
+namespace teensy4 {
 
 /** TRNG - Size of Registers Arrays */
 constexpr size_t kTRNG_ENTA_count = 16;
@@ -83,7 +84,7 @@ struct TRNG_Layout {
   volatile uint32_t INT_CTRL;                          /**< Interrupt Control Register, offset: 0xA4 */
   volatile uint32_t INT_MASK;                          /**< Mask Register, offset: 0xA8 */
   const volatile uint32_t INT_STATUS;                  /**< Interrupt Status Register, offset: 0xAC */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[16];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[16];
   const volatile uint32_t VID1;                        /**< Version ID Register (MS), offset: 0xF0 */
   const volatile uint32_t VID2;                        /**< Version ID Register (LS), offset: 0xF4 */
 };
@@ -91,12 +92,12 @@ struct TRNG_Layout {
 constexpr size_t    kTRNG_size = 0xF8;
 constexpr uintptr_t kTRNG_base = 0x400CC000;
 
-constexpr RegGroup<TRNG_Layout, kTRNG_size, kTRNG_base> TRNG;
+constexpr regs::RegGroup<TRNG_Layout, kTRNG_size, kTRNG_base> TRNG;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
 using TRNG_Reg =
-    Reg<kTRNG_base, TRNG_Layout, Member, 0, Bits, Shift, DirectAssign>;
+    regs::Reg<kTRNG_base, TRNG_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 constexpr TRNG_Reg<&TRNG_Layout::MCTL,     1, 16> TRNG_MCTL_PRGM;
 constexpr TRNG_Reg<&TRNG_Layout::MCTL,     1, 13> TRNG_MCTL_TSTOP_OK;
@@ -131,5 +132,6 @@ constexpr TRNG_Reg<&TRNG_Layout::SCR6PL,  11, 16> TRNG_SCR6PL_RUN6P_RNG;
 constexpr TRNG_Reg<&TRNG_Layout::SCR6PL,  11,  0> TRNG_SCR6PL_RUN6P_MAX;
 constexpr TRNG_Reg<&TRNG_Layout::SEC_CFG,  1,  1> TRNG_SEC_CFG_NO_PRGM;
 
-}  // namespace regs
-}  // namespace decept
+}  // namespace teensy4
+}  // namespace hardware
+}  // namespace qindesign

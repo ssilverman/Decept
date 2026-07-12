@@ -12,7 +12,8 @@
 #include <type_traits>
 #include <utility>
 
-namespace decept {
+namespace qindesign {
+namespace hardware {
 namespace regs {
 
 // Defines a register group having the given layout, expected size, and base
@@ -32,7 +33,8 @@ struct RegGroup {
 // The "direct assign" parameter means that assignment will not use the "read,
 // clear, set, assign" approach. Instead, the given value is directly assigned,
 // after shifting. This is appropriate for things like "CLR" and "SET"
-// registers, where only the 1-assigned bits are set to something.
+// registers, where only the 1-assigned bits are set to something. Or, it could
+// be used for write-1-to-clear bits.
 template <uintptr_t Base, typename T, auto Member,  // Can be const or non-const
           size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,
@@ -152,7 +154,8 @@ struct Reg {
 
 // RegValue defines an easier way to define register-part values. It is
 // represented by a mask and shift. It's useful for when a specific register
-// value may be used for more than one register.
+// value may be used for more than one register, and that value always has the
+// same size and is always at the same position.
 template <size_t Bits, unsigned int Shift>
 struct RegValue {
   // The shift.
@@ -175,10 +178,11 @@ struct RegValue {
 };
 
 // Generate unique "_reserved" field names
-#define DECEPT_REGS_CAT2(a, b) a##b
-#define DECEPT_REGS_CAT(a, b) DECEPT_REGS_CAT2(a, b)
-#define DECEPT_REGS_LAYOUT_MEMBER_RESERVED \
-  DECEPT_REGS_CAT(_reserved, __COUNTER__)
+#define HARDWARE_REGS_CAT2(a, b) a##b
+#define HARDWARE_REGS_CAT(a, b) HARDWARE_REGS_CAT2(a, b)
+#define HARDWARE_REGS_LAYOUT_MEMBER_RESERVED \
+  HARDWARE_REGS_CAT(_reserved, __COUNTER__)
 
 }  // namespace regs
-}  // namespace decept
+}  // namespace hardware
+}  // namespace qindesign

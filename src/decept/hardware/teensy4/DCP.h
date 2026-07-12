@@ -9,10 +9,11 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "decept/regs/regs.h"
+#include "decept/hardware/regs/regs.h"
 
-namespace decept {
-namespace regs {
+namespace qindesign {
+namespace hardware {
+namespace teensy4 {
 
 // DCP layout. Comments are from BSD-3-licensed NXP SDK.
 //
@@ -33,33 +34,33 @@ struct DCP_Layout {
   volatile uint32_t CHANNELCTRL_CLR;                   /**< DCP channel control register, offset: 0x28 */
   volatile uint32_t CHANNELCTRL_TOG;                   /**< DCP channel control register, offset: 0x2C */
   volatile uint32_t CAPABILITY0;                       /**< DCP capability 0 register, offset: 0x30 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   const volatile uint32_t CAPABILITY1;                 /**< DCP capability 1 register, offset: 0x40 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CONTEXT;                           /**< DCP context buffer pointer, offset: 0x50 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t KEY;                               /**< DCP key index, offset: 0x60 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t KEYDATA;                           /**< DCP key data, offset: 0x70 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   const volatile uint32_t PACKET0;                     /**< DCP work packet 0 status register, offset: 0x80 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   const volatile uint32_t PACKET1;                     /**< DCP work packet 1 status register, offset: 0x90 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   const volatile uint32_t PACKET2;                     /**< DCP work packet 2 status register, offset: 0xA0 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   const volatile uint32_t PACKET3;                     /**< DCP work packet 3 status register, offset: 0xB0 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   const volatile uint32_t PACKET4;                     /**< DCP work packet 4 status register, offset: 0xC0 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   const volatile uint32_t PACKET5;                     /**< DCP work packet 5 status register, offset: 0xD0 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   const volatile uint32_t PACKET6;                     /**< DCP work packet 6 status register, offset: 0xE0 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[7];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[7];
   volatile uint32_t CH0CMDPTR;                         /**< DCP channel 0 command pointer address register, offset: 0x100 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH0SEMA;                           /**< DCP channel 0 semaphore register, offset: 0x110 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH0STAT;                           /**< DCP channel 0 status register, offset: 0x120 */
   volatile uint32_t CH0STAT_SET;                       /**< DCP channel 0 status register, offset: 0x124 */
   volatile uint32_t CH0STAT_CLR;                       /**< DCP channel 0 status register, offset: 0x128 */
@@ -69,9 +70,9 @@ struct DCP_Layout {
   volatile uint32_t CH0OPTS_CLR;                       /**< DCP channel 0 options register, offset: 0x138 */
   volatile uint32_t CH0OPTS_TOG;                       /**< DCP channel 0 options register, offset: 0x13C */
   volatile uint32_t CH1CMDPTR;                         /**< DCP channel 1 command pointer address register, offset: 0x140 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH1SEMA;                           /**< DCP channel 1 semaphore register, offset: 0x150 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH1STAT;                           /**< DCP channel 1 status register, offset: 0x160 */
   volatile uint32_t CH1STAT_SET;                       /**< DCP channel 1 status register, offset: 0x164 */
   volatile uint32_t CH1STAT_CLR;                       /**< DCP channel 1 status register, offset: 0x168 */
@@ -81,9 +82,9 @@ struct DCP_Layout {
   volatile uint32_t CH1OPTS_CLR;                       /**< DCP channel 1 options register, offset: 0x178 */
   volatile uint32_t CH1OPTS_TOG;                       /**< DCP channel 1 options register, offset: 0x17C */
   volatile uint32_t CH2CMDPTR;                         /**< DCP channel 2 command pointer address register, offset: 0x180 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH2SEMA;                           /**< DCP channel 2 semaphore register, offset: 0x190 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH2STAT;                           /**< DCP channel 2 status register, offset: 0x1A0 */
   volatile uint32_t CH2STAT_SET;                       /**< DCP channel 2 status register, offset: 0x1A4 */
   volatile uint32_t CH2STAT_CLR;                       /**< DCP channel 2 status register, offset: 0x1A8 */
@@ -93,9 +94,9 @@ struct DCP_Layout {
   volatile uint32_t CH2OPTS_CLR;                       /**< DCP channel 2 options register, offset: 0x1B8 */
   volatile uint32_t CH2OPTS_TOG;                       /**< DCP channel 2 options register, offset: 0x1BC */
   volatile uint32_t CH3CMDPTR;                         /**< DCP channel 3 command pointer address register, offset: 0x1C0 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH3SEMA;                           /**< DCP channel 3 semaphore register, offset: 0x1D0 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t CH3STAT;                           /**< DCP channel 3 status register, offset: 0x1E0 */
   volatile uint32_t CH3STAT_SET;                       /**< DCP channel 3 status register, offset: 0x1E4 */
   volatile uint32_t CH3STAT_CLR;                       /**< DCP channel 3 status register, offset: 0x1E8 */
@@ -104,25 +105,25 @@ struct DCP_Layout {
   volatile uint32_t CH3OPTS_SET;                       /**< DCP channel 3 options register, offset: 0x1F4 */
   volatile uint32_t CH3OPTS_CLR;                       /**< DCP channel 3 options register, offset: 0x1F8 */
   volatile uint32_t CH3OPTS_TOG;                       /**< DCP channel 3 options register, offset: 0x1FC */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[128];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[128];
   volatile uint32_t DBGSELECT;                         /**< DCP debug select register, offset: 0x400 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   const volatile uint32_t DBGDATA;                     /**< DCP debug data register, offset: 0x410 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   volatile uint32_t PAGETABLE;                         /**< DCP page table register, offset: 0x420 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[3];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[3];
   const volatile uint32_t VERSION;                     /**< DCP version register, offset: 0x430 */
 };
 
 constexpr size_t    kDCP_size = 0x434;
 constexpr uintptr_t kDCP_base = 0x402FC000;
 
-constexpr RegGroup<DCP_Layout, kDCP_size, kDCP_base> DCP;
+constexpr regs::RegGroup<DCP_Layout, kDCP_size, kDCP_base> DCP;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
 using DCP_Reg =
-    Reg<kDCP_base, DCP_Layout, Member, 0, Bits, Shift, DirectAssign>;
+    regs::Reg<kDCP_base, DCP_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 // DCP control register 0
 constexpr DCP_Reg<&DCP_Layout::CTRL, 8,  0> DCP_CTRL_CHANNEL_INTERRUPT_ENABLE;
@@ -181,8 +182,9 @@ constexpr uint32_t kDCP_PACKET2_HASH_SELECT_CRC32  = 1;
 
 // DCP channel X registers
 
-constexpr RegValue<8, 16> DCP_CHxSEMA_VALUE;
-constexpr RegValue<8, 16> DCP_CHxSTAT_ERROR_CODE;
+constexpr regs::RegValue<8, 16> DCP_CHxSEMA_VALUE;
+constexpr regs::RegValue<8, 16> DCP_CHxSTAT_ERROR_CODE;
 
-}  // namespace regs
-}  // namespace decept
+}  // namespace teensy4
+}  // namespace hardware
+}  // namespace qindesign

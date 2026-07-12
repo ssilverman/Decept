@@ -9,10 +9,11 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "decept/regs/regs.h"
+#include "decept/hardware/regs/regs.h"
 
-namespace decept {
-namespace regs {
+namespace qindesign {
+namespace hardware {
+namespace teensy4 {
 
 // CCM layout. Comments are from BSD-3-licensed NXP SDK.
 //
@@ -21,7 +22,7 @@ namespace regs {
 // * https://github.com/nxp-mcuxpresso/legacy-mcux-sdk/blob/main/devices/MIMXRT1062/MIMXRT1062.h
 struct CCM_Layout {
   volatile uint32_t CCR;                               /**< CCM Control Register, offset: 0x0 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[1];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[1];
   const volatile uint32_t CSR;                         /**< CCM Status Register, offset: 0x8 */
   volatile uint32_t CCSR;                              /**< CCM Clock Switcher Register, offset: 0xC */
   volatile uint32_t CACRR;                             /**< CCM Arm Clock Root Register, offset: 0x10 */
@@ -33,12 +34,12 @@ struct CCM_Layout {
   volatile uint32_t CS1CDR;                            /**< CCM Clock Divider Register, offset: 0x28 */
   volatile uint32_t CS2CDR;                            /**< CCM Clock Divider Register, offset: 0x2C */
   volatile uint32_t CDCDR;                             /**< CCM D1 Clock Divider Register, offset: 0x30 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[1];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[1];
   volatile uint32_t CSCDR2;                            /**< CCM Serial Clock Divider Register 2, offset: 0x38 */
   volatile uint32_t CSCDR3;                            /**< CCM Serial Clock Divider Register 3, offset: 0x3C */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[2];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[2];
   const volatile uint32_t CDHIPR;                      /**< CCM Divider Handshake In-Process Register, offset: 0x48 */
-  uint32_t DECEPT_REGS_LAYOUT_MEMBER_RESERVED[2];
+  uint32_t HARDWARE_REGS_LAYOUT_MEMBER_RESERVED[2];
   volatile uint32_t CLPCR;                             /**< CCM Low Power Control Register, offset: 0x54 */
   volatile uint32_t CISR;                              /**< CCM Interrupt Status Register, offset: 0x58 */
   volatile uint32_t CIMR;                              /**< CCM Interrupt Mask Register, offset: 0x5C */
@@ -58,12 +59,12 @@ struct CCM_Layout {
 constexpr size_t    kCCM_size = 0x8C;
 constexpr uintptr_t kCCM_base = 0x400FC000;
 
-constexpr RegGroup<CCM_Layout, kCCM_size, kCCM_base> CCM;
+constexpr regs::RegGroup<CCM_Layout, kCCM_size, kCCM_base> CCM;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
 using CCM_Reg =
-    Reg<kCCM_base, CCM_Layout, Member, 0, Bits, Shift, DirectAssign>;
+    regs::Reg<kCCM_base, CCM_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 10> CCM_CCGR0_DCP;   // CG5
 constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 10> CCM_CCGR1_ENET;  // CG5
@@ -73,5 +74,6 @@ constexpr uint32_t kCCM_CCGR_OFF      = 0x00;
 constexpr uint32_t kCCM_CCGR_RUN_ONLY = 0x01;
 constexpr uint32_t kCCM_CCGR_ON       = 0x03;
 
-}  // namespace regs
-}  // namespace decept
+}  // namespace teensy4
+}  // namespace hardware
+}  // namespace qindesign

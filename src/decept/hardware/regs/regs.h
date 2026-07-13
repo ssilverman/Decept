@@ -33,8 +33,9 @@ struct RegGroup {
 // The "direct assign" parameter means that assignment will not use the "read,
 // clear, set, assign" approach. Instead, the given value is directly assigned,
 // after shifting. This is appropriate for things like "CLR" and "SET"
-// registers, where only the 1-assigned bits are set to something. Or, it could
-// be used for write-1-to-clear bits.
+// "SET" registers, where only the 1-assigned bits are set to something. Or, it
+// could be used for write-1-to-clear bits, if all the bits in the register are
+// write-1-to-clear (w1c).
 template <uintptr_t Base, typename T, auto Member,  // Can be const or non-const
           size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,

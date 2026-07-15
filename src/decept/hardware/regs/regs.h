@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <climits>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -20,34 +21,62 @@ namespace regs {
 // address. While it's possible to just utilize sizeof(Layout) instead of also
 // passing a size, having the size provides an extra check.
 template <typename Layout, size_t LayoutSize, uintptr_t BaseAddr>
-struct RegGroup {
+class RegGroup {
   static_assert(sizeof(Layout) == LayoutSize,
                 "Bad size: Packing? Incorrect size?");
   static_assert((BaseAddr % alignof(Layout)) == 0, "Bad alignment");
 
+ public:
   Layout* operator->() const { return reinterpret_cast<Layout*>(BaseAddr); }
 };
 
 // Reg defines an easier way to access parts of a register.
 //
+// The 'R' parameter is the unsigned type of each register, for example,
+// uint32_t or uint16_t.
+//
 // The "direct assign" parameter means that assignment will not use the "read,
-// clear, set, assign" approach. Instead, the given value is directly assigned,
-// after shifting. This is appropriate for things like "CLR" and "SET"
+// clear, set, assign" approach. Instead, the given value is directly assigned
+// to the register after shifting. This is appropriate for things like "CLR" and
 // "SET" registers, where only the 1-assigned bits are set to something. Or, it
 // could be used for write-1-to-clear bits, if all the bits in the register are
 // write-1-to-clear (w1c).
-template <uintptr_t Base, typename T, auto Member,  // Can be const or non-const
+template <typename R, uintptr_t Base, typename Layout,
+          auto Member,          // Can be const or non-const
           size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-struct Reg {
-  // Only arrays can have a non-zero offset
-  static_assert(
-      ((MemberOffset != 0) &&
-       std::is_array_v<
-           std::remove_reference_t<decltype(std::declval<T&>().*Member)>>) ||
-          (MemberOffset == 0),
-      "Non-array members must use a zero offset");
+class Reg {
+  using MemberExpr   = decltype(std::declval<Layout&>().*Member);
+  using MemberType   = std::remove_reference_t<MemberExpr>;
+  using RegType      = std::remove_extent_t<MemberType>;
+  using RegValueType = std::remove_cv_t<RegType>;
+
+  static constexpr bool kMemberIsWritable = !std::is_const_v<RegType>;
+  static constexpr bool kMemberIsArray    = std::is_array_v<MemberType>;
+
+  // Parameter shape checks
+  static_assert(std::is_integral_v<R> && std::is_unsigned_v<R>,
+                "Register type must be unsigned integral");
+  static_assert(Bits != 0, "Bits shouldn't be zero");
+
+  // Array checks
+  static_assert(std::is_same_v<RegValueType, R>,
+                "Array element type must match register type");
+  static_assert(kMemberIsArray || (MemberOffset == 0),
+                "Non-array members must use a zero offset");
+  static_assert(!kMemberIsArray || (MemberOffset < std::extent_v<MemberType>),
+                "Member offset out of range");
+
+ public:
+  // Number of bits in one register.
+  static constexpr size_t kRegBits = sizeof(R) * CHAR_BIT;
+
+  // More parameter shape checks
+  static_assert(Bits <= kRegBits, "Bit count exceeds register width");
+  static_assert(Shift < kRegBits, "Shift exceeds register width");
+  static_assert((Bits <= kRegBits) && (Shift <= kRegBits - Bits),
+                "Register extends past register bounds");
 
   // The shift.
   static constexpr unsigned int kShift = Shift;
@@ -56,35 +85,39 @@ struct Reg {
   static constexpr size_t kBits = Bits;
 
   // The shifted mask.
-  static constexpr uint32_t kMask =  // Add -1 using 32-bit modular arithmetic
-      (((Bits < 32) ? (uint32_t{1} << Bits) : uint32_t{0}) +
-       std::numeric_limits<uint32_t>::max())
+  static constexpr R kMask =  // Add -1 using R-bit modular arithmetic
+      (((Bits < kRegBits) ? (R{1} << Bits) : R{0}) +
+       std::numeric_limits<R>::max())
       << Shift;
-  // static constexpr uint32_t kMask = static_cast<uint32_t>(int32_t{-1}) >> (32 - Bits);
-  // static constexpr uint32_t kMask = ((uint32_t{1} << Bits) - uint32_t{1});
+  // static constexpr R kMask =
+  //     static_cast<R>(std::make_signed_t<R>{-1}) >> (kRegBits - Bits);
+  // static constexpr R kMask = ((R{1} << Bits) - R{1});
 
   // Returns the masked and shifted version of the given field value.
   [[gnu::always_inline]]
-  constexpr uint32_t operator()(const uint32_t val) const {
+  constexpr R operator()(const R val) const {
     return (val << Shift) & kMask;
   }
 
  private:
   [[gnu::always_inline]]
   static auto r() {
-    auto& m = reinterpret_cast<T*>(Base)->*Member;
-    if constexpr (std::is_array_v<std::remove_reference_t<decltype(m)>>) {
+    auto& m = reinterpret_cast<Layout*>(Base)->*Member;
+    if constexpr (kMemberIsArray) {
       return &m[MemberOffset];
     } else {
+      static_assert(MemberOffset == 0, "Not an array");
       return &m;
     }
   }
 
  public:
+  template <bool Writable = kMemberIsWritable,
+            typename = std::enable_if_t<Writable>>
   [[gnu::always_inline]]
-  const Reg& operator=(const uint32_t val) const {
+  const Reg& operator=(const R val) const {
     // Clear and then set the bits
-    if constexpr (DirectAssign) {
+    if constexpr (DirectAssign || ((Bits == kRegBits) && (Shift == 0))) {
       *r() = (*this)(val);
     } else {
       *r() = (*r() & ~kMask) | (*this)(val);
@@ -93,62 +126,69 @@ struct Reg {
   }
 
   [[gnu::always_inline]]
-  explicit operator uint32_t() const {
+  explicit operator R() const {
     return (*r() & kMask) >> Shift;
   }
 
-  // Converts the register to a uint32_t. This is useful for when an explicit
+  // Converts the register to an R. This is useful for when an explicit
   // conversion isn't desired.
   [[gnu::always_inline]]
-  uint32_t operator*() const {
-    return static_cast<uint32_t>(*this);
+  R operator*() const {
+    return static_cast<R>(*this);
   }
 
+  template <bool Writable = kMemberIsWritable,
+            typename = std::enable_if_t<Writable>>
   [[gnu::always_inline]]
-  const Reg& operator&=(const uint32_t val) const {
-    *r() &= (*this)(val);
+  const Reg& operator&=(const R val) const {
+    // Preserve bits outside the range
+    *r() &= static_cast<R>(~kMask) | (*this)(val);
     return *this;
   }
 
+  template <bool Writable = kMemberIsWritable,
+            typename = std::enable_if_t<Writable>>
   [[gnu::always_inline]]
-  const Reg& operator|=(const uint32_t val) const {
+  const Reg& operator|=(const R val) const {
     *r() |= (*this)(val);
     return *this;
   }
 
+  template <bool Writable = kMemberIsWritable,
+            typename = std::enable_if_t<Writable>>
   [[gnu::always_inline]]
-  const Reg& operator^=(const uint32_t val) const {
+  const Reg& operator^=(const R val) const {
     *r() ^= (*this)(val);
     return *this;
   }
 
   [[gnu::always_inline]]
-  uint32_t operator&(const uint32_t val) const {
+  R operator&(const R val) const {
     return ((*r() & (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
-  uint32_t operator|(const uint32_t val) const {
+  R operator|(const R val) const {
     return ((*r() | (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
-  uint32_t operator^(const uint32_t val) const {
+  R operator^(const R val) const {
     return ((*r() ^ (*this)(val)) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
-  uint32_t operator~() const {
+  R operator~() const {
     return ((~(*r())) & kMask) >> Shift;
   }
 
   [[gnu::always_inline]]
-  bool operator==(const uint32_t val) const {
+  bool operator==(const R val) const {
     return (*r() & kMask) == (*this)(val);
   }
 
   [[gnu::always_inline]]
-  bool operator!=(const uint32_t val) const {
+  bool operator!=(const R val) const {
     return !(*this == val);
   }
 };
@@ -156,9 +196,25 @@ struct Reg {
 // RegValue defines an easier way to define register-part values. It is
 // represented by a mask and shift. It's useful for when a specific register
 // value may be used for more than one register, and that value always has the
-// same size and is always at the same position.
-template <size_t Bits, unsigned int Shift>
-struct RegValue {
+// same size and is always at the same position. It's also useful when the
+// shifted value is used with regular R variables.
+template <typename R, size_t Bits, unsigned int Shift>
+class RegValue {
+  // Parameter shape checks
+  static_assert(std::is_integral_v<R> && std::is_unsigned_v<R>,
+                "Register type must be unsigned integral");
+  static_assert(Bits != 0, "Bits shouldn't be zero");
+
+ public:
+  // Number of bits in one register.
+  static constexpr size_t kRegBits = sizeof(R) * CHAR_BIT;
+
+  // More parameter shape checks
+  static_assert(Bits <= kRegBits, "Bit count exceeds register width");
+  static_assert(Shift < kRegBits, "Shift exceeds register width");
+  static_assert((Bits <= kRegBits) && (Shift <= kRegBits - Bits),
+                "Register extends past register bounds");
+
   // The shift.
   static constexpr unsigned int kShift = Shift;
 
@@ -166,14 +222,14 @@ struct RegValue {
   static constexpr size_t kBits = Bits;
 
   // The shifted mask.
-  static constexpr uint32_t kMask =  // Add -1 using 32-bit modular arithmetic
-      (((Bits < 32) ? (uint32_t{1} << Bits) : uint32_t{0}) +
-       std::numeric_limits<uint32_t>::max())
+  static constexpr R kMask =  // Add -1 using R-bit modular arithmetic
+      (((Bits < kRegBits) ? (R{1} << Bits) : R{0}) +
+       std::numeric_limits<R>::max())
       << Shift;
 
   // Returns the masked and shifted version of the given field value.
   [[gnu::always_inline]]
-  constexpr uint32_t operator()(const uint32_t val) const {
+  constexpr R operator()(const R val) const {
     return (val << Shift) & kMask;
   }
 };

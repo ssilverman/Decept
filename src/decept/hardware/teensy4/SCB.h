@@ -79,316 +79,244 @@ constexpr size_t    kSCB_size = 0x2AC;
 static constexpr uintptr_t kSCS_base = 0xE000E000;   /*!< System Control Space Base Address */
 constexpr uintptr_t kSCB_base = kSCS_base + 0x0D00;  /*!< System Control Block Base Address */
 
-constexpr regs::RegGroup<SCB_Layout, kSCB_size, kSCB_base> SCB;
+namespace SCB {
+constexpr regs::RegGroup<SCB_Layout, kSCB_size, kSCB_base> group;
+}  // namespace SCB
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
 using SCB_Reg =
     regs::Reg32<kSCB_base, SCB_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
-// Undefine anything defined by Teensyduino's imxrt.h
+namespace SCB {
 
 // SCB CPUID Register Definitions
-#undef SCB_CPUID_IMPLEMENTER
-constexpr SCB_Reg<&SCB_Layout::CPUID,  8, 24> SCB_CPUID_IMPLEMENTER;
-#undef SCB_CPUID_VARIANT
-constexpr SCB_Reg<&SCB_Layout::CPUID,  4, 20> SCB_CPUID_VARIANT;
-#undef SCB_CPUID_ARCHITECTURE
-constexpr SCB_Reg<&SCB_Layout::CPUID,  4, 16> SCB_CPUID_ARCHITECTURE;
-#undef SCB_CPUID_PARTNO
-constexpr SCB_Reg<&SCB_Layout::CPUID, 12,  4> SCB_CPUID_PARTNO;
-#undef SCB_CPUID_REVISION
-constexpr SCB_Reg<&SCB_Layout::CPUID,  4,  0> SCB_CPUID_REVISION;
+namespace CPUID {
+constexpr SCB_Reg<&SCB_Layout::CPUID,  8, 24> IMPLEMENTER;
+constexpr SCB_Reg<&SCB_Layout::CPUID,  4, 20> VARIANT;
+constexpr SCB_Reg<&SCB_Layout::CPUID,  4, 16> ARCHITECTURE;
+constexpr SCB_Reg<&SCB_Layout::CPUID, 12,  4> PARTNO;
+constexpr SCB_Reg<&SCB_Layout::CPUID,  4,  0> REVISION;
+}  // namespace CPUID
 
 // SCB Interrupt Control State Register Definitions
-#undef SCB_ICSR_NMIPENDSET
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 31> SCB_ICSR_NMIPENDSET;
-#undef SCB_ICSR_PENDSVSET
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 28> SCB_ICSR_PENDSVSET;
-#undef SCB_ICSR_PENDSVCLR
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 27> SCB_ICSR_PENDSVCLR;
-#undef SCB_ICSR_PENDSTSET
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 26> SCB_ICSR_PENDSTSET;
-#undef SCB_ICSR_PENDSTCLR
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 25> SCB_ICSR_PENDSTCLR;
-#undef SCB_ICSR_ISRPREEMPT
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 23> SCB_ICSR_ISRPREEMPT;
-#undef SCB_ICSR_ISRPENDING
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 22> SCB_ICSR_ISRPENDING;
-#undef SCB_ICSR_VECTPENDING
-constexpr SCB_Reg<&SCB_Layout::ICSR, 9, 12> SCB_ICSR_VECTPENDING;
-#undef SCB_ICSR_RETTOBASE
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 11> SCB_ICSR_RETTOBASE;
-#undef SCB_ICSR_VECTACTIVE
-constexpr SCB_Reg<&SCB_Layout::ICSR, 9,  0> SCB_ICSR_VECTACTIVE;
+namespace ICSR {
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 31> NMIPENDSET;
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 28> PENDSVSET;
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 27> PENDSVCLR;
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 26> PENDSTSET;
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 25> PENDSTCLR;
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 23> ISRPREEMPT;
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 22> ISRPENDING;
+constexpr SCB_Reg<&SCB_Layout::ICSR, 9, 12> VECTPENDING;
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 11> RETTOBASE;
+constexpr SCB_Reg<&SCB_Layout::ICSR, 9,  0> VECTACTIVE;
+}  // namespace ICSR
 
 // SCB Vector Table Offset Register Definitions
-#undef SCB_VTOR_TBLOFF
-constexpr SCB_Reg<&SCB_Layout::VTOR, 25, 7> SCB_VTOR_TBLOFF;
+namespace VTOR {
+constexpr SCB_Reg<&SCB_Layout::VTOR, 25, 7> TBLOFF;
+}  // namespace VTOR
 
 // SCB Application Interrupt and Reset Control Register Definitions
-#undef SCB_AIRCR_VECTKEY
-constexpr SCB_Reg<&SCB_Layout::AIRCR, 16, 16> SCB_AIRCR_VECTKEY;
-#undef SCB_AIRCR_VECTKEYSTAT
-constexpr SCB_Reg<&SCB_Layout::AIRCR, 16, 16> SCB_AIRCR_VECTKEYSTAT;
-#undef SCB_AIRCR_ENDIANNESS
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1, 15> SCB_AIRCR_ENDIANNESS;
-#undef SCB_AIRCR_PRIGROUP
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  3,  8> SCB_AIRCR_PRIGROUP;
-#undef SCB_AIRCR_SYSRESETREQ
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  2> SCB_AIRCR_SYSRESETREQ;
-#undef SCB_AIRCR_VECTCLRACTIVE
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  1> SCB_AIRCR_VECTCLRACTIVE;
-#undef SCB_AIRCR_VECTRESET
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  0> SCB_AIRCR_VECTRESET;
+namespace AIRCR {
+constexpr SCB_Reg<&SCB_Layout::AIRCR, 16, 16> VECTKEY;
+constexpr SCB_Reg<&SCB_Layout::AIRCR, 16, 16> VECTKEYSTAT;
+constexpr SCB_Reg<&SCB_Layout::AIRCR,  1, 15> ENDIANNESS;
+constexpr SCB_Reg<&SCB_Layout::AIRCR,  3,  8> PRIGROUP;
+constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  2> SYSRESETREQ;
+constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  1> VECTCLRACTIVE;
+constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  0> VECTRESET;
+}  // namespace AIRCR
 
 // SCB System Control Register Definitions
-#undef SCB_SCR_SEVONPEND
-constexpr SCB_Reg<&SCB_Layout::SCR, 1, 4> SCB_SCR_SEVONPEND;
-#undef SCB_SCR_SLEEPDEEP
-constexpr SCB_Reg<&SCB_Layout::SCR, 1, 2> SCB_SCR_SLEEPDEEP;
-#undef SCB_SCR_SLEEPONEXIT
-constexpr SCB_Reg<&SCB_Layout::SCR, 1, 1> SCB_SCR_SLEEPONEXIT;
+namespace SCR {
+constexpr SCB_Reg<&SCB_Layout::SCR, 1, 4> SEVONPEND;
+constexpr SCB_Reg<&SCB_Layout::SCR, 1, 2> SLEEPDEEP;
+constexpr SCB_Reg<&SCB_Layout::SCR, 1, 1> SLEEPONEXIT;
+}  // namespace SCR
 
 // SCB Configuration Control Register Definitions
-#undef SCB_CCR_BP
-constexpr SCB_Reg<&SCB_Layout::CCR, 1, 18> SCB_CCR_BP;
-#undef SCB_CCR_IC
-constexpr SCB_Reg<&SCB_Layout::CCR, 1, 17> SCB_CCR_IC;
-#undef SCB_CCR_DC
-constexpr SCB_Reg<&SCB_Layout::CCR, 1, 16> SCB_CCR_DC;
-#undef SCB_CCR_STKALIGN
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  9> SCB_CCR_STKALIGN;
-#undef SCB_CCR_BFHFNMIGN
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  8> SCB_CCR_BFHFNMIGN;
-#undef SCB_CCR_DIV_0_TRP
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  4> SCB_CCR_DIV_0_TRP;
-#undef SCB_CCR_UNALIGN_TRP
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  3> SCB_CCR_UNALIGN_TRP;
-#undef SCB_CCR_USERSETMPEND
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  1> SCB_CCR_USERSETMPEND;
-#undef SCB_CCR_NONBASETHRDENA
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  0> SCB_CCR_NONBASETHRDENA;
+namespace CCR {
+constexpr SCB_Reg<&SCB_Layout::CCR, 1, 18> BP;
+constexpr SCB_Reg<&SCB_Layout::CCR, 1, 17> IC;
+constexpr SCB_Reg<&SCB_Layout::CCR, 1, 16> DC;
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  9> STKALIGN;
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  8> BFHFNMIGN;
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  4> DIV_0_TRP;
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  3> UNALIGN_TRP;
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  1> USERSETMPEND;
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  0> NONBASETHRDENA;
+}  // namespace CCR
 
 // SCB System Handler Control and State Register Definitions
-#undef SCB_SHCSR_USGFAULTENA
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 18> SCB_SHCSR_USGFAULTENA;
-#undef SCB_SHCSR_BUSFAULTENA
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 17> SCB_SHCSR_BUSFAULTENA;
-#undef SCB_SHCSR_MEMFAULTENA
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 16> SCB_SHCSR_MEMFAULTENA;
-#undef SCB_SHCSR_SVCALLPENDED
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 15> SCB_SHCSR_SVCALLPENDED;
-#undef SCB_SHCSR_BUSFAULTPENDED
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 14> SCB_SHCSR_BUSFAULTPENDED;
-#undef SCB_SHCSR_MEMFAULTPENDED
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 13> SCB_SHCSR_MEMFAULTPENDED;
-#undef SCB_SHCSR_USGFAULTPENDED
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 12> SCB_SHCSR_USGFAULTPENDED;
-#undef SCB_SHCSR_SYSTICKACT
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 11> SCB_SHCSR_SYSTICKACT;
-#undef SCB_SHCSR_PENDSVACT
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 10> SCB_SHCSR_PENDSVACT;
-#undef SCB_SHCSR_MONITORACT
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  8> SCB_SHCSR_MONITORACT;
-#undef SCB_SHCSR_SVCALLACT
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  7> SCB_SHCSR_SVCALLACT;
-#undef SCB_SHCSR_USGFAULTACT
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  3> SCB_SHCSR_USGFAULTACT;
-#undef SCB_SHCSR_BUSFAULTACT
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  1> SCB_SHCSR_BUSFAULTACT;
-#undef SCB_SHCSR_MEMFAULTACT
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  0> SCB_SHCSR_MEMFAULTACT;
+namespace SHCSR {
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 18> USGFAULTENA;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 17> BUSFAULTENA;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 16> MEMFAULTENA;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 15> SVCALLPENDED;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 14> BUSFAULTPENDED;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 13> MEMFAULTPENDED;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 12> USGFAULTPENDED;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 11> SYSTICKACT;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 10> PENDSVACT;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  8> MONITORACT;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  7> SVCALLACT;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  3> USGFAULTACT;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  1> BUSFAULTACT;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  0> MEMFAULTACT;
+}  // namespace SHCSR
 
 // SCB Configurable Fault Status Register Definitions
-#undef SCB_CFSR_USGFAULTSR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 16, 16> SCB_CFSR_USGFAULTSR;
-#undef SCB_CFSR_BUSFAULTSR
-constexpr SCB_Reg<&SCB_Layout::CFSR,  8,  8> SCB_CFSR_BUSFAULTSR;
-#undef SCB_CFSR_MEMFAULTSR
-constexpr SCB_Reg<&SCB_Layout::CFSR,  8,  0> SCB_CFSR_MEMFAULTSR;
+namespace CFSR {
+constexpr SCB_Reg<&SCB_Layout::CFSR, 16, 16> USGFAULTSR;
+constexpr SCB_Reg<&SCB_Layout::CFSR,  8,  8> BUSFAULTSR;
+constexpr SCB_Reg<&SCB_Layout::CFSR,  8,  0> MEMFAULTSR;
 
 // SCB MemManage Fault Status Register Definitions (part of SCB Configurable Fault Status Register)
-#undef SCB_CFSR_MMARVALID
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 7> SCB_CFSR_MMARVALID;
-#undef SCB_CFSR_MLSPERR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 5> SCB_CFSR_MLSPERR;
-#undef SCB_CFSR_MSTKERR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 4> SCB_CFSR_MSTKERR;
-#undef SCB_CFSR_MUNSTKERR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 3> SCB_CFSR_MUNSTKERR;
-#undef SCB_CFSR_DACCVIOL
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 1> SCB_CFSR_DACCVIOL;
-#undef SCB_CFSR_IACCVIOL
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 0> SCB_CFSR_IACCVIOL;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 7> MMARVALID;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 5> MLSPERR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 4> MSTKERR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 3> MUNSTKERR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 1> DACCVIOL;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 0> IACCVIOL;
 
 // SCB BusFault Status Register Definitions (part of SCB Configurable Fault Status Register)
-#undef SCB_CFSR_BFARVALID
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 15> SCB_CFSR_BFARVALID;
-#undef SCB_CFSR_LSPERR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 13> SCB_CFSR_LSPERR;
-#undef SCB_CFSR_STKERR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 12> SCB_CFSR_STKERR;
-#undef SCB_CFSR_UNSTKERR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 11> SCB_CFSR_UNSTKERR;
-#undef SCB_CFSR_IMPRECISERR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 10> SCB_CFSR_IMPRECISERR;
-#undef SCB_CFSR_PRECISERR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1,  9> SCB_CFSR_PRECISERR;
-#undef SCB_CFSR_IBUSERR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1,  8> SCB_CFSR_IBUSERR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 15> BFARVALID;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 13> LSPERR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 12> STKERR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 11> UNSTKERR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 10> IMPRECISERR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1,  9> PRECISERR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1,  8> IBUSERR;
 
 // SCB UsageFault Status Register Definitions (part of SCB Configurable Fault Status Register)
-#undef SCB_CFSR_DIVBYZERO
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 25> SCB_CFSR_DIVBYZERO;
-#undef SCB_CFSR_UNALIGNED
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 24> SCB_CFSR_UNALIGNED;
-#undef SCB_CFSR_NOCP
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 19> SCB_CFSR_NOCP;
-#undef SCB_CFSR_INVPC
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 18> SCB_CFSR_INVPC;
-#undef SCB_CFSR_INVSTATE
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 17> SCB_CFSR_INVSTATE;
-#undef SCB_CFSR_UNDEFINSTR
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 16> SCB_CFSR_UNDEFINSTR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 25> DIVBYZERO;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 24> UNALIGNED;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 19> NOCP;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 18> INVPC;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 17> INVSTATE;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 16> UNDEFINSTR;
+}  // namespace CFSR
 
 // SCB Hard Fault Status Register Definitions
-#undef SCB_HFSR_DEBUGEVT
-constexpr SCB_Reg<&SCB_Layout::HFSR, 1, 31> SCB_HFSR_DEBUGEVT;
-#undef SCB_HFSR_FORCED
-constexpr SCB_Reg<&SCB_Layout::HFSR, 1, 30> SCB_HFSR_FORCED;
-#undef SCB_HFSR_VECTTBL
-constexpr SCB_Reg<&SCB_Layout::HFSR, 1,  1> SCB_HFSR_VECTTBL;
+namespace HFSR {
+constexpr SCB_Reg<&SCB_Layout::HFSR, 1, 31> DEBUGEVT;
+constexpr SCB_Reg<&SCB_Layout::HFSR, 1, 30> FORCED;
+constexpr SCB_Reg<&SCB_Layout::HFSR, 1,  1> VECTTBL;
+}  // namespace HFSR
 
 // SCB Debug Fault Status Register Definitions
-#undef SCB_DFSR_EXTERNAL
-constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 4> SCB_DFSR_EXTERNAL;
-#undef SCB_DFSR_VCATCH
-constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 3> SCB_DFSR_VCATCH;
-#undef SCB_DFSR_DWTTRAP
-constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 2> SCB_DFSR_DWTTRAP;
-#undef SCB_DFSR_BKPT
-constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 1> SCB_DFSR_BKPT;
-#undef SCB_DFSR_HALTED
-constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 0> SCB_DFSR_HALTED;
+namespace DFSR {
+constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 4> EXTERNAL;
+constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 3> VCATCH;
+constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 2> DWTTRAP;
+constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 1> BKPT;
+constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 0> HALTED;
+}  // namespace DFSR
 
 // SCB Cache Level ID Register Definitions
-#undef SCB_CLIDR_LOUU
-constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 27> SCB_CLIDR_LOUU;
-#undef SCB_CLIDR_LOC
-constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 24> SCB_CLIDR_LOC;
+namespace CLIDR {
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 27> LOUU;
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 24> LOC;
+}  // namespace CLIDR
 
 // SCB Cache Type Register Definitions
-#undef SCB_CTR_FORMAT
-constexpr SCB_Reg<&SCB_Layout::CTR, 3, 29> SCB_CTR_FORMAT;
-#undef SCB_CTR_CWG
-constexpr SCB_Reg<&SCB_Layout::CTR, 4, 24> SCB_CTR_CWG;
-#undef SCB_CTR_ERG
-constexpr SCB_Reg<&SCB_Layout::CTR, 4, 20> SCB_CTR_ERG;
-#undef SCB_CTR_DMINLINE
-constexpr SCB_Reg<&SCB_Layout::CTR, 4, 16> SCB_CTR_DMINLINE;
-#undef SCB_CTR_IMINLINE
-constexpr SCB_Reg<&SCB_Layout::CTR, 4,  0> SCB_CTR_IMINLINE;
+namespace CTR {
+constexpr SCB_Reg<&SCB_Layout::CTR, 3, 29> FORMAT;
+constexpr SCB_Reg<&SCB_Layout::CTR, 4, 24> CWG;
+constexpr SCB_Reg<&SCB_Layout::CTR, 4, 20> ERG;
+constexpr SCB_Reg<&SCB_Layout::CTR, 4, 16> DMINLINE;
+constexpr SCB_Reg<&SCB_Layout::CTR, 4,  0> IMINLINE;
+}  // namespace CTR
 
 // SCB Cache Size ID Register Definitions
-#undef SCB_CCSIDR_WT
-constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 31> SCB_CCSIDR_WT;
-#undef SCB_CCSIDR_WB
-constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 30> SCB_CCSIDR_WB;
-#undef SCB_CCSIDR_RA
-constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 29> SCB_CCSIDR_RA;
-#undef SCB_CCSIDR_WA
-constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 28> SCB_CCSIDR_WA;
-#undef SCB_CCSIDR_NUMSETS
-constexpr SCB_Reg<&SCB_Layout::CCSIDR, 15, 13> SCB_CCSIDR_NUMSETS;
-#undef SCB_CCSIDR_ASSOCIATIVITY
-constexpr SCB_Reg<&SCB_Layout::CCSIDR, 10,  3> SCB_CCSIDR_ASSOCIATIVITY;
-#undef SCB_CCSIDR_LINESIZE
-constexpr SCB_Reg<&SCB_Layout::CCSIDR,  3,  0> SCB_CCSIDR_LINESIZE;
+namespace CCSIDR {
+constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 31> WT;
+constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 30> WB;
+constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 29> RA;
+constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 28> WA;
+constexpr SCB_Reg<&SCB_Layout::CCSIDR, 15, 13> NUMSETS;
+constexpr SCB_Reg<&SCB_Layout::CCSIDR, 10,  3> ASSOCIATIVITY;
+constexpr SCB_Reg<&SCB_Layout::CCSIDR,  3,  0> LINESIZE;
+}  // namespace CCSIDR
 
 // SCB Cache Size Selection Register Definitions
-#undef SCB_CSSELR_LEVEL
-constexpr SCB_Reg<&SCB_Layout::CSSELR, 3, 1> SCB_CSSELR_LEVEL;
-#undef SCB_CSSELR_IND
-constexpr SCB_Reg<&SCB_Layout::CSSELR, 1, 0> SCB_CSSELR_IND;
+namespace CSSELR {
+constexpr SCB_Reg<&SCB_Layout::CSSELR, 3, 1> LEVEL;
+constexpr SCB_Reg<&SCB_Layout::CSSELR, 1, 0> IND;
+}  // namespace CSSELR
 
 // SCB Software Triggered Interrupt Register Definitions
-#undef SCB_STIR_INTID
-constexpr SCB_Reg<&SCB_Layout::STIR, 9, 0> SCB_STIR_INTID;
+namespace STIR {
+constexpr SCB_Reg<&SCB_Layout::STIR, 9, 0> INTID;
+}  // namespace STIR
 
 // SCB D-Cache Invalidate by Set-way Register Definitions
-#undef SCB_DCISW_WAY
-constexpr SCB_Reg<&SCB_Layout::DCISW, 2, 30> SCB_DCISW_WAY;
-#undef SCB_DCISW_SET
-constexpr SCB_Reg<&SCB_Layout::DCISW, 9,  5> SCB_DCISW_SET;
+namespace DCISW {
+constexpr SCB_Reg<&SCB_Layout::DCISW, 2, 30> WAY;
+constexpr SCB_Reg<&SCB_Layout::DCISW, 9,  5> SET;
+}  // namespace DCISW
 
 // SCB D-Cache Clean by Set-way Register Definitions
-#undef SCB_DCCSW_WAY
-constexpr SCB_Reg<&SCB_Layout::DCCSW, 2, 30> SCB_DCCSW_WAY;
-#undef SCB_DCCSW_SET
-constexpr SCB_Reg<&SCB_Layout::DCCSW, 9,  5> SCB_DCCSW_SET;
+namespace DCCSW {
+constexpr SCB_Reg<&SCB_Layout::DCCSW, 2, 30> WAY;
+constexpr SCB_Reg<&SCB_Layout::DCCSW, 9,  5> SET;
+}  // namespace DCCSW
 
 // SCB D-Cache Clean and Invalidate by Set-way Register Definitions
-#undef SCB_DCCISW_WAY
-constexpr SCB_Reg<&SCB_Layout::DCCISW, 2, 30> SCB_DCCISW_WAY;
-#undef SCB_DCCISW_SET
-constexpr SCB_Reg<&SCB_Layout::DCCISW, 9,  5> SCB_DCCISW_SET;
+namespace DCCISW {
+constexpr SCB_Reg<&SCB_Layout::DCCISW, 2, 30> WAY;
+constexpr SCB_Reg<&SCB_Layout::DCCISW, 9,  5> SET;
+}  // namespace DCCISW
 
 // SCB Instruction Tightly-Coupled Memory Control Register Definitions
-#undef SCB_ITCMCR_SZ
-constexpr SCB_Reg<&SCB_Layout::ITCMCR, 4, 3> SCB_ITCMCR_SZ;
-#undef SCB_ITCMCR_RETEN
-constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 2> SCB_ITCMCR_RETEN;
-#undef SCB_ITCMCR_RMW
-constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 1> SCB_ITCMCR_RMW;
-#undef SCB_ITCMCR_EN
-constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 0> SCB_ITCMCR_EN;
+namespace ITCMCR {
+constexpr SCB_Reg<&SCB_Layout::ITCMCR, 4, 3> SZ;
+constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 2> RETEN;
+constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 1> RMW;
+constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 0> EN;
+}  // namespace ITCMCR
 
 // SCB Data Tightly-Coupled Memory Control Register Definitions
-#undef SCB_DTCMCR_SZ
-constexpr SCB_Reg<&SCB_Layout::DTCMCR, 4, 3> SCB_DTCMCR_SZ;
-#undef SCB_DTCMCR_RETEN
-constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 2> SCB_DTCMCR_RETEN;
-#undef SCB_DTCMCR_RMW
-constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 1> SCB_DTCMCR_RMW;
-#undef SCB_DTCMCR_EN
-constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 0> SCB_DTCMCR_EN;
+namespace DTCMCR {
+constexpr SCB_Reg<&SCB_Layout::DTCMCR, 4, 3> SZ;
+constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 2> RETEN;
+constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 1> RMW;
+constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 0> EN;
+}  // namespace DTCMCR
 
 // SCB AHBP Control Register Definitions
-#undef SCB_AHBPCR_SZ
-constexpr SCB_Reg<&SCB_Layout::AHBPCR, 3, 1> SCB_AHBPCR_SZ;
-#undef SCB_AHBPCR_EN
-constexpr SCB_Reg<&SCB_Layout::AHBPCR, 1, 0> SCB_AHBPCR_EN;
+namespace AHBPCR {
+constexpr SCB_Reg<&SCB_Layout::AHBPCR, 3, 1> SZ;
+constexpr SCB_Reg<&SCB_Layout::AHBPCR, 1, 0> EN;
+}  // namespace AHBPCR
 
 // SCB L1 Cache Control Register Definitions
-#undef SCB_CACR_FORCEWT
-constexpr SCB_Reg<&SCB_Layout::CACR, 1, 2> SCB_CACR_FORCEWT;
-#undef SCB_CACR_ECCDIS
-constexpr SCB_Reg<&SCB_Layout::CACR, 1, 1> SCB_CACR_ECCDIS;
-#undef SCB_CACR_SIWT
-constexpr SCB_Reg<&SCB_Layout::CACR, 1, 0> SCB_CACR_SIWT;
+namespace CACR {
+constexpr SCB_Reg<&SCB_Layout::CACR, 1, 2> FORCEWT;
+constexpr SCB_Reg<&SCB_Layout::CACR, 1, 1> ECCDIS;
+constexpr SCB_Reg<&SCB_Layout::CACR, 1, 0> SIWT;
+}  // namespace CACR
 
 // SCB AHBS Control Register Definitions
-#undef SCB_AHBSCR_INITCOUNT
-constexpr SCB_Reg<&SCB_Layout::AHBSCR, 5, 11> SCB_AHBSCR_INITCOUNT;
-#undef SCB_AHBSCR_TPRI
-constexpr SCB_Reg<&SCB_Layout::AHBSCR, 9,  2> SCB_AHBSCR_TPRI;
-#undef SCB_AHBSCR_CTL
-constexpr SCB_Reg<&SCB_Layout::AHBSCR, 2,  0> SCB_AHBSCR_CTL;
+namespace AHBSCR {
+constexpr SCB_Reg<&SCB_Layout::AHBSCR, 5, 11> INITCOUNT;
+constexpr SCB_Reg<&SCB_Layout::AHBSCR, 9,  2> TPRI;
+constexpr SCB_Reg<&SCB_Layout::AHBSCR, 2,  0> CTL;
+}  // namespace AHBSCR
 
 // SCB Auxiliary Bus Fault Status Register Definitions
-#undef SCB_ABFSR_AXIMTYPE
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 2, 8> SCB_ABFSR_AXIMTYPE;
-#undef SCB_ABFSR_EPPB
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 4> SCB_ABFSR_EPPB;
-#undef SCB_ABFSR_AXIM
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 3> SCB_ABFSR_AXIM;
-#undef SCB_ABFSR_AHBP
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 2> SCB_ABFSR_AHBP;
-#undef SCB_ABFSR_DTCM
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 1> SCB_ABFSR_DTCM;
-#undef SCB_ABFSR_ITCM
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 0> SCB_ABFSR_ITCM;
+namespace ABFSR {
+constexpr SCB_Reg<&SCB_Layout::ABFSR, 2, 8> AXIMTYPE;
+constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 4> EPPB;
+constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 3> AXIM;
+constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 2> AHBP;
+constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 1> DTCM;
+constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 0> ITCM;
+}  // namespace ABFSR
+
+}  // namespace SCB
 
 }  // namespace teensy4
 }  // namespace hardware

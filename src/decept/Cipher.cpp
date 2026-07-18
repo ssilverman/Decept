@@ -37,7 +37,7 @@ void Cipher::init(dcp::Channels channel) {
   switch (algo_.algo) {
     case Algorithms::kAES128:
       ctx_.control1 =
-          DCP_PACKET2_CIPHER_SELECT(kDCP_PACKET2_CIPHER_SELECT_AES128);
+          DCP::PACKET2::CIPHER_SELECT(DCP::PACKET2::kCIPHER_SELECT_AES128);
       break;
   }
 }
@@ -49,7 +49,7 @@ bool Cipher::setKey(const KeySlots slot, const void* const key) {
     util::reallyClear(ctx_.keyData.data(), sizeof(ctx_.keyData));
 
     // For AES OTP and unique key, check and return read from fuses status
-    return (DCP_STAT_OTP_KEY_READY == 1);
+    return (DCP::STAT::OTP_KEY_READY == 1);
   }
 
   // Avoid UB because 'key' may be unaligned, so use memcpy to temporarily
@@ -59,13 +59,13 @@ bool Cipher::setKey(const KeySlots slot, const void* const key) {
   if (slot != KeySlots::kPayload) {
     // dcp_aes_set_sram_based_key()
 
-    DCP->KEY = DCP_KEY_INDEX(static_cast<uint32_t>(slot)) |
-               DCP_KEY_SUBWORD(0);
+    DCP::group->KEY = DCP::KEY::INDEX(static_cast<uint32_t>(slot)) |
+                      DCP::KEY::SUBWORD(0);
 
     // Move the key by 32-bit words
     for (size_t i = 0; i < algo_.keySize/4; ++i) {
       const uint32_t k = ctx_.keyData[i];
-      DCP->KEYDATA = k;
+      DCP::group->KEYDATA = k;
     }
 
     // Clear our internal key data because it was only temporary
@@ -151,15 +151,15 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
                          const size_t size) {
   dcp::WorkPacket& workPacket = ctx_.workPacket;
 
-  workPacket.control0 = DCP_PACKET1_CIPHER_INIT(hasIV)                |
-                        DCP_PACKET1_CIPHER_ENCRYPT(encryptNotDecrypt) |
-                        DCP_PACKET1_ENABLE_CIPHER(1)                  |
-                        DCP_PACKET1_DECR_SEMAPHORE(1)                 |
-                        DCP_PACKET1_SWAP(ctx_.swapCfg);
+  workPacket.control0 = DCP::PACKET1::CIPHER_INIT(hasIV)                |
+                        DCP::PACKET1::CIPHER_ENCRYPT(encryptNotDecrypt) |
+                        DCP::PACKET1::ENABLE_CIPHER(1)                  |
+                        DCP::PACKET1::DECR_SEMAPHORE(1)                 |
+                        DCP::PACKET1::SWAP(ctx_.swapCfg);
   if (hasIV) {
     workPacket.control1 =
         ctx_.control1 |
-        DCP_PACKET2_CIPHER_MODE(kDCP_PACKET2_CIPHER_MODE_CBC);
+        DCP::PACKET2::CIPHER_MODE(DCP::PACKET2::kCIPHER_MODE_CBC);
     if (ctx_.keySlot != KeySlots::kPayload) {
       workPacket.payloadPtr =
           reinterpret_cast<uint32_t>(&ctx_.keyData[algo_.keySize/4]);
@@ -167,7 +167,7 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
   } else {
     workPacket.control1 =
         ctx_.control1 |
-        DCP_PACKET2_CIPHER_MODE(kDCP_PACKET2_CIPHER_MODE_ECB);
+        DCP::PACKET2::CIPHER_MODE(DCP::PACKET2::kCIPHER_MODE_ECB);
   }
 
   workPacket.srcAddr = reinterpret_cast<uint32_t>(src);
@@ -175,19 +175,19 @@ bool Cipher::trySchedule(const bool encryptNotDecrypt, const bool hasIV,
   workPacket.bufSize = static_cast<uint32_t>(size);
 
   if (ctx_.keySlot == KeySlots::kOTPKey) {
-    workPacket.control0 |= DCP_PACKET1_OTP_KEY(1);
+    workPacket.control0 |= DCP::PACKET1::OTP_KEY(1);
     workPacket.control1 |=
-        DCP_PACKET2_KEY_SELECT(kDCP_PACKET2_KEY_SELECT_OTP_KEY);
+        DCP::PACKET2::KEY_SELECT(DCP::PACKET2::kKEY_SELECT_OTP_KEY);
   } else if (ctx_.keySlot == KeySlots::kOTPUniqueKey) {
-    workPacket.control0 |= DCP_PACKET1_OTP_KEY(1);
+    workPacket.control0 |= DCP::PACKET1::OTP_KEY(1);
     workPacket.control1 |=
-        DCP_PACKET2_KEY_SELECT(kDCP_PACKET2_KEY_SELECT_UNIQUE_KEY);
+        DCP::PACKET2::KEY_SELECT(DCP::PACKET2::kKEY_SELECT_UNIQUE_KEY);
   } else if (ctx_.keySlot == KeySlots::kPayload) {
     workPacket.payloadPtr = reinterpret_cast<uint32_t>(ctx_.keyData.data());
-    workPacket.control0  |= DCP_PACKET1_PAYLOAD_KEY(1);
+    workPacket.control0  |= DCP::PACKET1::PAYLOAD_KEY(1);
   } else {
     workPacket.control1 |=
-        DCP_PACKET2_KEY_SELECT(static_cast<uint32_t>(ctx_.keySlot));
+        DCP::PACKET2::KEY_SELECT(static_cast<uint32_t>(ctx_.keySlot));
   }
 
   util::dcacheFlush(ctx_.keyData.data(), sizeof(ctx_.keyData));

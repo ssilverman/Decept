@@ -92,7 +92,7 @@ class Reg {
   //     static_cast<R>(std::make_signed_t<R>{-1}) >> (kWholeRegBits - Bits);
   // static constexpr R kMask = ((R{1} << Bits) - R{1});
 
-  // Returns the masked and shifted version of the given field value.
+  // Returns the masked and shifted version of the given value.
   [[gnu::always_inline]]
   constexpr R operator()(const R val) const {
     return (val << Shift) & kMask;
@@ -111,6 +111,7 @@ class Reg {
   }
 
  public:
+  // Assigns the given value, after masking and shifting, to this register part.
   template <bool Writable = kMemberIsWritable,
             typename = std::enable_if_t<Writable>>
   [[gnu::always_inline]]
@@ -124,18 +125,21 @@ class Reg {
     return *this;
   }
 
+  // Gets the value of this register part. This returns the raw value not
+  // masked or shifted.
   [[gnu::always_inline]]
   explicit operator R() const {
     return (*r() & kMask) >> Shift;
   }
 
   // Converts the register to an R. This is useful for when an explicit
-  // conversion isn't desired.
+  // conversion isn't desired. This calls operatorR().
   [[gnu::always_inline]]
   R operator*() const {
     return static_cast<R>(*this);
   }
 
+  // Performs the operation after masking and shifting the given value.
   template <bool Writable = kMemberIsWritable,
             typename = std::enable_if_t<Writable>>
   [[gnu::always_inline]]
@@ -145,6 +149,7 @@ class Reg {
     return *this;
   }
 
+  // Performs the operation after masking and shifting the given value.
   template <bool Writable = kMemberIsWritable,
             typename = std::enable_if_t<Writable>>
   [[gnu::always_inline]]
@@ -153,6 +158,7 @@ class Reg {
     return *this;
   }
 
+  // Performs the operation after masking and shifting the given value.
   template <bool Writable = kMemberIsWritable,
             typename = std::enable_if_t<Writable>>
   [[gnu::always_inline]]
@@ -161,31 +167,42 @@ class Reg {
     return *this;
   }
 
+  // Performs the operation after masking and shifting the given value, and then
+  // returns a value that isn't masked or shifted.
   [[gnu::always_inline]]
   R operator&(const R val) const {
     return ((*r() & (*this)(val)) & kMask) >> Shift;
   }
 
+  // Performs the operation after masking and shifting the given value, and then
+  // returns a value that isn't masked or shifted.
   [[gnu::always_inline]]
   R operator|(const R val) const {
     return ((*r() | (*this)(val)) & kMask) >> Shift;
   }
 
+  // Performs the operation after masking and shifting the given value, and then
+  // returns a value that isn't masked or shifted.
   [[gnu::always_inline]]
   R operator^(const R val) const {
     return ((*r() ^ (*this)(val)) & kMask) >> Shift;
   }
 
+  // Performs the operation after masking and shifting the given value, and then
+  // returns a value that isn't masked or shifted.
   [[gnu::always_inline]]
   R operator~() const {
     return ((~(*r())) & kMask) >> Shift;
   }
 
+  // Tests if given value, after masking and shifting, is equal to this
+  // register part.
   [[gnu::always_inline]]
   bool operator==(const R val) const {
     return (*r() & kMask) == (*this)(val);
   }
 
+  // Calls !operator==().
   [[gnu::always_inline]]
   bool operator!=(const R val) const {
     return !(*this == val);
@@ -226,7 +243,7 @@ class RegValue {
        std::numeric_limits<R>::max())
       << Shift;
 
-  // Returns the masked and shifted version of the given field value.
+  // Returns the masked and shifted version of the given value.
   [[gnu::always_inline]]
   constexpr R operator()(const R val) const {
     return (val << Shift) & kMask;

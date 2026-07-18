@@ -35,10 +35,10 @@ const struct {
   volatile uint32_t* stat;
   volatile uint32_t* statClr;
 } kChannelInfo[4] = {
-    { (1u << 16), &DCP->CH0CMDPTR, &DCP->CH0SEMA, &DCP->CH0STAT, &DCP->CH0STAT_CLR },
-    { (1u << 17), &DCP->CH1CMDPTR, &DCP->CH1SEMA, &DCP->CH1STAT, &DCP->CH1STAT_CLR },
-    { (1u << 18), &DCP->CH2CMDPTR, &DCP->CH2SEMA, &DCP->CH2STAT, &DCP->CH2STAT_CLR },
-    { (1u << 19), &DCP->CH3CMDPTR, &DCP->CH3SEMA, &DCP->CH3STAT, &DCP->CH3STAT_CLR },
+    { (1u << 16), &DCP::group->CH0CMDPTR, &DCP::group->CH0SEMA, &DCP::group->CH0STAT, &DCP::group->CH0STAT_CLR },
+    { (1u << 17), &DCP::group->CH1CMDPTR, &DCP::group->CH1SEMA, &DCP::group->CH1STAT, &DCP::group->CH1STAT_CLR },
+    { (1u << 18), &DCP::group->CH2CMDPTR, &DCP::group->CH2SEMA, &DCP::group->CH2STAT, &DCP::group->CH2STAT_CLR },
+    { (1u << 19), &DCP::group->CH3CMDPTR, &DCP::group->CH3SEMA, &DCP::group->CH3STAT, &DCP::group->CH3STAT_CLR },
 };
 
 constexpr size_t kNumChannels = std::size(kChannelInfo);
@@ -54,30 +54,30 @@ alignas(32) static uint32_t s_contextSwitchingBuf[208 / sizeof(uint32_t)];
 
 FLASHMEM void init() {
   // Enable the clock
-  CCM_CCGR0_DCP = kCCM_CCGR_ON;
+  CCM::CCGR0::DCP = CCM::CCGR::kON;
 
   // CTRL:
   // Reset value:   0xF0800000
   // Default value: 0x30800000
-  DCP->CTRL = DCP_CTRL_SFTRESET(1)       |
-              DCP_CTRL_CLKGATE(1)        |
-              DCP_CTRL_PRESENT_CRYPTO(1) |
-              DCP_CTRL_PRESENT_SHA(1)    |
-              DCP_CTRL_GATHER_RESIDUAL_WRITES(1);  // Reset value
-  DCP->CTRL_CLR = DCP_CTRL_SFTRESET(1) |
-                  DCP_CTRL_CLKGATE(1);  // Default value
+  DCP::group->CTRL = DCP::CTRL::SFTRESET(1)       |
+                     DCP::CTRL::CLKGATE(1)        |
+                     DCP::CTRL::PRESENT_CRYPTO(1) |
+                     DCP::CTRL::PRESENT_SHA(1)    |
+                     DCP::CTRL::GATHER_RESIDUAL_WRITES(1);  // Reset value
+  DCP::group->CTRL_CLR = DCP::CTRL::SFTRESET(1) |
+                         DCP::CTRL::CLKGATE(1);  // Default value
 
   // Clear status
-  DCP->STAT_CLR = 0xFF;
-  while ((DCP->STAT & 0xFF) != 0) {
+  DCP::group->STAT_CLR = 0xFF;
+  while ((DCP::group->STAT & 0xFF) != 0) {
     // Wait for clear
   }
 
   // Clear all channels' status
-  DCP->CH0STAT_CLR = 0xFF;
-  DCP->CH1STAT_CLR = 0xFF;
-  DCP->CH2STAT_CLR = 0xFF;
-  DCP->CH3STAT_CLR = 0xFF;
+  DCP::group->CH0STAT_CLR = 0xFF;
+  DCP::group->CH1STAT_CLR = 0xFF;
+  DCP::group->CH2STAT_CLR = 0xFF;
+  DCP::group->CH3STAT_CLR = 0xFF;
 
   // Default config:
   // Gather residual writes: true
@@ -86,16 +86,16 @@ FLASHMEM void init() {
   // All channels enabled
   // All interrupts disabled
 
-  DCP->CTRL = DCP_CTRL_GATHER_RESIDUAL_WRITES(1)   |
-              DCP_CTRL_ENABLE_CONTEXT_CACHING(0)   |
-              DCP_CTRL_ENABLE_CONTEXT_SWITCHING(1) |
-              DCP_CTRL_CHANNEL_INTERRUPT_ENABLE(0);
+  DCP::group->CTRL = DCP::CTRL::GATHER_RESIDUAL_WRITES(1)   |
+                     DCP::CTRL::ENABLE_CONTEXT_CACHING(0)   |
+                     DCP::CTRL::ENABLE_CONTEXT_SWITCHING(1) |
+                     DCP::CTRL::CHANNEL_INTERRUPT_ENABLE(0);
 
   // Enable DCP channels
-  DCP->CHANNELCTRL = DCP_CHANNELCTRL_ENABLE_CHANNEL(0x0F);
+  DCP::group->CHANNELCTRL = DCP::CHANNELCTRL::ENABLE_CHANNEL(0x0F);
 
   // Use context switching buffer
-  DCP->CONTEXT = reinterpret_cast<uint32_t>(s_contextSwitchingBuf);
+  DCP::group->CONTEXT = reinterpret_cast<uint32_t>(s_contextSwitchingBuf);
 }
 
 FLASHMEM void deinit() {
@@ -105,19 +105,19 @@ FLASHMEM void deinit() {
   }
 
   // CTRL reset value: 0xF0800000
-  DCP->CTRL = DCP_CTRL_SFTRESET(1)       |
-              DCP_CTRL_CLKGATE(1)        |
-              DCP_CTRL_PRESENT_CRYPTO(1) |
-              DCP_CTRL_PRESENT_SHA(1)    |
-              DCP_CTRL_GATHER_RESIDUAL_WRITES(1);
+  DCP::group->CTRL = DCP::CTRL::SFTRESET(1)       |
+                     DCP::CTRL::CLKGATE(1)        |
+                     DCP::CTRL::PRESENT_CRYPTO(1) |
+                     DCP::CTRL::PRESENT_SHA(1)    |
+                     DCP::CTRL::GATHER_RESIDUAL_WRITES(1);
 
   // Turn off the clock
-  CCM_CCGR0_DCP = kCCM_CCGR_OFF;
+  CCM::CCGR0::DCP = CCM::CCGR::kOFF;
 }
 
 bool isStarted() {
   // Check only the run-only bit because that's always set when running
-  return (CCM_CCGR0_DCP & kCCM_CCGR_RUN_ONLY) == kCCM_CCGR_RUN_ONLY;
+  return (CCM::CCGR0::DCP & CCM::CCGR::kRUN_ONLY) == CCM::CCGR::kRUN_ONLY;
 }
 
 // Disable optimizations for GCC to prevent instruction reordering
@@ -130,14 +130,14 @@ bool scheduleWork(size_t channel, WorkPacket& workPacket) {
     return false;
   }
 
-  if ((DCP->STAT & kChannelInfo[channel].mask) ==
+  if ((DCP::group->STAT & kChannelInfo[channel].mask) ==
       kChannelInfo[channel].mask) {
     return false;
   }
 
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
     // Re-check channel
-    if ((DCP->STAT & kChannelInfo[channel].mask) ==
+    if ((DCP::group->STAT & kChannelInfo[channel].mask) ==
         kChannelInfo[channel].mask) {
       return false;
     }
@@ -164,14 +164,14 @@ States isChannelComplete(const size_t channel) {
     return States::kNotScheduled;
   }
 
-  if ((DCP->STAT & kChannelInfo[channel].mask) ==
+  if ((DCP::group->STAT & kChannelInfo[channel].mask) ==
       kChannelInfo[channel].mask) {
     return States::kContinue;
   }
 
   static const auto clearStatus = []() {
-    DCP->STAT_CLR = 0xFF;
-    while ((DCP->STAT & 0xFF) != 0) {
+    DCP::group->STAT_CLR = 0xFF;
+    while ((DCP::group->STAT & 0xFF) != 0) {
       // Wait for clear
     }
   };
@@ -180,8 +180,8 @@ States isChannelComplete(const size_t channel) {
   //       However, the NXP code clears the status before clearing the channel
   //       status, so that's what is done here.
 
-  if ((((*kChannelInfo[channel].sema & DCP_CHxSEMA_VALUE(0xFF)) != 0) ||
-       ((*kChannelInfo[channel].stat & DCP_CHxSTAT_ERROR_CODE(0xFF)) !=
+  if ((((*kChannelInfo[channel].sema & DCP::CHxSEMA::VALUE(0xFF)) != 0) ||
+       ((*kChannelInfo[channel].stat & DCP::CHxSTAT::ERROR_CODE(0xFF)) !=
         0))) {
     clearStatus();
 
@@ -201,14 +201,14 @@ bool waitForChannelComplete(const size_t channel) {
   }
 
   // Wait while the channel is still active
-  while ((DCP->STAT & kChannelInfo[channel].mask) ==
+  while ((DCP::group->STAT & kChannelInfo[channel].mask) ==
          kChannelInfo[channel].mask) {
     // Wait for clear
   }
 
   static const auto clearStatus = []() {
-    DCP->STAT_CLR = 0xFF;
-    while ((DCP->STAT & 0xFF) != 0) {
+    DCP::group->STAT_CLR = 0xFF;
+    while ((DCP::group->STAT & 0xFF) != 0) {
       // Wait for clear
     }
   };
@@ -217,8 +217,8 @@ bool waitForChannelComplete(const size_t channel) {
   //       However, the NXP code clears the status before clearing the channel
   //       status, so that's what is done here.
 
-  if ((((*kChannelInfo[channel].sema & DCP_CHxSEMA_VALUE(0xFF)) != 0) ||
-       ((*kChannelInfo[channel].stat & DCP_CHxSTAT_ERROR_CODE(0xFF)) !=
+  if ((((*kChannelInfo[channel].sema & DCP::CHxSEMA::VALUE(0xFF)) != 0) ||
+       ((*kChannelInfo[channel].stat & DCP::CHxSTAT::ERROR_CODE(0xFF)) !=
         0))) {
     clearStatus();
 

@@ -11,15 +11,15 @@
 #include <arm_math.h>  // __DSB() & __ISB()
 #include <pgmspace.h>
 
-#include "decept/hardware/teensy4/CCM.h"
-#include "decept/hardware/teensy4/DCP.h"
+#include "decept/hardware/imxrt1060/CCM.h"
+#include "decept/hardware/imxrt1060/DCP.h"
 #include "decept/util/dcache.h"
 #include "util/atomic.h"
 
 namespace decept {
 namespace dcp {
 
-using namespace qindesign::hardware::teensy4;
+using namespace qindesign::hardware::imxrt1060;
 
 // --------------------------------------------------------------------------
 //  Internal

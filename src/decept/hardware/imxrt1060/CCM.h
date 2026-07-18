@@ -13,7 +13,7 @@
 
 namespace qindesign {
 namespace hardware {
-namespace teensy4 {
+namespace imxrt1060 {
 
 // CCM layout. Comments are from BSD-3-licensed NXP SDK.
 //
@@ -722,6 +722,6 @@ constexpr uint32_t kON       = 0x03;
 
 }  // namespace CCM
 
-}  // namespace teensy4
+}  // namespace imxrt1060
 }  // namespace hardware
 }  // namespace qindesign

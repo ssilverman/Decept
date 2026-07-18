@@ -4,13 +4,13 @@
 // keys.cpp implements the key helper functions.
 // This file is part of the Decept library.
 
-#include "decept/hardware/teensy4/IOMUXC_GPR.h"
-#include "decept/hardware/teensy4/SNVS.h"
+#include "decept/hardware/imxrt1060/IOMUXC_GPR.h"
+#include "decept/hardware/imxrt1060/SNVS.h"
 
 namespace decept {
 namespace keys {
 
-using namespace qindesign::hardware::teensy4;
+using namespace qindesign::hardware::imxrt1060;
 
 // See:
 // * https://github.com/nxp-mcuxpresso/mcuxsdk-examples/blob/main/driver_examples/snvs_hp/snvs_sw_zmk/snvs_sw_zmk.c

@@ -13,7 +13,7 @@
 #include <cstdint>
 #include <cstring>
 
-#include "decept/hardware/teensy4/SCB.h"
+#include "decept/hardware/imxrt1060/SCB.h"
 
 namespace decept {
 namespace util {
@@ -21,7 +21,8 @@ namespace util {
 static constexpr size_t kCacheLineSize = 32;
 
 // Performs a dcache operation.
-template <volatile uint32_t qindesign::hardware::teensy4::SCB_Layout::* Member>
+template <
+    volatile uint32_t qindesign::hardware::imxrt1060::SCB_Layout::* Member>
 [[gnu::always_inline]]
 static inline void dcacheOp(const void* const m, const size_t size) {
   if (size == 0) {
@@ -34,8 +35,8 @@ static inline void dcacheOp(const void* const m, const size_t size) {
   asm volatile ("dsb 0xF":::"memory");
 
   do {
-    reinterpret_cast<qindesign::hardware::teensy4::SCB_Layout*>(
-        qindesign::hardware::teensy4::kSCB_base)
+    reinterpret_cast<qindesign::hardware::imxrt1060::SCB_Layout*>(
+        qindesign::hardware::imxrt1060::kSCB_base)
             ->*Member = a;
     a += kCacheLineSize;
   } while (a < end);
@@ -46,17 +47,17 @@ static inline void dcacheOp(const void* const m, const size_t size) {
 
 [[gnu::always_inline]]
 inline void dcacheFlush(const void* const m, const size_t size) {
-  dcacheOp<&qindesign::hardware::teensy4::SCB_Layout::DCCMVAC>(m, size);
+  dcacheOp<&qindesign::hardware::imxrt1060::SCB_Layout::DCCMVAC>(m, size);
 }
 
 [[gnu::always_inline]]
 inline void dcacheDelete(const void* const m, const size_t size) {
-  dcacheOp<&qindesign::hardware::teensy4::SCB_Layout::DCIMVAC>(m, size);
+  dcacheOp<&qindesign::hardware::imxrt1060::SCB_Layout::DCIMVAC>(m, size);
 }
 
 [[gnu::always_inline]]
 inline void dcacheFlushDelete(const void* const m, const size_t size) {
-  dcacheOp<&qindesign::hardware::teensy4::SCB_Layout::DCCIMVAC>(m, size);
+  dcacheOp<&qindesign::hardware::imxrt1060::SCB_Layout::DCCIMVAC>(m, size);
 }
 
 // Clears an object and then flushes and deletes the cache.

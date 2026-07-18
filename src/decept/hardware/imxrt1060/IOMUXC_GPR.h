@@ -13,7 +13,7 @@
 
 namespace qindesign {
 namespace hardware {
-namespace teensy4 {
+namespace imxrt1060 {
 
 // IOMUXC_GPR layout. Comments are from BSD-3-licensed NXP SDK.
 //
@@ -935,6 +935,6 @@ constexpr IOMUXC_GPR_Reg<&IOMUXC_GPR_Layout::GPR34, 8, 0> SIP_TEST_MUX_BOOT_PIN_
 
 }  // namespace IOMUXC_GPR
 
-}  // namespace teensy4
+}  // namespace imxrt1060
 }  // namespace hardware
 }  // namespace qindesign

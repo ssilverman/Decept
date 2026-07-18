@@ -13,7 +13,7 @@
 
 namespace qindesign {
 namespace hardware {
-namespace teensy4 {
+namespace imxrt1060 {
 
 // Structure type to access the System Control Block (SCB).
 //
@@ -318,6 +318,6 @@ constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 0> ITCM;
 
 }  // namespace SCB
 
-}  // namespace teensy4
+}  // namespace imxrt1060
 }  // namespace hardware
 }  // namespace qindesign

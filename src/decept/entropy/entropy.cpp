@@ -13,13 +13,13 @@
 
 #include <pgmspace.h>
 
-#include "decept/hardware/teensy4/CCM.h"
-#include "decept/hardware/teensy4/TRNG.h"
+#include "decept/hardware/imxrt1060/CCM.h"
+#include "decept/hardware/imxrt1060/TRNG.h"
 
 namespace decept {
 namespace entropy {
 
-using namespace qindesign::hardware::teensy4;
+using namespace qindesign::hardware::imxrt1060;
 
 namespace {
 namespace config {

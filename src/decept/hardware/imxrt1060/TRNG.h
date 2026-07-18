@@ -14,7 +14,7 @@
 
 namespace qindesign {
 namespace hardware {
-namespace teensy4 {
+namespace imxrt1060 {
 
 /** TRNG - Size of Registers Arrays */
 constexpr size_t kTRNG_ENTA_count = 16;
@@ -400,6 +400,6 @@ constexpr TRNG_Reg<&TRNG_Layout::VID2, 8,  0> CONFIG_OPT;
 
 }  // namespace TRNG
 
-}  // namespace teensy4
+}  // namespace imxrt1060
 }  // namespace hardware
 }  // namespace qindesign

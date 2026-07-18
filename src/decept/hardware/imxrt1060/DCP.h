@@ -13,7 +13,7 @@
 
 namespace qindesign {
 namespace hardware {
-namespace teensy4 {
+namespace imxrt1060 {
 
 // DCP layout. Comments are from BSD-3-licensed NXP SDK.
 //
@@ -774,6 +774,6 @@ constexpr regs::RegValue32<8, 16> ERROR_CODE;
 
 }  // namespace DCP
 
-}  // namespace teensy4
+}  // namespace imxrt1060
 }  // namespace hardware
 }  // namespace qindesign

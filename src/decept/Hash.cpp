@@ -8,12 +8,12 @@
 
 #include <cstring>
 
-#include "decept/hardware/teensy4/DCP.h"
+#include "decept/hardware/imxrt1060/DCP.h"
 #include "decept/util/dcache.h"
 
 namespace decept {
 
-using namespace qindesign::hardware::teensy4;
+using namespace qindesign::hardware::imxrt1060;
 
 // Digests for messages with zero size
 namespace {

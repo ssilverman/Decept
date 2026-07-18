@@ -13,7 +13,7 @@
 
 namespace qindesign {
 namespace hardware {
-namespace teensy4 {
+namespace imxrt1060 {
 
 // SNVS_HP and SNVS_LP layout. Comments are from BSD-3-licensed NXP SDK.
 //
@@ -532,6 +532,6 @@ constexpr SNVS_Reg<&SNVS_Layout::HPVIDR2, 8,  0> CONFIG_OPT;
 
 }  // namespace SNVS
 
-}  // namespace teensy4
+}  // namespace imxrt1060
 }  // namespace hardware
 }  // namespace qindesign

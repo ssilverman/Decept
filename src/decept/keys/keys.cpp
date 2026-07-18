@@ -4,6 +4,8 @@
 // keys.cpp implements the key helper functions.
 // This file is part of the Decept library.
 
+#include "decept/keys/keys.h"
+
 #include "decept/hardware/imxrt1060/IOMUXC_GPR.h"
 #include "decept/hardware/imxrt1060/SNVS.h"
 

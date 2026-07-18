@@ -1,4 +1,4 @@
-# Changelog for the _Decept__ Library
+# Changelog for the _Decept_ Library
 
 This document details the changes between each release.
 
@@ -26,3 +26,7 @@ and this project adheres to
 * Entropy:
   * Raw TRNG support
   * `decept::entropy::random_device` class
+
+---
+
+Copyright (c) 2026 Shawn Silverman

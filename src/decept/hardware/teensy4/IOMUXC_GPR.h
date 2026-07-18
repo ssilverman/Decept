@@ -66,8 +66,8 @@ constexpr regs::RegGroup<IOMUXC_GPR_Layout, kIOMUXC_GPR_size, kIOMUXC_GPR_base>
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-using IOMUXC_GPR_Reg = regs::Reg<uint32_t, kIOMUXC_GPR_base, IOMUXC_GPR_Layout,
-                                 Member, 0, Bits, Shift, DirectAssign>;
+using IOMUXC_GPR_Reg = regs::Reg32<kIOMUXC_GPR_base, IOMUXC_GPR_Layout, Member,
+                                   0, Bits, Shift, DirectAssign>;
 
 // Undefine anything defined by Teensyduino's imxrt.h
 

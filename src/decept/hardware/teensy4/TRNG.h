@@ -96,8 +96,8 @@ constexpr regs::RegGroup<TRNG_Layout, kTRNG_size, kTRNG_base> TRNG;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-using TRNG_Reg = regs::Reg<uint32_t, kTRNG_base, TRNG_Layout, Member, 0, Bits,
-                           Shift, DirectAssign>;
+using TRNG_Reg =
+    regs::Reg32<kTRNG_base, TRNG_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 // Undefine anything defined by Teensyduino's imxrt.h
 

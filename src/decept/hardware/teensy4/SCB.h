@@ -83,8 +83,8 @@ constexpr regs::RegGroup<SCB_Layout, kSCB_size, kSCB_base> SCB;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-using SCB_Reg = regs::Reg<uint32_t, kSCB_base, SCB_Layout, Member, 0, Bits,
-                          Shift, DirectAssign>;
+using SCB_Reg =
+    regs::Reg32<kSCB_base, SCB_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 // Undefine anything defined by Teensyduino's imxrt.h
 

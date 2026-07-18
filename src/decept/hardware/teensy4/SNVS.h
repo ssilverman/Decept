@@ -70,8 +70,8 @@ constexpr regs::RegGroup<SNVS_Layout, kSNVS_size, kSNVS_base> SNVS;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-using SNVS_Reg = regs::Reg<uint32_t, kSNVS_base, SNVS_Layout, Member, 0, Bits,
-                           Shift, DirectAssign>;
+using SNVS_Reg =
+    regs::Reg32<kSNVS_base, SNVS_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 // Undefine anything defined by Teensyduino's imxrt.h
 

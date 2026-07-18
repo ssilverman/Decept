@@ -122,8 +122,8 @@ constexpr regs::RegGroup<DCP_Layout, kDCP_size, kDCP_base> DCP;
 
 template <auto Member, size_t Bits, unsigned int Shift,
           bool DirectAssign = false>
-using DCP_Reg = regs::Reg<uint32_t, kDCP_base, DCP_Layout, Member, 0, Bits,
-                          Shift, DirectAssign>;
+using DCP_Reg =
+    regs::Reg32<kDCP_base, DCP_Layout, Member, 0, Bits, Shift, DirectAssign>;
 
 // Undefine anything defined by Teensyduino's imxrt.h
 
@@ -958,8 +958,8 @@ constexpr uint32_t kDCP_DBGSELECT_INDEX_OTPKEY2 = (1u << 4) + 2u;
 constexpr uint32_t kDCP_DBGSELECT_INDEX_OTPKEY3 = (1u << 4) + 3u;
 
 // DCP channel X register values
-constexpr regs::RegValue<uint32_t, 8, 16> DCP_CHxSEMA_VALUE;
-constexpr regs::RegValue<uint32_t, 8, 16> DCP_CHxSTAT_ERROR_CODE;
+constexpr regs::RegValue32<8, 16> DCP_CHxSEMA_VALUE;
+constexpr regs::RegValue32<8, 16> DCP_CHxSTAT_ERROR_CODE;
 
 }  // namespace teensy4
 }  // namespace hardware

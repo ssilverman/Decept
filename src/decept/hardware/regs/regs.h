@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include <climits>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -32,7 +31,7 @@ class RegGroup {
 
 // Reg defines an easier way to access parts of a register.
 //
-// The 'R' parameter is the unsigned type of each register, for example,
+// The 'R' parameter is the unsigned type of each whole register, for example,
 // uint32_t or uint16_t.
 //
 // The "direct assign" parameter means that assignment will not use the "read,
@@ -69,13 +68,13 @@ class Reg {
                 "Member offset out of range");
 
  public:
-  // Number of bits in one register.
-  static constexpr size_t kRegBits = sizeof(R) * CHAR_BIT;
+  // Number of bits in whole register.
+  static constexpr size_t kWholeRegBits = std::numeric_limits<R>::digits;
 
   // More parameter shape checks
-  static_assert(Bits <= kRegBits, "Bit count exceeds register width");
-  static_assert(Shift < kRegBits, "Shift exceeds register width");
-  static_assert((Bits <= kRegBits) && (Shift <= kRegBits - Bits),
+  static_assert(Bits <= kWholeRegBits, "Bit count exceeds register width");
+  static_assert(Shift < kWholeRegBits, "Shift exceeds register width");
+  static_assert((Bits <= kWholeRegBits) && (Shift <= kWholeRegBits - Bits),
                 "Register extends past register bounds");
 
   // The shift.
@@ -86,11 +85,11 @@ class Reg {
 
   // The shifted mask.
   static constexpr R kMask =  // Add -1 using R-bit modular arithmetic
-      (((Bits < kRegBits) ? (R{1} << Bits) : R{0}) +
+      (((Bits < kWholeRegBits) ? (R{1} << Bits) : R{0}) +
        std::numeric_limits<R>::max())
       << Shift;
   // static constexpr R kMask =
-  //     static_cast<R>(std::make_signed_t<R>{-1}) >> (kRegBits - Bits);
+  //     static_cast<R>(std::make_signed_t<R>{-1}) >> (kWholeRegBits - Bits);
   // static constexpr R kMask = ((R{1} << Bits) - R{1});
 
   // Returns the masked and shifted version of the given field value.
@@ -117,7 +116,7 @@ class Reg {
   [[gnu::always_inline]]
   const Reg& operator=(const R val) const {
     // Clear and then set the bits
-    if constexpr (DirectAssign || ((Bits == kRegBits) && (Shift == 0))) {
+    if constexpr (DirectAssign || ((Bits == kWholeRegBits) && (Shift == 0))) {
       *r() = (*this)(val);
     } else {
       *r() = (*r() & ~kMask) | (*this)(val);
@@ -206,13 +205,13 @@ class RegValue {
   static_assert(Bits != 0, "Bits shouldn't be zero");
 
  public:
-  // Number of bits in one register.
-  static constexpr size_t kRegBits = sizeof(R) * CHAR_BIT;
+  // Number of bits in whole register.
+  static constexpr size_t kWholeRegBits = std::numeric_limits<R>::digits;
 
   // More parameter shape checks
-  static_assert(Bits <= kRegBits, "Bit count exceeds register width");
-  static_assert(Shift < kRegBits, "Shift exceeds register width");
-  static_assert((Bits <= kRegBits) && (Shift <= kRegBits - Bits),
+  static_assert(Bits <= kWholeRegBits, "Bit count exceeds register width");
+  static_assert(Shift < kWholeRegBits, "Shift exceeds register width");
+  static_assert((Bits <= kWholeRegBits) && (Shift <= kWholeRegBits - Bits),
                 "Register extends past register bounds");
 
   // The shift.
@@ -223,7 +222,7 @@ class RegValue {
 
   // The shifted mask.
   static constexpr R kMask =  // Add -1 using R-bit modular arithmetic
-      (((Bits < kRegBits) ? (R{1} << Bits) : R{0}) +
+      (((Bits < kWholeRegBits) ? (R{1} << Bits) : R{0}) +
        std::numeric_limits<R>::max())
       << Shift;
 
@@ -233,6 +232,26 @@ class RegValue {
     return (val << Shift) & kMask;
   }
 };
+
+template <uintptr_t Base, typename Layout,
+          auto Member,          // Can be const or non-const
+          size_t MemberOffset,  // If the member is an array, otherwise zero
+          size_t Bits, unsigned int Shift, bool DirectAssign = false>
+using Reg32 = Reg<uint32_t, Base, Layout, Member, MemberOffset, Bits, Shift,
+                  DirectAssign>;
+
+template <size_t Bits, unsigned int Shift>
+using RegValue32 = RegValue<uint32_t, Bits, Shift>;
+
+template <uintptr_t Base, typename Layout,
+          auto Member,          // Can be const or non-const
+          size_t MemberOffset,  // If the member is an array, otherwise zero
+          size_t Bits, unsigned int Shift, bool DirectAssign = false>
+using Reg16 = Reg<uint16_t, Base, Layout, Member, MemberOffset, Bits, Shift,
+                  DirectAssign>;
+
+template <size_t Bits, unsigned int Shift>
+using RegValue16 = RegValue<uint16_t, Bits, Shift>;
 
 // Generate unique "_reserved" field names
 #define HARDWARE_REGS_CAT2(a, b) a##b

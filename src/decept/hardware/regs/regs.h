@@ -85,9 +85,9 @@ class Reg {
 
   // The shifted mask.
   static constexpr R kMask =  // Add -1 using R-bit modular arithmetic
-      (((Bits < kWholeRegBits) ? (R{1} << Bits) : R{0}) +
-       std::numeric_limits<R>::max())
-      << Shift;
+      static_cast<R>((((Bits < kWholeRegBits) ? (R{1} << Bits) : R{0}) +
+                      std::numeric_limits<R>::max())
+                     << Shift);
   // static constexpr R kMask =
   //     static_cast<R>(std::make_signed_t<R>{-1}) >> (kWholeRegBits - Bits);
   // static constexpr R kMask = ((R{1} << Bits) - R{1});
@@ -239,9 +239,9 @@ class RegValue {
 
   // The shifted mask.
   static constexpr R kMask =  // Add -1 using R-bit modular arithmetic
-      (((Bits < kWholeRegBits) ? (R{1} << Bits) : R{0}) +
-       std::numeric_limits<R>::max())
-      << Shift;
+      static_cast<R>((((Bits < kWholeRegBits) ? (R{1} << Bits) : R{0}) +
+                      std::numeric_limits<R>::max())
+                     << Shift);
 
   // Returns the masked and shifted version of the given value.
   [[gnu::always_inline]]

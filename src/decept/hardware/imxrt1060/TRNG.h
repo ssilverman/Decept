@@ -108,7 +108,7 @@ namespace MCTL {
 constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 16> PRGM;
 constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 14> LRUN_CONT;
 constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 13> TSTOP_OK;
-constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 12> ERR;
+constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 12> ERR;  // w1c
 constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 11> TST_OUT;
 constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 10> ENT_VAL;
 constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1,  9> FCT_VAL;

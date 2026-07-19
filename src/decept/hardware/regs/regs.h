@@ -274,7 +274,7 @@ using RegValue16 = RegValue<uint16_t, Bits, Shift>;
 #define HARDWARE_REGS_CAT2(a, b) a##b
 #define HARDWARE_REGS_CAT(a, b) HARDWARE_REGS_CAT2(a, b)
 #define HARDWARE_REGS_LAYOUT_MEMBER_RESERVED \
-  HARDWARE_REGS_CAT(_reserved, __COUNTER__)
+  HARDWARE_REGS_CAT(_reserved, __LINE__)
 
 }  // namespace regs
 }  // namespace hardware

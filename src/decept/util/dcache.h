@@ -18,11 +18,12 @@
 namespace decept {
 namespace util {
 
+using namespace qindesign::hardware::imxrt1060;
+
 static constexpr size_t kCacheLineSize = 32;
 
 // Performs a dcache operation.
-template <
-    volatile uint32_t qindesign::hardware::imxrt1060::SCB_Layout::* Member>
+template <volatile uint32_t SCB_Layout::* Member>
 [[gnu::always_inline]]
 static inline void dcacheOp(const void* const m, const size_t size) {
   if (size == 0) {
@@ -32,32 +33,30 @@ static inline void dcacheOp(const void* const m, const size_t size) {
   uint32_t a = reinterpret_cast<uint32_t>(m) & ~(kCacheLineSize - 1);
   const uint32_t end = reinterpret_cast<uint32_t>(m) + size;
 
-  asm volatile ("dsb 0xF":::"memory");
+  asm volatile ("dsb sy" ::: "memory");
 
   do {
-    reinterpret_cast<qindesign::hardware::imxrt1060::SCB_Layout*>(
-        qindesign::hardware::imxrt1060::kSCB_base)
-            ->*Member = a;
+    reinterpret_cast<SCB_Layout*>(kSCB_base)->*Member = a;
     a += kCacheLineSize;
   } while (a < end);
 
-  asm volatile ("dsb 0xF":::"memory");
-  asm volatile ("isb 0xF":::"memory");
+  asm volatile ("dsb sy" ::: "memory");
+  asm volatile ("isb sy" ::: "memory");
 }
 
 [[gnu::always_inline]]
 inline void dcacheFlush(const void* const m, const size_t size) {
-  dcacheOp<&qindesign::hardware::imxrt1060::SCB_Layout::DCCMVAC>(m, size);
+  dcacheOp<&SCB_Layout::DCCMVAC>(m, size);
 }
 
 [[gnu::always_inline]]
 inline void dcacheDelete(const void* const m, const size_t size) {
-  dcacheOp<&qindesign::hardware::imxrt1060::SCB_Layout::DCIMVAC>(m, size);
+  dcacheOp<&SCB_Layout::DCIMVAC>(m, size);
 }
 
 [[gnu::always_inline]]
 inline void dcacheFlushDelete(const void* const m, const size_t size) {
-  dcacheOp<&qindesign::hardware::imxrt1060::SCB_Layout::DCCIMVAC>(m, size);
+  dcacheOp<&SCB_Layout::DCCIMVAC>(m, size);
 }
 
 // Clears an object and then flushes and deletes the cache.

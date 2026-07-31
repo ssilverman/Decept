@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 // SCB.h defines all the SCB registers.
-// This file is part of the Decept library.
+// This file is part of the imxrt1060-regs library.
 
 #pragma once
 
@@ -76,244 +76,492 @@ struct SCB_Layout {
 };
 
 constexpr size_t    kSCB_size = 0x2AC;
-static constexpr uintptr_t kSCS_base = 0xE000E000;   /*!< System Control Space Base Address */
-constexpr uintptr_t kSCB_base = kSCS_base + 0x0D00;  /*!< System Control Block Base Address */
+namespace SCB {
+constexpr uintptr_t kSCS_base = 0xE000E000;          /*!< System Control Space Base Address */
+}  // namespace SCB
+constexpr uintptr_t kSCB_base = SCB::kSCS_base + 0x0D00;  /*!< System Control Block Base Address */
 
 namespace SCB {
 constexpr regs::RegGroup<SCB_Layout, kSCB_size, kSCB_base> group;
 }  // namespace SCB
 
 template <auto Member, size_t Bits, unsigned int Shift,
-          bool DirectAssign = false>
-using SCB_Reg =
-    regs::Reg32<kSCB_base, SCB_Layout, Member, 0, Bits, Shift, DirectAssign>;
+          auto AssignMask = regs::shiftedMask<uint32_t, Bits, Shift>(),
+          bool WriteOnly = false>
+using SCB_Reg = regs::Reg32<kSCB_base, SCB_Layout, Member, 0, Bits, Shift,
+                            AssignMask, WriteOnly>;
+
+template <auto Member, size_t MemberOffset, size_t Bits, unsigned int Shift>
+using SCB_ArrayReg32 =
+    regs::Reg32<kSCB_base, SCB_Layout, Member, MemberOffset, Bits, Shift>;
+
+template <auto Member, size_t MemberOffset, size_t Bits, unsigned int Shift>
+using SCB_ArrayReg8 =
+    regs::Reg8<kSCB_base, SCB_Layout, Member, MemberOffset, Bits, Shift>;
 
 namespace SCB {
 
-// SCB CPUID Register Definitions
+// CPUID Base Register
 namespace CPUID {
-constexpr SCB_Reg<&SCB_Layout::CPUID,  8, 24> IMPLEMENTER;
-constexpr SCB_Reg<&SCB_Layout::CPUID,  4, 20> VARIANT;
-constexpr SCB_Reg<&SCB_Layout::CPUID,  4, 16> ARCHITECTURE;
-constexpr SCB_Reg<&SCB_Layout::CPUID, 12,  4> PARTNO;
-constexpr SCB_Reg<&SCB_Layout::CPUID,  4,  0> REVISION;
+constexpr SCB_Reg<&SCB_Layout::CPUID,  8, 24> IMPLEMENTER;   // Implementer code
+constexpr SCB_Reg<&SCB_Layout::CPUID,  4, 20> VARIANT;       // Indicates processor revision: 0x2 = Revision 2
+constexpr SCB_Reg<&SCB_Layout::CPUID,  4, 16> ARCHITECTURE;  // ARCHITECTURE
+constexpr SCB_Reg<&SCB_Layout::CPUID, 12,  4> PARTNO;        // Indicates part number
+constexpr SCB_Reg<&SCB_Layout::CPUID,  4,  0> REVISION;      // Indicates patch release: 0x0 = Patch 0
 }  // namespace CPUID
 
-// SCB Interrupt Control State Register Definitions
+// Interrupt Control and State Register
 namespace ICSR {
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 31> NMIPENDSET;
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 28> PENDSVSET;
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 27> PENDSVCLR;
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 26> PENDSTSET;
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 25> PENDSTCLR;
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 23> ISRPREEMPT;
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 22> ISRPENDING;
-constexpr SCB_Reg<&SCB_Layout::ICSR, 9, 12> VECTPENDING;
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 11> RETTOBASE;
-constexpr SCB_Reg<&SCB_Layout::ICSR, 9,  0> VECTACTIVE;
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 31, 0x0> NMIPENDSET;              // NMI set-pending bit
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 28, 0x0> PENDSVSET;               // PendSV set-pending bit
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 27, 0x0, true> PENDSVCLR;         // PendSV clear-pending bit
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 26, 0x0> PENDSTSET;               // SysTick exception set-pending bit
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 25, 0x0, true> PENDSTCLR;         // SysTick exception clear-pending bit
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ICSR), 1, 23> ISRPREEMPT;
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ICSR), 1, 22> ISRPENDING;   // Interrupt pending flag, excluding NMI and Faults
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ICSR), 9, 12> VECTPENDING;  // Exception number of the highest priority pending enabled exception
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ICSR), 1, 11> RETTOBASE;    // Indicates whether there are preempted active exceptions
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ICSR), 9,  0> VECTACTIVE;   // Active exception number
 }  // namespace ICSR
 
-// SCB Vector Table Offset Register Definitions
+// Vector Table Offset Register
 namespace VTOR {
-constexpr SCB_Reg<&SCB_Layout::VTOR, 25, 7> TBLOFF;
+constexpr SCB_Reg<&SCB_Layout::VTOR, 25, 7> TBLOFF;  // Vector table base offset
 }  // namespace VTOR
 
-// SCB Application Interrupt and Reset Control Register Definitions
+// Application Interrupt and Reset Control Register
+// Exercise caution when setting or assigning fields in this register.
 namespace AIRCR {
-constexpr SCB_Reg<&SCB_Layout::AIRCR, 16, 16> VECTKEY;
-constexpr SCB_Reg<&SCB_Layout::AIRCR, 16, 16> VECTKEYSTAT;
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1, 15> ENDIANNESS;
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  3,  8> PRIGROUP;
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  2> SYSRESETREQ;
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  1> VECTCLRACTIVE;
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  0> VECTRESET;
+// TODO: Is this the correct way?
+constexpr uint32_t kWO = 0xffff'0007;
+
+constexpr SCB_Reg<&SCB_Layout::AIRCR, 16, 16, kWO, true> VECTKEY;                    // Register key
+constexpr SCB_Reg<regs::constify(&SCB_Layout::AIRCR), 16, 16> VECTKEYSTAT;
+constexpr SCB_Reg<regs::constify(&SCB_Layout::AIRCR),  1, 15> ENDIANNESS;            // Data endianness
+constexpr SCB_Reg<&SCB_Layout::AIRCR,  3,  8, (uint32_t{0x7} << 8) | kWO> PRIGROUP;  // Interrupt priority grouping field.
+    // This field determines the split of group priority from subpriority.
+constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  2, kWO, true> SYSRESETREQ;                // System reset request
+constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  1, kWO, true> VECTCLRACTIVE;              // Writing 1 to this bit clears all active state information for fixed and configurable exceptions.
+constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  0, kWO, true> VECTRESET;                  // Writing 1 to this bit causes a local system reset
 }  // namespace AIRCR
 
-// SCB System Control Register Definitions
+// System Control Register
 namespace SCR {
-constexpr SCB_Reg<&SCB_Layout::SCR, 1, 4> SEVONPEND;
-constexpr SCB_Reg<&SCB_Layout::SCR, 1, 2> SLEEPDEEP;
-constexpr SCB_Reg<&SCB_Layout::SCR, 1, 1> SLEEPONEXIT;
+constexpr SCB_Reg<&SCB_Layout::SCR, 1, 4> SEVONPEND;    // Send Event on Pending bit
+constexpr SCB_Reg<&SCB_Layout::SCR, 1, 2> SLEEPDEEP;    // Controls whether the processor uses sleep or deep sleep as its low power mode
+constexpr SCB_Reg<&SCB_Layout::SCR, 1, 1> SLEEPONEXIT;  // Indicates sleep-on-exit when returning from Handler mode to Thread mode
 }  // namespace SCR
 
-// SCB Configuration Control Register Definitions
+// Configuration and Control Register
 namespace CCR {
-constexpr SCB_Reg<&SCB_Layout::CCR, 1, 18> BP;
-constexpr SCB_Reg<&SCB_Layout::CCR, 1, 17> IC;
-constexpr SCB_Reg<&SCB_Layout::CCR, 1, 16> DC;
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  9> STKALIGN;
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  8> BFHFNMIGN;
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  4> DIV_0_TRP;
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  3> UNALIGN_TRP;
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  1> USERSETMPEND;
-constexpr SCB_Reg<&SCB_Layout::CCR, 1,  0> NONBASETHRDENA;
+constexpr SCB_Reg<regs::constify(&SCB_Layout::CCR), 1, 18> BP;  // Always reads-as-one.
+    // It indicates branch prediction is enabled.
+constexpr SCB_Reg<&SCB_Layout::CCR, 1, 17> IC;                  // Enables L1 instruction cache.
+constexpr SCB_Reg<&SCB_Layout::CCR, 1, 16> DC;                  // Enables L1 data cache.
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  9> STKALIGN;            // Indicates stack alignment on exception entry
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  8> BFHFNMIGN;           // Enables handlers with priority -1 or -2 to ignore data BusFaults caused by load and store instructions.
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  4> DIV_0_TRP;           // Enables faulting or halting when the processor executes an SDIV or UDIV instruction with a divisor of 0
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  3> UNALIGN_TRP;         // Enables unaligned access traps
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  1> USERSETMPEND;        // Enables unprivileged software access to the STIR
+constexpr SCB_Reg<&SCB_Layout::CCR, 1,  0> NONBASETHRDENA;      // Indicates how the processor enters Thread mode
 }  // namespace CCR
 
-// SCB System Handler Control and State Register Definitions
+// The following SHPR fields expose only the four implemented priority bits.
+// They occupy bits [7:4] of each architectural 8-bit priority field. These
+// wrappers accept and return unshifted priority values in the range 0-15.
+// For example, assigning 0xA writes 0xA0 to the corresponding priority byte.
+
+// System Handler Priority Register 1
+namespace SHPR1 {
+constexpr SCB_ArrayReg8<&SCB_Layout::SHPR, 0, 4, 4> PRI_4;  // Priority of system handler 4, MemManage
+constexpr SCB_ArrayReg8<&SCB_Layout::SHPR, 1, 4, 4> PRI_5;  // Priority of system handler 5, BusFault
+constexpr SCB_ArrayReg8<&SCB_Layout::SHPR, 2, 4, 4> PRI_6;  // Priority of system handler 6, UsageFault
+}  // namespace SHPR1
+
+// System Handler Priority Register 2
+namespace SHPR2 {
+constexpr SCB_ArrayReg8<&SCB_Layout::SHPR, 7, 4, 4> PRI_11;  // Priority of system handler 11, SVCall
+}  // namespace SHPR2
+
+// System Handler Priority Register 3
+namespace SHPR3 {
+constexpr SCB_ArrayReg8<&SCB_Layout::SHPR, 10, 4, 4> PRI_14;  // Priority of system handler 14, PendSV
+constexpr SCB_ArrayReg8<&SCB_Layout::SHPR, 11, 4, 4> PRI_15;  // Priority of system handler 15, SysTick exception
+}  // namespace SHPR3
+
+// System Handler Control and State Registers
 namespace SHCSR {
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 18> USGFAULTENA;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 17> BUSFAULTENA;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 16> MEMFAULTENA;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 15> SVCALLPENDED;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 14> BUSFAULTPENDED;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 13> MEMFAULTPENDED;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 12> USGFAULTPENDED;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 11> SYSTICKACT;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 10> PENDSVACT;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  8> MONITORACT;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  7> SVCALLACT;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  3> USGFAULTACT;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  1> BUSFAULTACT;
-constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  0> MEMFAULTACT;
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 18> USGFAULTENA;     // UsageFault enable bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 17> BUSFAULTENA;     // BusFault enable bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 16> MEMFAULTENA;     // MemManage enable bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 15> SVCALLPENDED;    // SVCall pending bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 14> BUSFAULTPENDED;  // BusFault exception pending bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 13> MEMFAULTPENDED;  // MemManage exception pending bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 12> USGFAULTPENDED;  // UsageFault exception pending bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 11> SYSTICKACT;      // SysTick exception active bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1, 10> PENDSVACT;       // PendSV exception active bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  8> MONITORACT;      // Debug monitor active bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  7> SVCALLACT;       // SVCall active bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  3> USGFAULTACT;     // UsageFault exception active bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  1> BUSFAULTACT;     // BusFault exception active bit
+constexpr SCB_Reg<&SCB_Layout::SHCSR, 1,  0> MEMFAULTACT;     // MemManage exception active bit
 }  // namespace SHCSR
 
-// SCB Configurable Fault Status Register Definitions
+// Configurable Fault Status Register
 namespace CFSR {
-constexpr SCB_Reg<&SCB_Layout::CFSR, 16, 16> USGFAULTSR;
-constexpr SCB_Reg<&SCB_Layout::CFSR,  8,  8> BUSFAULTSR;
-constexpr SCB_Reg<&SCB_Layout::CFSR,  8,  0> MEMFAULTSR;
+constexpr SCB_Reg<&SCB_Layout::CFSR, 16, 16, 0x0> USGFAULTSR;
+constexpr SCB_Reg<&SCB_Layout::CFSR,  8,  8, 0x0> BUSFAULTSR;
+constexpr SCB_Reg<&SCB_Layout::CFSR,  8,  0, 0x0> MEMFAULTSR;
 
-// SCB MemManage Fault Status Register Definitions (part of SCB Configurable Fault Status Register)
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 7> MMARVALID;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 5> MLSPERR;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 4> MSTKERR;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 3> MUNSTKERR;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 1> DACCVIOL;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 0> IACCVIOL;
+// MemManage Fault Status Register Definitions
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 7, 0x0> MMARVALID;     // MemManage Fault Address Register (MMFAR) valid flag
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 5, 0x0> MLSPERR;       // MemManage fault occurred during floating-point lazy state preservation
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 4, 0x0> MSTKERR;       // MemManage fault on stacking for exception entry
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 3, 0x0> MUNSTKERR;     // MemManage fault on unstacking for a return from exception
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 1, 0x0> DACCVIOL;      // Data access violation flag
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 0, 0x0> IACCVIOL;      // Instruction access violation flag
 
-// SCB BusFault Status Register Definitions (part of SCB Configurable Fault Status Register)
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 15> BFARVALID;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 13> LSPERR;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 12> STKERR;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 11> UNSTKERR;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 10> IMPRECISERR;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1,  9> PRECISERR;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1,  8> IBUSERR;
+// BusFault Status Register Definitions
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 15, 0x0> BFARVALID;    // BusFault Address Register (BFAR) valid flag
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 13, 0x0> LSPERR;       // Bus fault occurred during floating-point lazy state preservation
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 12, 0x0> STKERR;       // BusFault on stacking for exception entry
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 11, 0x0> UNSTKERR;     // BusFault on unstacking for a return from exception
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 10, 0x0> IMPRECISERR;  // Imprecise data bus error
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1,  9, 0x0> PRECISERR;    // Precise data bus error
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1,  8, 0x0> IBUSERR;      // Instruction bus error
 
-// SCB UsageFault Status Register Definitions (part of SCB Configurable Fault Status Register)
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 25> DIVBYZERO;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 24> UNALIGNED;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 19> NOCP;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 18> INVPC;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 17> INVSTATE;
-constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 16> UNDEFINSTR;
+// UsageFault Status Register Definitions
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 25, 0x0> DIVBYZERO;    // Divide by zero UsageFault
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 24, 0x0> UNALIGNED;    // Unaligned access UsageFault
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 19, 0x0> NOCP;         // No coprocessor UsageFault
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 18, 0x0> INVPC;        // Invalid PC load UsageFault, caused by an invalid PC load by EXC_RETURN
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 17, 0x0> INVSTATE;     // Invalid state UsageFault
+constexpr SCB_Reg<&SCB_Layout::CFSR, 1, 16, 0x0> UNDEFINSTR;   // Undefined instruction UsageFault
 }  // namespace CFSR
 
-// SCB Hard Fault Status Register Definitions
+// HardFault Status register
 namespace HFSR {
-constexpr SCB_Reg<&SCB_Layout::HFSR, 1, 31> DEBUGEVT;
-constexpr SCB_Reg<&SCB_Layout::HFSR, 1, 30> FORCED;
-constexpr SCB_Reg<&SCB_Layout::HFSR, 1,  1> VECTTBL;
+constexpr SCB_Reg<&SCB_Layout::HFSR, 1, 31, 0x0> DEBUGEVT;  // Reserved for Debug use.
+    // When writing to the register you must write 0 to this bit, otherwise behavior is Unpredictable.
+constexpr SCB_Reg<&SCB_Layout::HFSR, 1, 30, 0x0> FORCED;    // Indicates a forced hard fault, generated by escalation of a fault with configurable priority that cannot be handles, either because of priority or because it is disabled.
+constexpr SCB_Reg<&SCB_Layout::HFSR, 1,  1, 0x0> VECTTBL;   // Indicates a BusFault on a vector table read during exception processing.
 }  // namespace HFSR
 
-// SCB Debug Fault Status Register Definitions
+// Debug Fault Status Register
 namespace DFSR {
-constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 4> EXTERNAL;
-constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 3> VCATCH;
-constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 2> DWTTRAP;
-constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 1> BKPT;
-constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 0> HALTED;
+constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 4, 0x0> EXTERNAL;  // Debug event generated because of the assertion of an external debug request
+constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 3, 0x0> VCATCH;    // Indicates triggering of a Vector catch
+constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 2, 0x0> DWTTRAP;   // Debug event generated by the DWT
+constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 1, 0x0> BKPT;      // Debug event generated by BKPT instruction execution or a breakpoint match in FPB
+constexpr SCB_Reg<&SCB_Layout::DFSR, 1, 0, 0x0> HALTED;    // Indicates a debug event generated by either a C_HALT or C_STEP request, triggered by a write to the DHCSR or a step request triggered by setting DEMCR.MON_STEP to 1.
 }  // namespace DFSR
 
-// SCB Cache Level ID Register Definitions
+// MemManage Fault Address Register
+namespace MMFAR {
+constexpr SCB_Reg<&SCB_Layout::MMFAR, 32, 0> ADDRESS;  // Address of MemManage fault location
+}  // namespace MMFAR
+
+// BusFault Address Register
+namespace BFAR {
+constexpr SCB_Reg<&SCB_Layout::BFAR, 32, 0> ADDRESS;  // Address of the BusFault location
+}  // namespace BFAR
+
+// Auxiliary Fault Status Register
+namespace AFSR {
+constexpr SCB_Reg<&SCB_Layout::AFSR, 32, 0> IMPDEF;  // Implementation defined
+}  // namespace AFSR
+
+// Processor Feature Register 0
+namespace ID_PFR0 {
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_PFR, 0, 4, 12> STATE3;  // ARMv7-M unused
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_PFR, 0, 4,  8> STATE2;  // ARMv7-M unused
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_PFR, 0, 4,  4> STATE1;  // Thumb instruction set support
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_PFR, 0, 4,  0> STATE0;  // ARM instruction set support
+}  // namespace ID_PFR0
+
+// Processor Feature Register 1
+namespace ID_PFR1 {
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_PFR, 1, 4, 8> PROGMODEL;  // M profile programmers' model
+}  // namespace ID_PFR1
+
+// Debug Feature Register
+namespace ID_DFR {
+constexpr SCB_Reg<&SCB_Layout::ID_DFR, 4, 20> DEBUGMODEL;  // Support for memory-mapped debug model for M profile processors
+}  // namespace ID_DFR
+
+// Auxiliary Feature Register
+namespace ID_AFR {
+constexpr SCB_Reg<&SCB_Layout::ID_AFR, 4, 12> IMPLEMENTATION_DEFINED3;  // Gives information about the IMPLEMENTATION DEFINED features of a processor implementation.
+constexpr SCB_Reg<&SCB_Layout::ID_AFR, 4,  8> IMPLEMENTATION_DEFINED2;  // Gives information about the IMPLEMENTATION DEFINED features of a processor implementation.
+constexpr SCB_Reg<&SCB_Layout::ID_AFR, 4,  4> IMPLEMENTATION_DEFINED1;  // Gives information about the IMPLEMENTATION DEFINED features of a processor implementation.
+constexpr SCB_Reg<&SCB_Layout::ID_AFR, 4,  0> IMPLEMENTATION_DEFINED0;  // Gives information about the IMPLEMENTATION DEFINED features of a processor implementation.
+}  // namespace ID_AFR
+
+// Memory Model Feature Register 0
+namespace ID_MMFR0 {
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_MMFR, 0, 4, 20> AUXILIARY_REGISTERS;     // Indicates the support for Auxiliary registers
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_MMFR, 0, 4, 16> TCM_SUPPORT;             // Indicates the support for Tightly Coupled Memory
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_MMFR, 0, 4, 12> SHAREABILITY_LEVELS;     // Indicates the number of shareability levels implemented
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_MMFR, 0, 4,  8> OUTERMOST_SHAREABILITY;  // Indicates the outermost shareability domain implemented
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_MMFR, 0, 4,  4> PMSASUPPORT;             // Indicates support for a PMSA
+}  // namespace ID_MMFR0
+
+// Memory Model Feature Register 2
+namespace ID_MMFR2 {
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_MMFR, 2, 4, 24> WFI_STALL;  // Indicates the support for Wait For Interrupt (WFI) stalling
+}  // namespace ID_MMFR2
+
+// Instruction Set Attributes Register 0
+namespace ID_ISAR0 {
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 0, 4, 24> DIVIDE_INSTRS;     // Indicates the supported Divide instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 0, 4, 20> DEBUG_INSTRS;      // Indicates the supported Debug instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 0, 4, 16> COPROC_INSTRS;     // Indicates the supported Coprocessor instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 0, 4, 12> CMPBRANCH_INSTRS;  // Indicates the supported combined Compare and Branch instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 0, 4,  8> BITFIELD_INSTRS;   // Indicates the supported BitField instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 0, 4,  4> BITCOUNT_INSTRS;   // Indicates the supported Bit Counting instructions
+}  // namespace ID_ISAR0
+
+// Instruction Set Attributes Register 1
+namespace ID_ISAR1 {
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 1, 4, 24> INTERWORK_INSTRS;  // Indicates the supported Interworking instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 1, 4, 20> IMMEDIATE_INSTRS;  // Indicates the support for data-processing instructions with long immediate
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 1, 4, 16> IFTHEN_INSTRS;     // Indicates the supported IfThen instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 1, 4, 12> EXTEND_INSTRS;     // Indicates the supported Extend instructions
+}  // namespace ID_ISAR1
+
+// Instruction Set Attributes Register 2
+namespace ID_ISAR2 {
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 2, 4, 28> REVERSAL_INSTRS;        // Indicates the supported Reversal instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 2, 4, 20> MULTU_INSTRS;           // Indicates the supported advanced unsigned Multiply instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 2, 4, 16> MULTS_INSTRS;           // Indicates the supported advanced signed Multiply instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 2, 4, 12> MULT_INSTRS;            // Indicates the supported additional Multiply instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 2, 4,  8> MULTIACCESSINT_INSTRS;  // Indicates the support for multi-access interruptible instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 2, 4,  4> MEMHINT_INSTRS;         // Indicates the supported Memory Hint instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 2, 4,  0> LOADSTORE_INSTRS;       // Indicates the supported additional load and store instructions
+}  // namespace ID_ISAR2
+
+// Instruction Set Attributes Register 3
+namespace ID_ISAR3 {
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 3, 4, 24> TRUENOP_INSTRS;    // Indicates the supported non flag-setting MOV instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 3, 4, 20> THUMBCOPY_INSTRS;  // Indicates the supported non flag-setting MOV instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 3, 4, 16> TABBRANCH_INSTRS;  // Indicates the supported Table Branch instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 3, 4, 12> SYNCHPRIM_INSTRS;  // Together with the ID_ISAR4[SYNCHPRIM_INSTRS_FRAC] indicates the supported Synchronization Primitives
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 3, 4,  8> SVC_INSTRS;        // Indicates the supported SVC instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 3, 4,  4> SIMD_INSTRS;       // Indicates the supported SIMD instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 3, 4,  0> SATURATE_INSTRS;   // Indicates the supported Saturate instructions
+}  // namespace ID_ISAR3
+
+// Instruction Set Attributes Register 4
+namespace ID_ISAR4 {
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 4, 4, 24> PSR_M_INSTRS;           // Indicates the supported M profile instructions to modify the PSRs
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 4, 4, 20> SYNCHPRIM_INSTRS_FRAC;  // Together with the ID_ISAR3[SYNCHPRIM_INSTRS] indicates the supported Synchronization Primitives
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 4, 4, 16> BARRIER_INSTRS;         // Indicates the supported Barrier instructions
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 4, 4,  8> WRITEBACK_INSTRS;       // Indicates the support for Writeback addressing modes
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 4, 4,  4> WITHSHIFTS_INSTRS;      // Indicates the support for instructions with shifts
+constexpr SCB_ArrayReg32<&SCB_Layout::ID_ISAR, 4, 4,  0> UNPRIV_INSTRS;          // Indicates the supported unprivileged instructions.
+    // These are the instruction variants indicated by a T suffix.
+}  // namespace ID_ISAR4
+
+// Cache Level ID Register
 namespace CLIDR {
-constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 27> LOUU;
-constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 24> LOC;
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 27> LOUU;   // Level of Unification Uniprocessor for the cache hierarchy
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 24> LOC;    // Level of Coherency for the cache hierarchy
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 21> LOUIS;  // Level of Unification Inner Shareable for the cache hierarchy.
+    // This field is RAZ.
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 18> CL7;    // Indicate the type of cache implemented at level 7.
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 15> CL6;    // Indicate the type of cache implemented at level 6.
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3, 12> CL5;    // Indicate the type of cache implemented at level 5.
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3,  9> CL4;    // Indicate the type of cache implemented at level 4.
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3,  6> CL3;    // Indicate the type of cache implemented at level 3.
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3,  3> CL2;    // Indicate the type of cache implemented at level 2.
+constexpr SCB_Reg<&SCB_Layout::CLIDR, 3,  0> CL1;    // Indicate the type of cache implemented at level 1.
 }  // namespace CLIDR
 
-// SCB Cache Type Register Definitions
+// Cache Type Register
 namespace CTR {
-constexpr SCB_Reg<&SCB_Layout::CTR, 3, 29> FORMAT;
-constexpr SCB_Reg<&SCB_Layout::CTR, 4, 24> CWG;
-constexpr SCB_Reg<&SCB_Layout::CTR, 4, 20> ERG;
-constexpr SCB_Reg<&SCB_Layout::CTR, 4, 16> DMINLINE;
-constexpr SCB_Reg<&SCB_Layout::CTR, 4,  0> IMINLINE;
+constexpr SCB_Reg<&SCB_Layout::CTR, 3, 29> FORMAT;    // Indicates the implemented CTR format.
+constexpr SCB_Reg<&SCB_Layout::CTR, 4, 24> CWG;       // Cache Write-back Granule.
+    // The maximum size of memory that can be overwritten as a result of the eviction of a cache entry that has had a memory location in it modified, encoded as Log2 of the number of words.
+constexpr SCB_Reg<&SCB_Layout::CTR, 4, 20> ERG;       // Exclusives Reservation Granule.
+    // The maximum size of the reservation granule that has been implemented for the Load-Exclusive and Store-Exclusive instructions, encoded as Log2 of the number of words.
+constexpr SCB_Reg<&SCB_Layout::CTR, 4, 16> DMINLINE;  // Log2 of the number of words in the smallest cache line of all the data caches and unified caches that are controlled by the processor.
+constexpr SCB_Reg<&SCB_Layout::CTR, 4,  0> IMINLINE;  // Log2 of the number of words in the smallest cache line of all the instruction caches that are controlled by the processor.
 }  // namespace CTR
 
-// SCB Cache Size ID Register Definitions
+// Cache Size ID Register
 namespace CCSIDR {
-constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 31> WT;
-constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 30> WB;
-constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 29> RA;
-constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 28> WA;
-constexpr SCB_Reg<&SCB_Layout::CCSIDR, 15, 13> NUMSETS;
-constexpr SCB_Reg<&SCB_Layout::CCSIDR, 10,  3> ASSOCIATIVITY;
-constexpr SCB_Reg<&SCB_Layout::CCSIDR,  3,  0> LINESIZE;
+constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 31> WT;             // Indicates whether the cache level supports write-through
+constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 30> WB;             // Indicates whether the cache level supports write-back
+constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 29> RA;             // Indicates whether the cache level supports read-allocation
+constexpr SCB_Reg<&SCB_Layout::CCSIDR,  1, 28> WA;             // Indicates whether the cache level supports write-allocation
+constexpr SCB_Reg<&SCB_Layout::CCSIDR, 15, 13> NUMSETS;        // (Number of sets in cache) - 1, therefore a value of 0 indicates 1 set in the cache.
+    // The number of sets does not have to be a power of 2.
+constexpr SCB_Reg<&SCB_Layout::CCSIDR, 10,  3> ASSOCIATIVITY;  // (Associativity of cache) - 1, therefore a value of 0 indicates an associativity of 1.
+    // The associativity does not have to be a power of 2.
+constexpr SCB_Reg<&SCB_Layout::CCSIDR,  3,  0> LINESIZE;       // (Log2(Number of words in cache line)) - 2.
 }  // namespace CCSIDR
 
-// SCB Cache Size Selection Register Definitions
+// Cache Size Selection Register
 namespace CSSELR {
-constexpr SCB_Reg<&SCB_Layout::CSSELR, 3, 1> LEVEL;
-constexpr SCB_Reg<&SCB_Layout::CSSELR, 1, 0> IND;
+constexpr SCB_Reg<&SCB_Layout::CSSELR, 3, 1> LEVEL;  // Cache level of required cache
+constexpr SCB_Reg<&SCB_Layout::CSSELR, 1, 0> IND;    // Instruction not data bit
 }  // namespace CSSELR
 
-// SCB Software Triggered Interrupt Register Definitions
+// Coprocessor Access Control Register
+namespace CPACR {
+constexpr SCB_Reg<&SCB_Layout::CPACR, 2, 22> CP11;  // Access privileges for coprocessor 11.
+constexpr SCB_Reg<&SCB_Layout::CPACR, 2, 20> CP10;  // Access privileges for coprocessor 10.
+constexpr SCB_Reg<&SCB_Layout::CPACR, 2, 14> CP7;   // Access privileges for coprocessor 7.
+constexpr SCB_Reg<&SCB_Layout::CPACR, 2, 12> CP6;   // Access privileges for coprocessor 6.
+constexpr SCB_Reg<&SCB_Layout::CPACR, 2, 10> CP5;   // Access privileges for coprocessor 5.
+constexpr SCB_Reg<&SCB_Layout::CPACR, 2,  8> CP4;   // Access privileges for coprocessor 4.
+constexpr SCB_Reg<&SCB_Layout::CPACR, 2,  6> CP3;   // Access privileges for coprocessor 3.
+constexpr SCB_Reg<&SCB_Layout::CPACR, 2,  4> CP2;   // Access privileges for coprocessor 2.
+constexpr SCB_Reg<&SCB_Layout::CPACR, 2,  2> CP1;   // Access privileges for coprocessor 1.
+constexpr SCB_Reg<&SCB_Layout::CPACR, 2,  0> CP0;   // Access privileges for coprocessor 0.
+}  // namespace CPACR
+
+// Software Triggered Interrupt Register
 namespace STIR {
-constexpr SCB_Reg<&SCB_Layout::STIR, 9, 0> INTID;
+constexpr SCB_Reg<&SCB_Layout::STIR, 9, 0, 0x0, true> INTID;  // Indicates the interrupt to be triggered
 }  // namespace STIR
 
-// SCB D-Cache Invalidate by Set-way Register Definitions
+// Media and VFP Feature Register 0
+namespace MVFR0 {
+constexpr SCB_Reg<&SCB_Layout::MVFR0, 4, 28> FPRound;      // Rounding modes bits
+constexpr SCB_Reg<&SCB_Layout::MVFR0, 4, 24> FPShortvec;   // Short vectors bits
+constexpr SCB_Reg<&SCB_Layout::MVFR0, 4, 20> FPSqrt;       // Square root bits
+constexpr SCB_Reg<&SCB_Layout::MVFR0, 4, 16> FPDivide;     // Divide bits
+constexpr SCB_Reg<&SCB_Layout::MVFR0, 4, 12> FPExceptrap;  // Exception trapping bits
+constexpr SCB_Reg<&SCB_Layout::MVFR0, 4,  8> FPDP;         // Double-precision bits
+constexpr SCB_Reg<&SCB_Layout::MVFR0, 4,  4> FPSP;         // Single-precision bits
+constexpr SCB_Reg<&SCB_Layout::MVFR0, 4,  0> SIMDReg;      // SIMD registers bits
+}  // namespace MVFR0
+
+// Media and VFP Feature Register 1
+namespace MVFR1 {
+constexpr SCB_Reg<&SCB_Layout::MVFR1, 4, 28> FMAC;    // Fused MAC bits
+constexpr SCB_Reg<&SCB_Layout::MVFR1, 4, 24> FPHP;    // FP HPFP bits
+constexpr SCB_Reg<&SCB_Layout::MVFR1, 4,  4> FPDNaN;  // D_NaN mode bits
+constexpr SCB_Reg<&SCB_Layout::MVFR1, 4,  0> FPFtZ;   // FtZ mode bits
+}  // namespace MVFR1
+
+// Media and VFP Feature Register 2
+namespace MVFR2 {
+constexpr SCB_Reg<&SCB_Layout::MVFR2, 4, 4> FPMisc;  // VFP Misc bits
+}  // namespace MVFR2
+
+// Instruction cache invalidate all to Point of Unification (PoU)
+namespace ICIALLU {
+constexpr SCB_Reg<&SCB_Layout::ICIALLU, 32, 0, 0x0, true> ICIALLU;  // I-cache invalidate all to PoU
+}  // namespace ICIALLU
+
+// Instruction cache invalidate by address to PoU
+namespace ICIMVAU {
+constexpr SCB_Reg<&SCB_Layout::ICIMVAU, 32, 0, 0x0, true> ICIMVAU;  // I-cache invalidate by MVA to PoU
+}  // namespace ICIMVAU
+
+// Data cache invalidate by address to Point of Coherency (PoC)
+namespace DCIMVAC {
+constexpr SCB_Reg<&SCB_Layout::DCIMVAC, 32, 0, 0x0, true> DCIMVAC;  // D-cache invalidate by MVA to PoC
+}  // namespace DCIMVAC
+
+// Data cache invalidate by set/way
+// Exercise caution when setting or assigning fields in this register.
 namespace DCISW {
-constexpr SCB_Reg<&SCB_Layout::DCISW, 2, 30> WAY;
-constexpr SCB_Reg<&SCB_Layout::DCISW, 9,  5> SET;
+constexpr SCB_Reg<&SCB_Layout::DCISW, 2, 30, 0x0, true> WAY;
+constexpr SCB_Reg<&SCB_Layout::DCISW, 9,  5, 0x0, true> SET;
 }  // namespace DCISW
 
-// SCB D-Cache Clean by Set-way Register Definitions
+// Data cache by address to PoU
+namespace DCCMVAU {
+constexpr SCB_Reg<&SCB_Layout::DCCMVAU, 32, 0, 0x0, true> DCCMVAU;  // D-cache clean by MVA to PoU
+}  // namespace DCCMVAU
+
+// Data cache clean by address to PoC
+namespace DCCMVAC {
+constexpr SCB_Reg<&SCB_Layout::DCCMVAC, 32, 0, 0x0, true> DCCMVAC;  // D-cache clean by MVA to PoC
+}  // namespace DCCMVAC
+
+// Data cache clean by set/way
+// Exercise caution when setting or assigning fields in this register.
 namespace DCCSW {
-constexpr SCB_Reg<&SCB_Layout::DCCSW, 2, 30> WAY;
-constexpr SCB_Reg<&SCB_Layout::DCCSW, 9,  5> SET;
+constexpr SCB_Reg<&SCB_Layout::DCCSW, 2, 30, 0x0, true> WAY;
+constexpr SCB_Reg<&SCB_Layout::DCCSW, 9,  5, 0x0, true> SET;
 }  // namespace DCCSW
 
-// SCB D-Cache Clean and Invalidate by Set-way Register Definitions
+// Data cache clean and invalidate by address to PoC
+namespace DCCIMVAC {
+constexpr SCB_Reg<&SCB_Layout::DCCIMVAC, 32, 0, 0x0, true> DCCIMVAC;  // D-cache clean and invalidate by MVA to PoC
+}  // namespace DCCIMVAC
+
+// Data cache clean and invalidate by set/way
+// Exercise caution when setting or assigning fields in this register.
 namespace DCCISW {
-constexpr SCB_Reg<&SCB_Layout::DCCISW, 2, 30> WAY;
-constexpr SCB_Reg<&SCB_Layout::DCCISW, 9,  5> SET;
+constexpr SCB_Reg<&SCB_Layout::DCCISW, 2, 30, 0x0, true> WAY;
+constexpr SCB_Reg<&SCB_Layout::DCCISW, 9,  5, 0x0, true> SET;
 }  // namespace DCCISW
 
-// SCB Instruction Tightly-Coupled Memory Control Register Definitions
+// Branch Predictor Invalidate All
+namespace BPIALL {
+constexpr SCB_Reg<&SCB_Layout::BPIALL, 32, 0, 0x0, true> BPIALL;
+}  // namespace BPIALL
+
+// Instruction Tightly-Coupled Memory Control Register
 namespace ITCMCR {
-constexpr SCB_Reg<&SCB_Layout::ITCMCR, 4, 3> SZ;
-constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 2> RETEN;
-constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 1> RMW;
-constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 0> EN;
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ITCMCR), 4, 3> SZ;  // TCM size.
+    // Indicates the size of the relevant TCM.
+constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 2> RETEN;               // Retry phase enable.
+    // When enabled the processor guarantees to honor the retry output on the corresponding TCM interface, re-executing the instruction which carried out the TCM access.
+constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 1> RMW;                 // Read-Modify-Write (RMW) enable.
+    // Indicates that all writes to TCM, that are not the full width of the TCM RAM, use a RMW sequence.
+constexpr SCB_Reg<&SCB_Layout::ITCMCR, 1, 0> EN;                  // TCM enable.
+    // When a TCM is disabled all accesses are made to the AXIM interface.
 }  // namespace ITCMCR
 
-// SCB Data Tightly-Coupled Memory Control Register Definitions
+// Data Tightly-Coupled Memory Control Register
 namespace DTCMCR {
-constexpr SCB_Reg<&SCB_Layout::DTCMCR, 4, 3> SZ;
-constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 2> RETEN;
-constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 1> RMW;
-constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 0> EN;
+constexpr SCB_Reg<regs::constify(&SCB_Layout::DTCMCR), 4, 3> SZ;  // TCM size.
+    // Indicates the size of the relevant TCM.
+constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 2> RETEN;               // Retry phase enable.
+    // When enabled the processor guarantees to honor the retry output on the corresponding TCM interface, re-executing the instruction which carried out the TCM access.
+constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 1> RMW;                 // Read-Modify-Write (RMW) enable.
+    // Indicates that all writes to TCM, that are not the full width of the TCM RAM, use a RMW sequence.
+constexpr SCB_Reg<&SCB_Layout::DTCMCR, 1, 0> EN;                  // TCM enable.
+    // When a TCM is disabled all accesses are made to the AXIM interface.
 }  // namespace DTCMCR
 
-// SCB AHBP Control Register Definitions
+// AHBP Control Register
 namespace AHBPCR {
-constexpr SCB_Reg<&SCB_Layout::AHBPCR, 3, 1> SZ;
-constexpr SCB_Reg<&SCB_Layout::AHBPCR, 1, 0> EN;
+constexpr SCB_Reg<regs::constify(&SCB_Layout::AHBPCR), 3, 1> SZ;  // AHBP size.
+constexpr SCB_Reg<&SCB_Layout::AHBPCR, 1, 0> EN;                  // AHBP enable.
 }  // namespace AHBPCR
 
-// SCB L1 Cache Control Register Definitions
+// L1 Cache Control Register
 namespace CACR {
-constexpr SCB_Reg<&SCB_Layout::CACR, 1, 2> FORCEWT;
-constexpr SCB_Reg<&SCB_Layout::CACR, 1, 1> ECCDIS;
-constexpr SCB_Reg<&SCB_Layout::CACR, 1, 0> SIWT;
+constexpr SCB_Reg<&SCB_Layout::CACR, 1, 2> FORCEWT;  // Enables Force Write-Through in the data cache.
+constexpr SCB_Reg<&SCB_Layout::CACR, 1, 1> ECCDIS;   // Enables ECC in the instruction and data cache.
+constexpr SCB_Reg<&SCB_Layout::CACR, 1, 0> SIWT;     // Shared cacheable-is-WT for data cache.
+    // Enables limited cache coherency usage.
 }  // namespace CACR
 
-// SCB AHBS Control Register Definitions
+// AHB Slave Control Register
 namespace AHBSCR {
-constexpr SCB_Reg<&SCB_Layout::AHBSCR, 5, 11> INITCOUNT;
-constexpr SCB_Reg<&SCB_Layout::AHBSCR, 9,  2> TPRI;
-constexpr SCB_Reg<&SCB_Layout::AHBSCR, 2,  0> CTL;
+constexpr SCB_Reg<&SCB_Layout::AHBSCR, 5, 11> INITCOUNT;  // Fairness counter initialization value.
+constexpr SCB_Reg<&SCB_Layout::AHBSCR, 9,  2> TPRI;       // Threshold execution priority for AHBS traffic demotion.
+constexpr SCB_Reg<&SCB_Layout::AHBSCR, 2,  0> CTL;        // AHBS prioritization control.
 }  // namespace AHBSCR
 
-// SCB Auxiliary Bus Fault Status Register Definitions
+// Auxiliary Bus Fault Status Register
+// Note: Cleared to 0x0 on writes of any value
 namespace ABFSR {
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 2, 8> AXIMTYPE;
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 4> EPPB;
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 3> AXIM;
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 2> AHBP;
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 1> DTCM;
-constexpr SCB_Reg<&SCB_Layout::ABFSR, 1, 0> ITCM;
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ABFSR), 2, 8> AXIMTYPE;  // Indicates the type of fault on the AXIM interface.
+    // Only valid when AXIM is 1.
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ABFSR), 1, 4> EPPB;      // Asynchronous fault on EPPB interface.
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ABFSR), 1, 3> AXIM;      // Asynchronous fault on AXIM interface.
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ABFSR), 1, 2> AHBP;      // Asynchronous fault on AHBP interface.
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ABFSR), 1, 1> DTCM;      // Asynchronous fault on DTCM interface.
+constexpr SCB_Reg<regs::constify(&SCB_Layout::ABFSR), 1, 0> ITCM;      // Asynchronous fault on ITCM interface.
 }  // namespace ABFSR
 
 }  // namespace SCB

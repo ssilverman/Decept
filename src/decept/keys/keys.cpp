@@ -19,9 +19,9 @@ using namespace qindesign::hardware::imxrt1060;
 // * https://github.com/nxp-mcuxpresso/legacy-mcux-sdk-examples/blob/main/evkbmimxrt1060/driver_examples/snvs/snvs_sw_zmk/snvs_sw_zmk.c
 void setSNVSZeroizableMasterKey(const uint32_t* const key) {
     // Disable the ZMK and ECC first
-    SNVS::LPMKCR::ZMK_ECC_EN = false;  // SNVS_LP_EnableZeroizableMasterKeyECC
-    SNVS::LPMKCR::ZMK_VAL    = false;  // SNVS_LP_SetZeroizableMasterKeyValid
-    SNVS::group->HPSVSR = SNVS::HPSVSR::ZMK_ECC_FAIL(1);  // SNVS_HP_ClearSecurityViolationStatusFlags
+    SNVS::LPMKCR::ZMK_ECC_EN   = 0;  // SNVS_LP_EnableZeroizableMasterKeyECC
+    SNVS::LPMKCR::ZMK_VAL      = 0;  // SNVS_LP_SetZeroizableMasterKeyValid
+    SNVS::HPSVSR::ZMK_ECC_FAIL = 1;  // SNVS_HP_ClearSecurityViolationStatusFlags
 
     // Step 1: Set the ZMK key by software
     SNVS::LPMKCR::ZMK_HWP = SNVS::LPMKCR::kZMK_HWP_SOFTWARE;  // SNVS_LP_SetZeroizableMasterKeyProgramMode
@@ -30,19 +30,19 @@ void setSNVSZeroizableMasterKey(const uint32_t* const key) {
     }  // SNVS_LP_WriteZeroizableMasterKey
 
     // Step 2: Enable the ZMK
-    SNVS::LPMKCR::ZMK_VAL = true;  // SNVS_LP_SetZeroizableMasterKeyValid
+    SNVS::LPMKCR::ZMK_VAL = 1;  // SNVS_LP_SetZeroizableMasterKeyValid
 
     // Step 3: Enable the ECC
-    SNVS::LPMKCR::ZMK_ECC_EN = true;  // SNVS_LP_EnableZeroizableMasterKeyECC
+    SNVS::LPMKCR::ZMK_ECC_EN = 1;  // SNVS_LP_EnableZeroizableMasterKeyECC
 }
 
 bool isSNVSZeroizableMasterKeyZero() {
-  return (SNVS::HPSR::ZMK_ZERO_MASK != 0);
+  return (SNVS::HPSR::ZMK_ZERO != 0);
 }
 
 void selectSNVSZeroizableMasterKey() {
   // Enable master key selection
-  SNVS::HPCOMR::MKS_EN = true;
+  SNVS::HPCOMR::MKS_EN = 1;
 
   // Select the zeroizable master key
   SNVS::LPMKCR::MASTER_KEY_SEL = SNVS::LPMKCR::kMASTER_KEY_SEL_ZMK;

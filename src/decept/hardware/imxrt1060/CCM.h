@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 // CCM.h defines all the CCM registers.
-// This file is part of the Decept library.
+// This file is part of the imxrt1060-regs library.
 
 #pragma once
 
@@ -15,7 +15,9 @@ namespace qindesign {
 namespace hardware {
 namespace imxrt1060 {
 
-// CCM layout. Comments are from BSD-3-licensed NXP SDK.
+// Structure type to access the Clock Controller Module (CCM) registers.
+//
+// Comments are from BSD-3-licensed NXP SDK.
 //
 // See:
 // * https://github.com/nxp-mcuxpresso/mcux-devices-rt/blob/main/RT1060/periph/PERI_CCM.h
@@ -64,26 +66,26 @@ constexpr regs::RegGroup<CCM_Layout, kCCM_size, kCCM_base> group;
 }  // namespace CCM
 
 template <auto Member, size_t Bits, unsigned int Shift,
-          bool DirectAssign = false>
+          auto AssignMask = regs::shiftedMask<uint32_t, Bits, Shift>()>
 using CCM_Reg =
-    regs::Reg32<kCCM_base, CCM_Layout, Member, 0, Bits, Shift, DirectAssign>;
+    regs::Reg32<kCCM_base, CCM_Layout, Member, 0, Bits, Shift, AssignMask>;
 
 namespace CCM {
 
 // CCM Control Register
 namespace CCR {
-constexpr CCM_Reg<&CCM_Layout::CCR, 1, 27> RBC_EN;
+constexpr CCM_Reg<&CCM_Layout::CCR, 1, 27> RBC_EN;            // Enable for REG_BYPASS_COUNTER
     // 0b0..REG_BYPASS_COUNTER disabled
     // 0b1..REG_BYPASS_COUNTER enabled.
-constexpr CCM_Reg<&CCM_Layout::CCR, 6, 21> REG_BYPASS_COUNT;
+constexpr CCM_Reg<&CCM_Layout::CCR, 6, 21> REG_BYPASS_COUNT;  // Counter for analog_reg_bypass signal assertion after standby voltage request by PMIC_STBY_REQ
     // 'value' CKIL clock period delay:
     // 0b000000..no delay
     // 0b000001..1 CKIL clock period delay
     // 0b111111..63 CKIL clock periods delay
-constexpr CCM_Reg<&CCM_Layout::CCR, 1, 12> COSC_EN;
+constexpr CCM_Reg<&CCM_Layout::CCR, 1, 12> COSC_EN;           // On chip oscillator enable bit - this bit value is reflected on the output cosc_en
     // 0b0..disable on chip oscillator
     // 0b1..enable on chip oscillator
-constexpr CCM_Reg<&CCM_Layout::CCR, 8,  0> OSCNT;  // Oscillator ready counter value
+constexpr CCM_Reg<&CCM_Layout::CCR, 8,  0> OSCNT;             // Oscillator ready counter value
     // These bits define value of 32KHz counter, that serve as
     // counter for oscillator lock time (count to n+1 ckil's). This is used for oscillator lock time.
     // Current estimation is ~5ms. This counter will be used in ignition sequence and in wake from
@@ -93,22 +95,23 @@ constexpr CCM_Reg<&CCM_Layout::CCR, 8,  0> OSCNT;  // Oscillator ready counter v
 
 // CCM Status Register
 namespace CSR {
-constexpr CCM_Reg<&CCM_Layout::CSR, 1, 5> COSC_READY;
+constexpr CCM_Reg<&CCM_Layout::CSR, 1, 5> COSC_READY;   // Status indication of on board oscillator
     // 0b0..on board oscillator is not ready.
     // 0b1..on board oscillator is ready.
-constexpr CCM_Reg<&CCM_Layout::CSR, 1, 3> CAMP2_READY;
+constexpr CCM_Reg<&CCM_Layout::CSR, 1, 3> CAMP2_READY;  // Status indication of CAMP2.
     // 0b0..CAMP2 is not ready.
     // 0b1..CAMP2 is ready.
-constexpr CCM_Reg<&CCM_Layout::CSR, 1, 0> REF_EN_B;
+constexpr CCM_Reg<&CCM_Layout::CSR, 1, 0> REF_EN_B;     // Status of the value of CCM_REF_EN_B output of ccm
     // 0b0..value of CCM_REF_EN_B is '0'
     // 0b1..value of CCM_REF_EN_B is '1'
 }  // namespace CSR
 
 // CCM Clock Switcher Register
 namespace CCSR {
-constexpr CCM_Reg<&CCM_Layout::CCSR, 1, 0> PLL3_SW_CLK_SEL;
-// 0b0..pll3_main_clk
-// 0b1..pll3 bypass clock
+constexpr CCM_Reg<&CCM_Layout::CCSR, 1, 0> PLL3_SW_CLK_SEL;  // Selects source to generate pll3_sw_clk.
+    // This bit should only be used for testing purposes.
+    // 0b0..pll3_main_clk
+    // 0b1..pll3 bypass clock
 
 // CCM Clock Switcher Register values
 constexpr uint32_t kPLL3_SW_CLK_SEL_MAIN   = 0;
@@ -117,8 +120,8 @@ constexpr uint32_t kPLL3_SW_CLK_SEL_BYPASS = 1;
 
 // CCM Arm Clock Root Register
 namespace CACRR {
-constexpr CCM_Reg<&CCM_Layout::CACRR, 3, 0> ARM_PODF;
-    // Divide by 'value + 1:
+constexpr CCM_Reg<&CCM_Layout::CACRR, 3, 0> ARM_PODF;  // Divider for Arm clock root
+    // Divide by 'value' + 1:
     // 0b000..divide by 1
     // 0b001..divide by 2
     // 0b010..divide by 3
@@ -131,25 +134,49 @@ constexpr CCM_Reg<&CCM_Layout::CACRR, 3, 0> ARM_PODF;
 
 // CCM Bus Clock Divider Register
 namespace CBCDR {
-constexpr CCM_Reg<&CCM_Layout::CBCDR, 3, 27> PERIPH_CLK2_PODF;
-    // Divide by 'value + 1
-constexpr CCM_Reg<&CCM_Layout::CBCDR, 1, 25> PERIPH_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CBCDR, 3, 27> PERIPH_CLK2_PODF;  // Divider for periph_clk2_podf.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CBCDR, 1, 25> PERIPH_CLK_SEL;    // Selector for peripheral main clock
     // 0b0..derive clock from pre_periph_clk_sel
     // 0b1..derive clock from periph_clk2_clk_divided
-constexpr CCM_Reg<&CCM_Layout::CBCDR, 3, 16> SEMC_PODF;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CBCDR, 3, 10> AHB_PODF;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CBCDR, 2,  8> IPG_PODF;
+constexpr CCM_Reg<&CCM_Layout::CBCDR, 3, 16> SEMC_PODF;         // Post divider for SEMC clock
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CBCDR, 3, 10> AHB_PODF;          // Divider for AHB PODF
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CBCDR, 2,  8> IPG_PODF;          // Divider for ipg podf.
     // Divide by 'value' + 1:
     // 0b00..divide by 1
     // 0b01..divide by 2
     // 0b10..divide by 3
     // 0b11..divide by 4
-constexpr CCM_Reg<&CCM_Layout::CBCDR, 1,  7> SEMC_ALT_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CBCDR, 1,  7> SEMC_ALT_CLK_SEL;  // SEMC alternative clock select
     // 0b0..PLL2 PFD2 will be selected as alternative clock for SEMC root clock
     // 0b1..PLL3 PFD1 will be selected as alternative clock for SEMC root clock
-constexpr CCM_Reg<&CCM_Layout::CBCDR, 1,  6> SEMC_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CBCDR, 1,  6> SEMC_CLK_SEL;      // SEMC clock source select
     // 0b0..Periph_clk output will be used as SEMC clock root
     // 0b1..SEMC alternative clock will be used as SEMC clock root
 
@@ -164,33 +191,58 @@ constexpr uint32_t kCBCDR_PERIPH_CLK_SEL_PRE_PERIPH_CLK2_CLK_DIV = 1;
 
 // CCM Bus Clock Multiplexer Register
 namespace CBCMR {
-constexpr CCM_Reg<&CCM_Layout::CBCMR, 3, 29> FLEXSPI2_PODF;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CBCMR, 3, 26> LPSPI_PODF;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CBCMR, 3, 23> LCDIF_PODF;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CBCMR, 2, 18> PRE_PERIPH_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CBCMR, 3, 29> FLEXSPI2_PODF;       // Divider for flexspi2 clock root.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CBCMR, 3, 26> LPSPI_PODF;          // Divider for LPSPI.
+    // Divider should be updated when output clock is gated.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CBCMR, 3, 23> LCDIF_PODF;          // Post-divider for LCDIF clock.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CBCMR, 2, 18> PRE_PERIPH_CLK_SEL;  // Selector for pre_periph clock multiplexer
     // 0b00..derive clock from PLL2
     // 0b01..derive clock from PLL2 PFD2
     // 0b10..derive clock from PLL2 PFD0
     // 0b11..derive clock from divided PLL1
-constexpr CCM_Reg<&CCM_Layout::CBCMR, 2, 14> TRACE_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CBCMR, 2, 14> TRACE_CLK_SEL;       // Selector for Trace clock multiplexer
     // 0b00..derive clock from PLL2
     // 0b01..derive clock from PLL2 PFD2
     // 0b10..derive clock from PLL2 PFD0
     // 0b11..derive clock from PLL2 PFD1
-constexpr CCM_Reg<&CCM_Layout::CBCMR, 2, 12> PERIPH_CLK2_SEL;
+constexpr CCM_Reg<&CCM_Layout::CBCMR, 2, 12> PERIPH_CLK2_SEL;     // Selector for peripheral clk2 clock multiplexer
     // 0b00..derive clock from pll3_sw_clk
     // 0b01..derive clock from osc_clk (pll1_ref_clk)
     // 0b10..derive clock from pll2_bypass_clk
     // 0b11..reserved
-constexpr CCM_Reg<&CCM_Layout::CBCMR, 2,  8> FLEXSPI2_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CBCMR, 2,  8> FLEXSPI2_CLK_SEL;    // Selector for flexspi2 clock multiplexer
     // 0b00..derive clock from PLL2 PFD2
     // 0b01..derive clock from PLL3 PFD0
     // 0b10..derive clock from PLL3 PFD1
     // 0b11..derive clock from PLL2 (pll2_main_clk)
-constexpr CCM_Reg<&CCM_Layout::CBCMR, 2,  4> LPSPI_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CBCMR, 2,  4> LPSPI_CLK_SEL;       // Selector for lpspi clock multiplexer
     // 0b00..derive clock from PLL3 PFD1 clk
     // 0b01..derive clock from PLL3 PFD0
     // 0b10..derive clock from PLL2
@@ -199,66 +251,97 @@ constexpr CCM_Reg<&CCM_Layout::CBCMR, 2,  4> LPSPI_CLK_SEL;
 
 // CCM Serial Clock Multiplexer Register 1
 namespace CSCMR1 {
-constexpr CCM_Reg<&CCM_Layout::CSCMR1, 2, 29> FLEXSPI_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCMR1, 2, 29> FLEXSPI_CLK_SEL;  // Selector for flexspi clock multiplexer
     // 0b00..derive clock from semc_clk_root_pre
     // 0b01..derive clock from pll3_sw_clk
     // 0b10..derive clock from PLL2 PFD2
     // 0b11..derive clock from PLL3 PFD0
-constexpr CCM_Reg<&CCM_Layout::CSCMR1, 3, 23> FLEXSPI_PODF;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CSCMR1, 1, 17> USDHC2_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCMR1, 3, 23> FLEXSPI_PODF;     // Divider for flexspi clock root.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CSCMR1, 1, 17> USDHC2_CLK_SEL;   // Selector for usdhc2 clock multiplexer
     // 0b0..derive clock from PLL2 PFD2
     // 0b1..derive clock from PLL2 PFD0
-constexpr CCM_Reg<&CCM_Layout::CSCMR1, 1, 16> USDHC1_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCMR1, 1, 16> USDHC1_CLK_SEL;   // Selector for usdhc1 clock multiplexer
     // 0b0..derive clock from PLL2 PFD2
     // 0b1..derive clock from PLL2 PFD0
-constexpr CCM_Reg<&CCM_Layout::CSCMR1, 2, 14> SAI3_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCMR1, 2, 14> SAI3_CLK_SEL;     // Selector for sai3/adc1/adc2 clock multiplexer
     // 0b00..derive clock from PLL3 PFD2
     // 0b01..derive clock from PLL5
     // 0b10..derive clock from PLL4
     // 0b11..Reserved
-constexpr CCM_Reg<&CCM_Layout::CSCMR1, 2, 12> SAI2_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCMR1, 2, 12> SAI2_CLK_SEL;     // Selector for sai2 clock multiplexer
     // 0b00..derive clock from PLL3 PFD2
     // 0b01..derive clock from PLL5
     // 0b10..derive clock from PLL4
     // 0b11..Reserved
-constexpr CCM_Reg<&CCM_Layout::CSCMR1, 2, 10> SAI1_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCMR1, 2, 10> SAI1_CLK_SEL;     // Selector for sai1 clock multiplexer
     // 0b00..derive clock from PLL3 PFD2
     // 0b01..derive clock from PLL5
     // 0b10..derive clock from PLL4
     // 0b11..Reserved
-constexpr CCM_Reg<&CCM_Layout::CSCMR1, 1,  6> PERCLK_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCMR1, 1,  6> PERCLK_CLK_SEL;   // Selector for the perclk clock multiplexor
     // 0b0..derive clock from ipg clk root
     // 0b1..derive clock from osc_clk
-constexpr CCM_Reg<&CCM_Layout::CSCMR1, 6,  0> PERCLK_PODF;  // Divider for perclk podf.
+constexpr CCM_Reg<&CCM_Layout::CSCMR1, 6,  0> PERCLK_PODF;      // Divider for perclk podf.
     // Divide by 'value' + 1
 }  // namespace CSCMR1
 
 // CCM Serial Clock Multiplexer Register 2
 namespace CSCMR2 {
-constexpr CCM_Reg<&CCM_Layout::CSCMR2, 2, 19> FLEXIO2_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCMR2, 2, 19> FLEXIO2_CLK_SEL;  // Selector for flexio2/flexio3 clock multiplexer
     // 0b00..derive clock from PLL4 divided clock
     // 0b01..derive clock from PLL3 PFD2 clock
     // 0b10..derive clock from PLL5 clock
     // 0b11..derive clock from pll3_sw_clk
-constexpr CCM_Reg<&CCM_Layout::CSCMR2, 2,  8> CAN_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCMR2, 2,  8> CAN_CLK_SEL;      // Selector for CAN/CANFD clock multiplexer
     // 0b00..derive clock from pll3_sw_clk divided clock (60M)
     // 0b01..derive clock from osc_clk (24M)
     // 0b10..derive clock from pll3_sw_clk divided clock (80M)
     // 0b11..Disable FlexCAN clock
-constexpr CCM_Reg<&CCM_Layout::CSCMR2, 6,  2> CAN_CLK_PODF;  // Divider for CAN/CANFD clock podf.
+constexpr CCM_Reg<&CCM_Layout::CSCMR2, 6,  2> CAN_CLK_PODF;     // Divider for CAN/CANFD clock podf.
     // Divide by 'value' + 1
 }  // namespace CSCMR2
 
 // CCM Serial Clock Divider Register 1
 namespace CSCDR1 {
-constexpr CCM_Reg<&CCM_Layout::CSCDR1, 2, 25> TRACE_PODF;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CSCDR1, 3, 16> USDHC2_PODF;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CSCDR1, 3, 11> USDHC1_PODF;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CSCDR1, 1,  6> UART_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCDR1, 2, 25> TRACE_PODF;     // Divider for trace clock.
+    // Divider should be updated when output clock is gated.
+    // Divide by 'value' + 1:
+    // 0b00..divide by 1
+    // 0b01..divide by 2
+    // 0b10..divide by 3
+    // 0b11..divide by 4
+constexpr CCM_Reg<&CCM_Layout::CSCDR1, 3, 16> USDHC2_PODF;    // Divider for usdhc2 clock.
+    // Divider should be updated when output clock is gated.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CSCDR1, 3, 11> USDHC1_PODF;    // Divider for usdhc1 clock podf.
+    // Divider should be updated when output clock is gated.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CSCDR1, 1,  6> UART_CLK_SEL;   // Selector for the UART clock multiplexor
     // 0b0..derive clock from pll3_80m
     // 0b1..derive clock from osc_clk
 constexpr CCM_Reg<&CCM_Layout::CSCDR1, 6,  0> UART_CLK_PODF;  // Divider for uart clock podf.
@@ -269,17 +352,49 @@ constexpr CCM_Reg<&CCM_Layout::CSCDR1, 6,  0> UART_CLK_PODF;  // Divider for uar
 namespace CS1CDR {
 constexpr CCM_Reg<&CCM_Layout::CS1CDR, 3, 25> FLEXIO2_CLK_PODF;  //  Divider for flexio2/flexio3 clock.
     // Divider should be updated when output clock is gated.
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CS1CDR, 3, 22> SAI3_CLK_PRED;
-    // Divide by 'value' + 1
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CS1CDR, 3, 22> SAI3_CLK_PRED;     // Divider for sai3/adc1/adc2 clock pred.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
 constexpr CCM_Reg<&CCM_Layout::CS1CDR, 6, 16> SAI3_CLK_PODF;     // Divider for sai3 clock podf.
     // The input clock to this divider should be lower
     //   than 300Mhz, the predivider can be used to achieve this.
     // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CS1CDR, 3,  9> FLEXIO2_CLK_PRED;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CS1CDR, 3,  6> SAI1_CLK_PRED;
-    // Divide by 'value' + 1
+constexpr CCM_Reg<&CCM_Layout::CS1CDR, 3,  9> FLEXIO2_CLK_PRED;  // Divider for flexio2/flexio3 clock.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CS1CDR, 3,  6> SAI1_CLK_PRED;     // Divider for sai1 clock pred.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
 constexpr CCM_Reg<&CCM_Layout::CS1CDR, 6,  0> SAI1_CLK_PODF;     // Divider for sai1 clock podf.
     // The input clock to this divider should be lower
     //   than 300Mhz, the predivider can be used to achieve this.
@@ -288,8 +403,17 @@ constexpr CCM_Reg<&CCM_Layout::CS1CDR, 6,  0> SAI1_CLK_PODF;     // Divider for 
 
 // CCM Clock Divider Register
 namespace CS2CDR {
-constexpr CCM_Reg<&CCM_Layout::CS2CDR, 3, 6> SAI2_CLK_PRED;
-    // Divide by 'value' + 1
+constexpr CCM_Reg<&CCM_Layout::CS2CDR, 3, 6> SAI2_CLK_PRED;  // Divider for sai2 clock pred.
+    // Divider should be updated when output clock is gated.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
 constexpr CCM_Reg<&CCM_Layout::CS2CDR, 6, 0> SAI2_CLK_PODF;  // Divider for sai2 clock podf.
     // The input clock to this divider should be lower
     //   than 300Mhz, the predivider can be used to achieve this.
@@ -298,24 +422,56 @@ constexpr CCM_Reg<&CCM_Layout::CS2CDR, 6, 0> SAI2_CLK_PODF;  // Divider for sai2
 
 // CCM D1 Clock Divider Register
 namespace CDCDR {
-constexpr CCM_Reg<&CCM_Layout::CDCDR, 3, 25> SPDIF0_CLK_PRED;  // Divider for spdif0 clock pred.
+constexpr CCM_Reg<&CCM_Layout::CDCDR, 3, 25> SPDIF0_CLK_PRED;   // Divider for spdif0 clock pred.
     // Divider should be updated when output clock is gated.
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CDCDR, 3, 22> SPDIF0_CLK_PODF;  // Divider for spdif0 clock podf.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CDCDR, 3, 22> SPDIF0_CLK_PODF;   // Divider for spdif0 clock podf.
     // Divider should be updated when output clock is gated.
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CDCDR, 2, 20> SPDIF0_CLK_SEL;
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CDCDR, 2, 20> SPDIF0_CLK_SEL;    // Selector for spdif0 clock multiplexer
     // 0b00..derive clock from PLL4
     // 0b01..derive clock from PLL3 PFD2
     // 0b10..derive clock from PLL5
     // 0b11..derive clock from pll3_sw_clk
 constexpr CCM_Reg<&CCM_Layout::CDCDR, 3, 12> FLEXIO1_CLK_PRED;  // Divider for flexio1 clock pred.
     // Divider should be updated when output clock is gated.
-    // Divide by 'value' + 1
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
 constexpr CCM_Reg<&CCM_Layout::CDCDR, 3,  9> FLEXIO1_CLK_PODF;  // Divider for flexio1 clock podf.
     // Divider should be updated when output clock is gated.
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CDCDR, 2,  7> FLEXIO1_CLK_SEL;
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CDCDR, 2,  7> FLEXIO1_CLK_SEL;   // Selector for flexio1 clock multiplexer
     // 0b00..derive clock from PLL4
     // 0b01..derive clock from PLL3 PFD2
     // 0b10..derive clock from PLL5
@@ -324,15 +480,15 @@ constexpr CCM_Reg<&CCM_Layout::CDCDR, 2,  7> FLEXIO1_CLK_SEL;
 
 // CCM Serial Clock Divider Register 2
 namespace CSCDR2 {
-constexpr CCM_Reg<&CCM_Layout::CSCDR2, 6, 19> LPI2C_CLK_PODF;  // Divider for lpi2c clock podf.
+constexpr CCM_Reg<&CCM_Layout::CSCDR2, 6, 19> LPI2C_CLK_PODF;     // Divider for lpi2c clock podf.
     // Divider should be updated when output clock is
     //   gated. The input clock to this divider should be lower than 300Mhz, the predivider can be used
     //   to achieve this.
     // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CSCDR2, 1, 18> LPI2C_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCDR2, 1, 18> LPI2C_CLK_SEL;      // Selector for the LPI2C clock multiplexor
     // 0b0..derive clock from pll3_60m
     // 0b1..derive clock from osc_clk
-constexpr CCM_Reg<&CCM_Layout::CSCDR2, 3, 15> LCDIF_PRE_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCDR2, 3, 15> LCDIF_PRE_CLK_SEL;  // Selector for lcdif root clock pre-multiplexer
     // 0b000..derive clock from PLL2
     // 0b001..derive clock from PLL3 PFD3
     // 0b010..derive clock from PLL5
@@ -340,15 +496,33 @@ constexpr CCM_Reg<&CCM_Layout::CSCDR2, 3, 15> LCDIF_PRE_CLK_SEL;
     // 0b100..derive clock from PLL2 PFD1
     // 0b101..derive clock from PLL3 PFD1
     // 0b110-0b111..Reserved
-constexpr CCM_Reg<&CCM_Layout::CSCDR2, 3, 12> LCDIF_PRED;
-    // Divide by 'value' + 1
+constexpr CCM_Reg<&CCM_Layout::CSCDR2, 3, 12> LCDIF_PRED;         // Pre-divider for lcdif clock.
+    // Divider should be updated when output clock is gated.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
 }  // namespace CSCDR2
 
 // CCM Serial Clock Divider Register 3
 namespace CSCDR3 {
-constexpr CCM_Reg<&CCM_Layout::CSCDR3, 3, 11> CSI_PODF;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CSCDR3, 2,  9> CSI_CLK_SEL;
+constexpr CCM_Reg<&CCM_Layout::CSCDR3, 3, 11> CSI_PODF;     // Post divider for csi_mclk.
+    // Divider should be updated when output clock is gated.
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CSCDR3, 2,  9> CSI_CLK_SEL;  // Selector for csi_mclk multiplexer
     // 0b00..derive clock from osc_clk (24M)
     // 0b01..derive clock from PLL2 PFD2
     // 0b10..derive clock from pll3_120M
@@ -357,23 +531,23 @@ constexpr CCM_Reg<&CCM_Layout::CSCDR3, 2,  9> CSI_CLK_SEL;
 
 // CCM Divider Handshake In-Process Register
 namespace CDHIPR {
-constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1, 16> ARM_PODF_BUSY;
+constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1, 16> ARM_PODF_BUSY;         // Busy indicator for arm_podf.
     // 0b0..divider is not busy and its value represents the actual division.
     // 0b1..divider is busy with handshake process with module. The value read in the divider represents the previous
     //      value of the division factor, and after the handshake the written value of the arm_podf will be applied.
-constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1,  5> PERIPH_CLK_SEL_BUSY;
+constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1,  5> PERIPH_CLK_SEL_BUSY;   // Busy indicator for periph_clk_sel mux control.
     // 0b0..mux is not busy and its value represents the actual division.
     // 0b1..mux is busy with handshake process with module. The value read in the periph_clk_sel represents the
     //      previous value of select, and after the handshake periph_clk_sel value will be applied.
-constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1,  3> PERIPH2_CLK_SEL_BUSY;
+constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1,  3> PERIPH2_CLK_SEL_BUSY;  // Busy indicator for periph2_clk_sel mux control.
     // 0b0..mux is not busy and its value represents the actual division.
     // 0b1..mux is busy with handshake process with module. The value read in the periph2_clk_sel represents the
     //      previous value of select, and after the handshake periph2_clk_sel value will be applied.
-constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1,  1> AHB_PODF_BUSY;
+constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1,  1> AHB_PODF_BUSY;         // Busy indicator for ahb_podf.
     // 0b0..divider is not busy and its value represents the actual division.
     // 0b1..divider is busy with handshake process with module. The value read in the divider represents the previous
     //      value of the division factor, and after the handshake the written value of the ahb_podf will be applied.
-constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1,  0> SEMC_PODF_BUSY;
+constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1,  0> SEMC_PODF_BUSY;        // Busy indicator for semc_podf.
     // 0b0..divider is not busy and its value represents the actual division.
     // 0b1..divider is busy with handshake process with module. The value read in the divider represents the previous
     //      value of the division factor, and after the handshake the written value of the semc_podf will be applied.
@@ -381,42 +555,46 @@ constexpr CCM_Reg<&CCM_Layout::CDHIPR, 1,  0> SEMC_PODF_BUSY;
 
 // CCM Low Power Control Register
 namespace CLPCR {
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 27> MASK_L2CC_IDLE;
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 27> MASK_L2CC_IDLE;      // Mask L2CC IDLE for entering low power mode
     // 0b0..L2CC IDLE is not masked
     // 0b1..L2CC IDLE is masked
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 26> MASK_SCU_IDLE;
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 26> MASK_SCU_IDLE;       // Mask SCU IDLE for entering low power mode
+    // Assertion of all bits[27:22] will generate low power mode request
     // 0b0..SCU IDLE is not masked
     // 0b1..SCU IDLE is masked
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 22> MASK_CORE0_WFI;
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 22> MASK_CORE0_WFI;      // Mask WFI of core0 for entering low power mode
+    // Assertion of all bits[27:22] will generate low power mode request
     // 0b0..WFI of core0 is not masked
     // 0b1..WFI of core0 is masked
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 21> BYPASS_LPM_HS0;
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 19> BYPASS_LPM_HS1;
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 11> COSC_PWRDOWN;
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 21> BYPASS_LPM_HS0;      // Bypass low power mode handshake.
+    // This bit should always be set to 1'b1 by software.
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 19> BYPASS_LPM_HS1;      // Bypass low power mode handshake.
+    // This bit should always be set to 1'b1 by software.
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 1, 11> COSC_PWRDOWN;        // In run mode, software can manually control powering down of on chip oscillator, i
     // 0b0..On chip oscillator will not be powered down, i.e. cosc_pwrdown = '0'.
     // 0b1..On chip oscillator will be powered down, i.e. cosc_pwrdown = '1'.
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 2,  9> STBY_COUNT;
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 2,  9> STBY_COUNT;          // Standby counter definition
     // 0b00..CCM will wait (1*pmic_delay_scaler)+1 ckil clock cycles
     // 0b01..CCM will wait (3*pmic_delay_scaler)+1 ckil clock cycles
     // 0b10..CCM will wait (7*pmic_delay_scaler)+1 ckil clock cycles
     // 0b11..CCM will wait (15*pmic_delay_scaler)+1 ckil clock cycles
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 1,  8> VSTBY;
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 1,  8> VSTBY;               // Voltage standby request bit
     // 0b0..Voltage will not be changed to standby voltage after next entrance to STOP mode. ( PMIC_STBY_REQ will remain negated - '0')
     // 0b1..Voltage will be requested to change to standby voltage after next entrance to stop mode. ( PMIC_STBY_REQ will be asserted - '1').
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 1,  7> DIS_REF_OSC;
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 1,  7> DIS_REF_OSC;         // dis_ref_osc - in run mode, software can manually control closing of external reference oscillator clock, i
     // 0b0..external high frequency oscillator will be enabled, i.e. CCM_REF_EN_B = '0'.
     // 0b1..external high frequency oscillator will be disabled, i.e. CCM_REF_EN_B = '1'
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 1,  6> SBYOS;
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 1,  6> SBYOS;               // Standby clock oscillator bit
     // 0b0..On-chip oscillator will not be powered down, after next entrance to STOP mode. (CCM_REF_EN_B will remain
     //      asserted - '0' and cosc_pwrdown will remain de asserted - '0')
     // 0b1..On-chip oscillator will be powered down, after next entrance to STOP mode. (CCM_REF_EN_B will be
     //      deasserted - '1' and cosc_pwrdown will be asserted - '1'). When returning from STOP mode, external oscillator will
     //      be enabled again, on-chip oscillator will return to oscillator mode, and after oscnt count, CCM will
     //      continue with the exit from the STOP mode process.
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 1,  5> ARM_CLK_DIS_ON_LPM;
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 1,  5> ARM_CLK_DIS_ON_LPM;  // Define if Arm clocks (arm_clk, soc_mxclk, soc_pclk, soc_dbg_pclk, vl_wrck) will be disabled on wait mode
     // 0b0..Arm clock enabled on wait mode.
     // 0b1..Arm clock disabled on wait mode. .
-constexpr CCM_Reg<&CCM_Layout::CLPCR, 2,  0> LPM;
+constexpr CCM_Reg<&CCM_Layout::CLPCR, 2,  0> LPM;                 // Setting the low power mode that system will enter on next assertion of dsm_request signal.
     // 0b00..Remain in run mode
     // 0b01..Transfer to wait mode
     // 0b10..Transfer to stop mode
@@ -425,62 +603,70 @@ constexpr CCM_Reg<&CCM_Layout::CLPCR, 2,  0> LPM;
 
 // CCM Interrupt Status Register
 namespace CISR {
-constexpr CCM_Reg<&CCM_Layout::CISR, 1, 26, true> ARM_PODF_LOADED;
+constexpr CCM_Reg<&CCM_Layout::CISR, 1, 26, 0x0> ARM_PODF_LOADED;         // CCM interrupt request 1 generated due to frequency change of arm_podf
     // 0b0..interrupt is not generated due to frequency change of arm_podf
     // 0b1..interrupt generated due to frequency change of arm_podf
-constexpr CCM_Reg<&CCM_Layout::CISR, 1, 22, true> PERIPH_CLK_SEL_LOADED;
+constexpr CCM_Reg<&CCM_Layout::CISR, 1, 22, 0x0> PERIPH_CLK_SEL_LOADED;   // CCM interrupt request 1 generated due to update of periph_clk_sel.
     // 0b0..interrupt is not generated due to update of periph_clk_sel.
     // 0b1..interrupt generated due to update of periph_clk_sel.
-constexpr CCM_Reg<&CCM_Layout::CISR, 1, 20, true> AHB_PODF_LOADED;
+constexpr CCM_Reg<&CCM_Layout::CISR, 1, 20, 0x0> AHB_PODF_LOADED;         // CCM interrupt request 1 generated due to frequency change of ahb_podf
     // 0b0..interrupt is not generated due to frequency change of ahb_podf
     // 0b1..interrupt generated due to frequency change of ahb_podf
-constexpr CCM_Reg<&CCM_Layout::CISR, 1, 19, true> PERIPH2_CLK_SEL_LOADED;
+constexpr CCM_Reg<&CCM_Layout::CISR, 1, 19, 0x0> PERIPH2_CLK_SEL_LOADED;  // CCM interrupt request 1 generated due to frequency change of periph2_clk_sel
     // 0b0..interrupt is not generated due to frequency change of periph2_clk_sel
     // 0b1..interrupt generated due to frequency change of periph2_clk_sel
-constexpr CCM_Reg<&CCM_Layout::CISR, 1, 17, true> SEMC_PODF_LOADED;
+constexpr CCM_Reg<&CCM_Layout::CISR, 1, 17, 0x0> SEMC_PODF_LOADED;        // CCM interrupt request 1 generated due to frequency change of semc_podf
     // 0b0..interrupt is not generated due to frequency change of semc_podf
     // 0b1..interrupt generated due to frequency change of semc_podf
-constexpr CCM_Reg<&CCM_Layout::CISR, 1,  6, true> COSC_READY;
+constexpr CCM_Reg<&CCM_Layout::CISR, 1,  6, 0x0> COSC_READY;              // CCM interrupt request 2 generated due to on board oscillator ready, i
     // 0b0..interrupt is not generated due to on board oscillator ready
     // 0b1..interrupt generated due to on board oscillator ready
-constexpr CCM_Reg<&CCM_Layout::CISR, 1,  0, true> LRF_PLL;
+constexpr CCM_Reg<&CCM_Layout::CISR, 1,  0, 0x0> LRF_PLL;                 // CCM interrupt request 2 generated due to lock of all enabled and not bypaseed PLLs
     // 0b0..interrupt is not generated due to lock ready of all enabled and not bypaseed PLLs
     // 0b1..interrupt generated due to lock ready of all enabled and not bypaseed PLLs
 }  // namespace CISR
 
 // CCM Interrupt Mask Register
 namespace CIMR {
-constexpr CCM_Reg<&CCM_Layout::CIMR, 1, 26> ARM_PODF_LOADED;
+constexpr CCM_Reg<&CCM_Layout::CIMR, 1, 26> ARM_PODF_LOADED;              // mask interrupt generation due to frequency change of arm_podf
     // 0b0..don't mask interrupt due to frequency change of arm_podf - interrupt will be created
     // 0b1..mask interrupt due to frequency change of arm_podf
-constexpr CCM_Reg<&CCM_Layout::CIMR, 1, 22> MASK_PERIPH_CLOCK_SEL_LOADED;
+constexpr CCM_Reg<&CCM_Layout::CIMR, 1, 22> MASK_PERIPH_CLK_SEL_LOADED;   // mask interrupt generation due to update of periph_clk_sel.
     // 0b0..don't mask interrupt due to update of periph_clk_sel - interrupt will be created
     // 0b1..mask interrupt due to update of periph_clk_sel
-constexpr CCM_Reg<&CCM_Layout::CIMR, 1, 20> MASK_AHB_PODF_LOADED;
+constexpr CCM_Reg<&CCM_Layout::CIMR, 1, 20> MASK_AHB_PODF_LOADED;         // mask interrupt generation due to frequency change of ahb_podf
     // 0b0..don't mask interrupt due to frequency change of ahb_podf - interrupt will be created
     // 0b1..mask interrupt due to frequency change of ahb_podf
-constexpr CCM_Reg<&CCM_Layout::CIMR, 1, 19> MASK_PERIPH2_CLK_SEL_LOADED;
+constexpr CCM_Reg<&CCM_Layout::CIMR, 1, 19> MASK_PERIPH2_CLK_SEL_LOADED;  // mask interrupt generation due to update of periph2_clk_sel.
     // 0b0..don't mask interrupt due to update of periph2_clk_sel - interrupt will be created
     // 0b1..mask interrupt due to update of periph2_clk_sel
-constexpr CCM_Reg<&CCM_Layout::CIMR, 1, 17> MASK_SEMC_PODF_LOADED;
+constexpr CCM_Reg<&CCM_Layout::CIMR, 1, 17> MASK_SEMC_PODF_LOADED;        // mask interrupt generation due to frequency change of semc_podf
     // 0b0..don't mask interrupt due to frequency change of semc_podf - interrupt will be created
     // 0b1..mask interrupt due to frequency change of semc_podf
-constexpr CCM_Reg<&CCM_Layout::CIMR, 1,  6> MASK_COSC_READY;
+constexpr CCM_Reg<&CCM_Layout::CIMR, 1,  6> MASK_COSC_READY;              // mask interrupt generation due to on board oscillator ready
     // 0b0..don't mask interrupt due to on board oscillator ready - interrupt will be created
     // 0b1..mask interrupt due to on board oscillator ready
-constexpr CCM_Reg<&CCM_Layout::CIMR, 1,  0> MASK_LRF_PLL;
+constexpr CCM_Reg<&CCM_Layout::CIMR, 1,  0> MASK_LRF_PLL;                 // mask interrupt generation due to lrf of PLLs
     // 0b0..don't mask interrupt due to lrf of PLLs - interrupt will be created
     // 0b1..mask interrupt due to lrf of PLLs
 }  // namespace CIMR
 
 // CCM Clock Output Source Register
 namespace CCOSR {
-constexpr CCM_Reg<&CCM_Layout::CCOSR, 1, 24> CLKO2_EN;
+constexpr CCM_Reg<&CCM_Layout::CCOSR, 1, 24> CLKO2_EN;     // Enable of CCM_CLKO2 clock
     // 0b0..CCM_CLKO2 disabled.
     // 0b1..CCM_CLKO2 enabled.
-constexpr CCM_Reg<&CCM_Layout::CCOSR, 3, 21> CLKO2_DIV;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CCOSR, 5, 16> CLKO2_SEL;
+constexpr CCM_Reg<&CCM_Layout::CCOSR, 3, 21> CLKO2_DIV;    // Setting the divider of CCM_CLKO2
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CCOSR, 5, 16> CLKO2_SEL;    // Selection of the clock to be generated on CCM_CLKO2
     // 0b00011..usdhc1_clk_root
     // 0b00110..lpi2c_clk_root
     // 0b01011..csi_clk_root
@@ -494,15 +680,23 @@ constexpr CCM_Reg<&CCM_Layout::CCOSR, 5, 16> CLKO2_SEL;
     // 0b11100..uart_clk_root
     // 0b11101..spdif0_clk_root
     // 0b11111..Reserved
-constexpr CCM_Reg<&CCM_Layout::CCOSR, 1,  8> CLK_OUT_SEL;
+constexpr CCM_Reg<&CCM_Layout::CCOSR, 1,  8> CLK_OUT_SEL;  // CCM_CLKO1 output to reflect CCM_CLKO1 or CCM_CLKO2 clocks
     // 0b0..CCM_CLKO1 output drives CCM_CLKO1 clock
     // 0b1..CCM_CLKO1 output drives CCM_CLKO2 clock
-constexpr CCM_Reg<&CCM_Layout::CCOSR, 1,  7> CLKO1_EN;
+constexpr CCM_Reg<&CCM_Layout::CCOSR, 1,  7> CLKO1_EN;     // Enable of CCM_CLKO1 clock
     // 0b0..CCM_CLKO1 disabled.
     // 0b1..CCM_CLKO1 enabled.
-constexpr CCM_Reg<&CCM_Layout::CCOSR, 3,  4> CLKO1_DIV;
-    // Divide by 'value' + 1
-constexpr CCM_Reg<&CCM_Layout::CCOSR, 4,  0> CLKO1_SEL;
+constexpr CCM_Reg<&CCM_Layout::CCOSR, 3,  4> CLKO1_DIV;    // Setting the divider of CCM_CLKO1
+    // Divide by 'value' + 1:
+    // 0b000..divide by 1
+    // 0b001..divide by 2
+    // 0b010..divide by 3
+    // 0b011..divide by 4
+    // 0b100..divide by 5
+    // 0b101..divide by 6
+    // 0b110..divide by 7
+    // 0b111..divide by 8
+constexpr CCM_Reg<&CCM_Layout::CCOSR, 4,  0> CLKO1_SEL;    // Selection of the clock to be generated on CCM_CLKO1
     // 0b0000..USB1 PLL clock (divided by 2)
     // 0b0001..SYS PLL clock (divided by 2)
     // 0b0011..VIDEO PLL clock (divided by 2)
@@ -518,21 +712,22 @@ constexpr CCM_Reg<&CCM_Layout::CCOSR, 4,  0> CLKO1_SEL;
 
 // CCM General Purpose Register
 namespace CGPR {
-constexpr CCM_Reg<&CCM_Layout::CGPR, 1, 17> INT_MEM_CLK_LPM;
+constexpr CCM_Reg<&CCM_Layout::CGPR, 1, 17> INT_MEM_CLK_LPM;         // Control for the Deep Sleep signal to the Arm Platform memories with additional control logic based on the Arm WFI signal
     // 0b0..Disable the clock to the Arm platform memories when entering Low Power Mode
     // 0b1..Keep the clocks to the Arm platform memories enabled only if an interrupt is pending when entering Low
     //      Power Modes (WAIT and STOP without power gating)
-constexpr CCM_Reg<&CCM_Layout::CGPR, 1, 16> FPL;  // Fast PLL enable.
+constexpr CCM_Reg<&CCM_Layout::CGPR, 1, 16> FPL;                     // Fast PLL enable.
     // 0b0..Engage PLL enable default way.
     // 0b1..Engage PLL enable 3 CKIL clocks earlier at exiting low power mode (STOP). Should be used only if 24MHz OSC was active in low power mode.
-constexpr CCM_Reg<&CCM_Layout::CGPR, 2, 14> SYS_MEM_DS_CTRL;
+constexpr CCM_Reg<&CCM_Layout::CGPR, 2, 14> SYS_MEM_DS_CTRL;         // System memory DS control
     // 0b00..Disable memory DS mode always
     // 0b01..Enable memory (outside Arm platform) DS mode when system STOP and PLL are disabled
     // 0b1x..enable memory (outside Arm platform) DS mode when system is in STOP mode
-constexpr CCM_Reg<&CCM_Layout::CGPR, 1,  4> EFUSE_PROG_SUPPLY_GATE;
+constexpr CCM_Reg<&CCM_Layout::CGPR, 1,  4> EFUSE_PROG_SUPPLY_GATE;  // Defines the value of the output signal cgpr_dout[4].
+    // Gate of program supply for efuse programing
     // 0b0..fuse programing supply voltage is gated off to the efuse module
     // 0b1..allow fuse programing.
-constexpr CCM_Reg<&CCM_Layout::CGPR, 1,  0> PMIC_DELAY_SCALER;
+constexpr CCM_Reg<&CCM_Layout::CGPR, 1,  0> PMIC_DELAY_SCALER;       // Defines clock dividion of clock for stby_count (pmic delay counter)
     // 0b0..clock is not divided
     // 0b1..clock is divided /8
 }  // namespace CGPR
@@ -690,25 +885,25 @@ constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  0> ENET2;        // CG0
 
 // CCM Module Enable Overide Register
 namespace CMEOR {
-constexpr CCM_Reg<&CCM_Layout::CMEOR, 1, 30> MOD_EN_OV_CAN1_CPI;
+constexpr CCM_Reg<&CCM_Layout::CMEOR, 1, 30> MOD_EN_OV_CAN1_CPI;   // Overide clock enable signal from CAN1 - clock will not be gated based on CAN's signal 'enable_clk_cpi'
     // 0b0..don't override module enable signal
     // 0b1..override module enable signal
-constexpr CCM_Reg<&CCM_Layout::CMEOR, 1, 28> MOD_EN_OV_CAN2_CPI;
+constexpr CCM_Reg<&CCM_Layout::CMEOR, 1, 28> MOD_EN_OV_CAN2_CPI;   // Overide clock enable signal from CAN2 - clock will not be gated based on CAN's signal 'enable_clk_cpi'
     // 0b0..don't override module enable signal
     // 0b1..override module enable signal
-constexpr CCM_Reg<&CCM_Layout::CMEOR, 1, 10> MOD_EN_OV_CANFD_CPI;
+constexpr CCM_Reg<&CCM_Layout::CMEOR, 1, 10> MOD_EN_OV_CANFD_CPI;  // Overide clock enable signal from FlexCAN3(CANFD) - clock will not be gated based on CAN's signal 'enable_clk_cpi'
     // 0b0..don't override module enable signal
     // 0b1..override module enable signal
-constexpr CCM_Reg<&CCM_Layout::CMEOR, 1,  9> MOD_EN_OV_TRNG;
+constexpr CCM_Reg<&CCM_Layout::CMEOR, 1,  9> MOD_EN_OV_TRNG;       // Overide clock enable signal from TRNG
     // 0b0..don't override module enable signal
     // 0b1..override module enable signal
-constexpr CCM_Reg<&CCM_Layout::CMEOR, 1,  7> MOD_EN_USDHC;
+constexpr CCM_Reg<&CCM_Layout::CMEOR, 1,  7> MOD_EN_USDHC;         // overide clock enable signal from USDHC.
     // 0b0..don't override module enable signal
     // 0b1..override module enable signal
-constexpr CCM_Reg<&CCM_Layout::CMEOR, 1,  6> MOD_EN_OV_PIT;
+constexpr CCM_Reg<&CCM_Layout::CMEOR, 1,  6> MOD_EN_OV_PIT;        // Overide clock enable signal from PIT - clock will not be gated based on PIT's signal 'ipg_enable_clk'
     // 0b0..don't override module enable signal
     // 0b1..override module enable signal
-constexpr CCM_Reg<&CCM_Layout::CMEOR, 1,  5> MOD_EN_OV_GPT;
+constexpr CCM_Reg<&CCM_Layout::CMEOR, 1,  5> MOD_EN_OV_GPT;        // Overide clock enable signal from GPT - clock will not be gated based on GPT's signal 'ipg_enable_clk'
     // 0b0..don't override module enable signal
     // 0b1..override module enable signal
 }  // namespace CMEOR

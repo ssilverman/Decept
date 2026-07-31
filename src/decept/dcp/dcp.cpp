@@ -59,12 +59,12 @@ FLASHMEM void init() {
   // CTRL:
   // Reset value:   0xF0800000
   // Default value: 0x30800000
-  DCP::group->CTRL = DCP::CTRL::SFTRESET(1)       |
+  DCP::group->CTRL = DCP::CTRL::SFTRST(1)         |
                      DCP::CTRL::CLKGATE(1)        |
                      DCP::CTRL::PRESENT_CRYPTO(1) |
                      DCP::CTRL::PRESENT_SHA(1)    |
                      DCP::CTRL::GATHER_RESIDUAL_WRITES(1);  // Reset value
-  DCP::group->CTRL_CLR = DCP::CTRL::SFTRESET(1) |
+  DCP::group->CTRL_CLR = DCP::CTRL::SFTRST(1) |
                          DCP::CTRL::CLKGATE(1);  // Default value
 
   // Clear status
@@ -105,7 +105,7 @@ FLASHMEM void deinit() {
   }
 
   // CTRL reset value: 0xF0800000
-  DCP::group->CTRL = DCP::CTRL::SFTRESET(1)       |
+  DCP::group->CTRL = DCP::CTRL::SFTRST(1)         |
                      DCP::CTRL::CLKGATE(1)        |
                      DCP::CTRL::PRESENT_CRYPTO(1) |
                      DCP::CTRL::PRESENT_SHA(1)    |

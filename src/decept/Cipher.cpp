@@ -65,7 +65,7 @@ bool Cipher::setKey(const KeySlots slot, const void* const key) {
     // Move the key by 32-bit words
     for (size_t i = 0; i < algo_.keySize/4; ++i) {
       const uint32_t k = ctx_.keyData[i];
-      DCP::group->KEYDATA = k;
+      DCP::KEYDATA::DATA = k;
     }
 
     // Clear our internal key data because it was only temporary

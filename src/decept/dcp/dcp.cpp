@@ -95,7 +95,7 @@ FLASHMEM void init() {
   DCP::group->CHANNELCTRL = DCP::CHANNELCTRL::ENABLE_CHANNEL(0x0F);
 
   // Use context switching buffer
-  DCP::group->CONTEXT = reinterpret_cast<uint32_t>(s_contextSwitchingBuf);
+  DCP::CONTEXT::ADDR = reinterpret_cast<uint32_t>(s_contextSwitchingBuf);
 }
 
 FLASHMEM void deinit() {

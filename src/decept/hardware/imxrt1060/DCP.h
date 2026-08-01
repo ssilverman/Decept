@@ -118,7 +118,7 @@ struct DCP_Layout {
 };
 
 constexpr size_t    kDCP_size = 0x434;
-constexpr uintptr_t kDCP_base = 0x402FC000;
+constexpr uintptr_t kDCP_base = 0x402F'C000;
 
 namespace DCP {
 constexpr regs::RegGroup<DCP_Layout, kDCP_size, kDCP_base> group;
@@ -315,10 +315,10 @@ constexpr DCP_Reg<&DCP_Layout::CONTEXT, 32, 0> ADDR;  // Context pointer address
 namespace KEY {
 constexpr DCP_Reg<&DCP_Layout::KEY, 24, 8> RSVD;
 constexpr DCP_Reg<&DCP_Layout::KEY,  2, 6> RSVD_INDEX;
-constexpr DCP_Reg<&DCP_Layout::KEY,  2, 4> INDEX;        // Key index pointer.
+constexpr DCP_Reg<&DCP_Layout::KEY,  2, 4> INDEX;         // Key index pointer.
     // The valid indices are 0-[number_keys].
 constexpr DCP_Reg<&DCP_Layout::KEY,  2, 2> RSVD_SUBWORD;
-constexpr DCP_Reg<&DCP_Layout::KEY,  2, 0> SUBWORD;      // Key subword pointer
+constexpr DCP_Reg<&DCP_Layout::KEY,  2, 0> SUBWORD;       // Key subword pointer
 }  // namespace KEY
 
 // DCP key data
@@ -832,14 +832,20 @@ constexpr DCP_Reg<&DCP_Layout::VERSION,  8, 16> MINOR;  // Fixed read-only value
 constexpr DCP_Reg<&DCP_Layout::VERSION, 16,  0> STEP;   // Fixed read-only value reflecting the stepping of the version of the design implementation.
 }  // namespace VERSION
 
-namespace CHxSEMA {
+// CHxSEMA values
+namespace CHANNEL_SEMA {
+namespace vals {
 // DCP channel X register values
 constexpr regs::RegValue32<8, 16> VALUE;
-}  // namespace CHxSEMA
+}  // namespace vals
+}  // namespace CHANNEL_SEMA
 
-namespace CHxSTAT {
+// CHxSTAT values
+namespace CHANNEL_STAT {
+namespace vals {
 constexpr regs::RegValue32<8, 16> ERROR_CODE;
-}  // namespace CHxSTAT
+}  // namespace vals
+}  // namespace CHANNEL_STAT
 
 }  // namespace DCP
 

@@ -67,7 +67,7 @@ struct SNVS_Layout {
 };
 
 constexpr size_t    kSNVS_size = 0xC00;
-constexpr uintptr_t kSNVS_base = 0x400D4000;
+constexpr uintptr_t kSNVS_base = 0x400D'4000;
 
 namespace SNVS {
 constexpr regs::RegGroup<SNVS_Layout, kSNVS_size, kSNVS_base> group;
@@ -77,7 +77,7 @@ template <auto Member, size_t Bits, unsigned int Shift,
           auto AssignMask = regs::shiftedMask<uint32_t, Bits, Shift>(),
           bool WriteOnly = false>
 using SNVS_Reg = regs::Reg32<kSNVS_base, SNVS_Layout, Member, 0, Bits, Shift,
-                             AssignMask, WriteOnly>;
+                             AssignMask, 0, WriteOnly>;
 
 template <auto Member, size_t MemberOffset, size_t Bits, unsigned int Shift,
           auto AssignMask = regs::shiftedMask<uint32_t, Bits, Shift>()>

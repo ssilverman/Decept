@@ -180,9 +180,10 @@ States isChannelComplete(const size_t channel) {
   //       However, the NXP code clears the status before clearing the channel
   //       status, so that's what is done here.
 
-  if ((((*kChannelInfo[channel].sema & DCP::CHxSEMA::VALUE(0xFF)) != 0) ||
-       ((*kChannelInfo[channel].stat & DCP::CHxSTAT::ERROR_CODE(0xFF)) !=
-        0))) {
+  if ((((*kChannelInfo[channel].sema & DCP::CHANNEL_SEMA::vals::VALUE(0xFF)) !=
+        0) ||
+       ((*kChannelInfo[channel].stat &
+         DCP::CHANNEL_STAT::vals::ERROR_CODE(0xFF)) != 0))) {
     clearStatus();
 
     // Clear channel status
@@ -217,9 +218,10 @@ bool waitForChannelComplete(const size_t channel) {
   //       However, the NXP code clears the status before clearing the channel
   //       status, so that's what is done here.
 
-  if ((((*kChannelInfo[channel].sema & DCP::CHxSEMA::VALUE(0xFF)) != 0) ||
-       ((*kChannelInfo[channel].stat & DCP::CHxSTAT::ERROR_CODE(0xFF)) !=
-        0))) {
+  if ((((*kChannelInfo[channel].sema & DCP::CHANNEL_SEMA::vals::VALUE(0xFF)) !=
+        0) ||
+       ((*kChannelInfo[channel].stat &
+         DCP::CHANNEL_STAT::vals::ERROR_CODE(0xFF)) != 0))) {
     clearStatus();
 
     // Clear channel status

@@ -61,7 +61,7 @@ struct IOMUXC_GPR_Layout {
 };
 
 constexpr size_t    kIOMUXC_GPR_size = 0x8C;
-constexpr uintptr_t kIOMUXC_GPR_base = 0x400AC000;
+constexpr uintptr_t kIOMUXC_GPR_base = 0x400A'C000;
 
 namespace IOMUXC_GPR {
 constexpr regs::RegGroup<IOMUXC_GPR_Layout, kIOMUXC_GPR_size, kIOMUXC_GPR_base>

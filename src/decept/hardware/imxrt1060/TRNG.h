@@ -91,7 +91,7 @@ struct TRNG_Layout {
 };
 
 constexpr size_t    kTRNG_size = 0xF8;
-constexpr uintptr_t kTRNG_base = 0x400CC000;
+constexpr uintptr_t kTRNG_base = 0x400C'C000;
 
 namespace TRNG {
 constexpr regs::RegGroup<TRNG_Layout, kTRNG_size, kTRNG_base> group;
@@ -101,7 +101,7 @@ template <auto Member, size_t Bits, unsigned int Shift,
           auto AssignMask = regs::shiftedMask<uint32_t, Bits, Shift>(),
           bool WriteOnly = false>
 using TRNG_Reg = regs::Reg32<kTRNG_base, TRNG_Layout, Member, 0, Bits, Shift,
-                             AssignMask, WriteOnly>;
+                             AssignMask, 0, WriteOnly>;
 
 namespace TRNG {
 

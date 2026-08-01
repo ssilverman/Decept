@@ -71,11 +71,14 @@ constexpr R shiftedMask() {
 // Note that caution should be observed when working with registers having
 // fields marked with a zero 'AssignMask' if not all fields have a
 // zero 'AssignMask'.
+//
+// The 'AssignSet' parameter guarantees certain bits are set.
 template <typename R, uintptr_t Base, typename Layout,
           auto Member,          // Can be const or non-const
           size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,
           R AssignMask = shiftedMask<R, Bits, Shift>(),
+          R AssignSet = 0,
           bool WriteOnly = false>
 class Reg {
   using MemberExpr   = decltype(std::declval<Layout&>().*Member);
@@ -127,6 +130,7 @@ class Reg {
   // Mask checks
   static_assert((AssignMask == 0) || ((AssignMask & kMask) == kMask),
                 "Nonzero AssignMask must include the complete field mask");
+  static_assert((AssignSet & AssignMask) == 0);  // They should be disjoint
 
   // Returns the masked and shifted version of the given value.
   [[gnu::always_inline]]
@@ -155,9 +159,9 @@ class Reg {
     // Either directly assign or clear and then set the bits
     if constexpr ((AssignMask == 0) ||
                   ((Bits == kWholeRegBits) && (Shift == 0))) {
-      *r() = (*this)(val);
+      *r() = (*this)(val) | AssignSet;
     } else {
-      *r() = (*r() & ~AssignMask) | (*this)(val);
+      *r() = (*r() & ~AssignMask) | AssignSet | (*this)(val);
     }
     return *this;
   }
@@ -193,8 +197,7 @@ class Reg {
   const Reg& operator&=(const R val) const {
     const R curr = *r();
     *r() = static_cast<R>((curr & static_cast<R>(~AssignMask)) |
-                          ((curr & kMask) & (*this)(val)));
-    // *r() &= static_cast<R>(static_cast<R>(~AssignMask) | (*this)(val));
+                          ((curr & kMask) & (*this)(val)) | AssignSet);
     return *this;
   }
 
@@ -211,9 +214,9 @@ class Reg {
   const Reg& operator|=(const R val) const {
     const R curr = *r();
     *r() = static_cast<R>((curr & static_cast<R>(~AssignMask)) |
-                          (curr & kMask) | (*this)(val));
+                          (curr & kMask) | (*this)(val) | AssignSet);
     // *r() = static_cast<R>((*r() & (static_cast<R>(~AssignMask) | kMask)) |
-    //                       (*this)(val));
+    //                       (*this)(val) | AssignSet);
     return *this;
   }
 
@@ -230,7 +233,7 @@ class Reg {
   const Reg& operator^=(const R val) const {
     const R curr = *r();
     *r() = static_cast<R>((curr & static_cast<R>(~AssignMask)) |
-                          ((curr & kMask) ^ (*this)(val)));
+                          ((curr & kMask) ^ (*this)(val)) | AssignSet);
     return *this;
   }
 
@@ -331,9 +334,10 @@ template <uintptr_t Base, typename Layout,
           size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,
           auto AssignMask = shiftedMask<uint32_t, Bits, Shift>(),
+          uint32_t AssignSet = 0,
           bool WriteOnly = false>
 using Reg32 = Reg<uint32_t, Base, Layout, Member, MemberOffset, Bits, Shift,
-                  AssignMask, WriteOnly>;
+                  AssignMask, AssignSet, WriteOnly>;
 
 template <size_t Bits, unsigned int Shift>
 using RegValue32 = RegValue<uint32_t, Bits, Shift>;
@@ -343,9 +347,10 @@ template <uintptr_t Base, typename Layout,
           size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,
           auto AssignMask = shiftedMask<uint16_t, Bits, Shift>(),
+          uint16_t AssignSet = 0,
           bool WriteOnly = false>
 using Reg16 = Reg<uint16_t, Base, Layout, Member, MemberOffset, Bits, Shift,
-                  AssignMask, WriteOnly>;
+                  AssignMask, AssignSet, WriteOnly>;
 
 template <size_t Bits, unsigned int Shift>
 using RegValue16 = RegValue<uint16_t, Bits, Shift>;
@@ -355,9 +360,10 @@ template <uintptr_t Base, typename Layout,
           size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,
           auto AssignMask = shiftedMask<uint8_t, Bits, Shift>(),
+          uint8_t AssignSet = 0,
           bool WriteOnly = false>
 using Reg8 = Reg<uint8_t, Base, Layout, Member, MemberOffset, Bits, Shift,
-                 AssignMask, WriteOnly>;
+                 AssignMask, AssignSet, WriteOnly>;
 
 template <size_t Bits, unsigned int Shift>
 using RegValue8 = RegValue<uint8_t, Bits, Shift>;

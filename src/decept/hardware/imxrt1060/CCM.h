@@ -59,7 +59,7 @@ struct CCM_Layout {
 };
 
 constexpr size_t    kCCM_size = 0x8C;
-constexpr uintptr_t kCCM_base = 0x400FC000;
+constexpr uintptr_t kCCM_base = 0x400F'C000;
 
 namespace CCM {
 constexpr regs::RegGroup<CCM_Layout, kCCM_size, kCCM_base> group;
@@ -71,6 +71,11 @@ using CCM_Reg =
     regs::Reg32<kCCM_base, CCM_Layout, Member, 0, Bits, Shift, AssignMask>;
 
 namespace CCM {
+
+template <auto Member, size_t Bits, unsigned int Shift, uint32_t AssignSet>
+using CGPR_Reg =
+    regs::Reg32<kCCM_base, CCM_Layout, Member, 0, Bits, Shift,
+                regs::shiftedMask<uint32_t, Bits, Shift>(), AssignSet>;
 
 // CCM Control Register
 namespace CCR {
@@ -712,22 +717,24 @@ constexpr CCM_Reg<&CCM_Layout::CCOSR, 4,  0> CLKO1_SEL;    // Selection of the c
 
 // CCM General Purpose Register
 namespace CGPR {
-constexpr CCM_Reg<&CCM_Layout::CGPR, 1, 17> INT_MEM_CLK_LPM;         // Control for the Deep Sleep signal to the Arm Platform memories with additional control logic based on the Arm WFI signal
+constexpr uint32_t kWOO = 0x0000'0002;
+
+constexpr CGPR_Reg<&CCM_Layout::CGPR, 1, 17, kWOO> INT_MEM_CLK_LPM;         // Control for the Deep Sleep signal to the Arm Platform memories with additional control logic based on the Arm WFI signal
     // 0b0..Disable the clock to the Arm platform memories when entering Low Power Mode
     // 0b1..Keep the clocks to the Arm platform memories enabled only if an interrupt is pending when entering Low
     //      Power Modes (WAIT and STOP without power gating)
-constexpr CCM_Reg<&CCM_Layout::CGPR, 1, 16> FPL;                     // Fast PLL enable.
+constexpr CGPR_Reg<&CCM_Layout::CGPR, 1, 16, kWOO> FPL;                     // Fast PLL enable.
     // 0b0..Engage PLL enable default way.
     // 0b1..Engage PLL enable 3 CKIL clocks earlier at exiting low power mode (STOP). Should be used only if 24MHz OSC was active in low power mode.
-constexpr CCM_Reg<&CCM_Layout::CGPR, 2, 14> SYS_MEM_DS_CTRL;         // System memory DS control
+constexpr CGPR_Reg<&CCM_Layout::CGPR, 2, 14, kWOO> SYS_MEM_DS_CTRL;         // System memory DS control
     // 0b00..Disable memory DS mode always
     // 0b01..Enable memory (outside Arm platform) DS mode when system STOP and PLL are disabled
     // 0b1x..enable memory (outside Arm platform) DS mode when system is in STOP mode
-constexpr CCM_Reg<&CCM_Layout::CGPR, 1,  4> EFUSE_PROG_SUPPLY_GATE;  // Defines the value of the output signal cgpr_dout[4].
+constexpr CGPR_Reg<&CCM_Layout::CGPR, 1,  4, kWOO> EFUSE_PROG_SUPPLY_GATE;  // Defines the value of the output signal cgpr_dout[4].
     // Gate of program supply for efuse programing
     // 0b0..fuse programing supply voltage is gated off to the efuse module
     // 0b1..allow fuse programing.
-constexpr CCM_Reg<&CCM_Layout::CGPR, 1,  0> PMIC_DELAY_SCALER;       // Defines clock dividion of clock for stby_count (pmic delay counter)
+constexpr CGPR_Reg<&CCM_Layout::CGPR, 1,  0, kWOO> PMIC_DELAY_SCALER;       // Defines clock dividion of clock for stby_count (pmic delay counter)
     // 0b0..clock is not divided
     // 0b1..clock is divided /8
 }  // namespace CGPR

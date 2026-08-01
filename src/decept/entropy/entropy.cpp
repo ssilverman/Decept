@@ -170,9 +170,7 @@ static bool fillEntropyBuf() {
   }
 
   // Fill the array
-  for (size_t i = 0; i < kEntropyCount; ++i) {
-    s_entropy[i] = TRNG::group->ENT[i];
-  }
+  std::copy_n(&TRNG::group->ENT[0], kEntropyCount, &s_entropy[0]);
   (void)TRNG::group->ENT[0];  // Dummy read after TRNG_ENT15 for defect workaround (according to SDK)
   s_entropySizeBytes = kEntropyCountBytes;
 

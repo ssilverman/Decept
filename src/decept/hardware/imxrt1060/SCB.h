@@ -86,10 +86,11 @@ constexpr regs::RegGroup<SCB_Layout, kSCB_size, kSCB_base> group;
 }  // namespace SCB
 
 template <auto Member, size_t Bits, unsigned int Shift,
-          auto AssignMask = regs::shiftedMask<uint32_t, Bits, Shift>(),
+          auto AssignMask = regs::shiftedMask32<Bits, Shift>(),
+          uint32_t AssignSet = 0,
           bool WriteOnly = false>
 using SCB_Reg = regs::Reg32<kSCB_base, SCB_Layout, Member, 0, Bits, Shift,
-                            AssignMask, 0, WriteOnly>;
+                            AssignMask, AssignSet, WriteOnly>;
 
 template <auto Member, size_t MemberOffset, size_t Bits, unsigned int Shift>
 using SCB_ArrayReg32 =
@@ -114,9 +115,9 @@ constexpr SCB_Reg<&SCB_Layout::CPUID,  4,  0> REVISION;      // Indicates patch 
 namespace ICSR {
 constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 31, 0x0> NMIPENDSET;              // NMI set-pending bit
 constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 28, 0x0> PENDSVSET;               // PendSV set-pending bit
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 27, 0x0, true> PENDSVCLR;         // PendSV clear-pending bit
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 27, 0x0, 0x0, true> PENDSVCLR;    // PendSV clear-pending bit
 constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 26, 0x0> PENDSTSET;               // SysTick exception set-pending bit
-constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 25, 0x0, true> PENDSTCLR;         // SysTick exception clear-pending bit
+constexpr SCB_Reg<&SCB_Layout::ICSR, 1, 25, 0x0, 0x0, true> PENDSTCLR;    // SysTick exception clear-pending bit
 constexpr SCB_Reg<regs::constify(&SCB_Layout::ICSR), 1, 23> ISRPREEMPT;
 constexpr SCB_Reg<regs::constify(&SCB_Layout::ICSR), 1, 22> ISRPENDING;   // Interrupt pending flag, excluding NMI and Faults
 constexpr SCB_Reg<regs::constify(&SCB_Layout::ICSR), 9, 12> VECTPENDING;  // Exception number of the highest priority pending enabled exception
@@ -135,14 +136,24 @@ namespace AIRCR {
 // TODO: Is this the correct way?
 constexpr uint32_t kWO = 0xffff'0007;
 
-constexpr SCB_Reg<&SCB_Layout::AIRCR, 16, 16, kWO, true> VECTKEY;                    // Register key
+constexpr SCB_Reg<&SCB_Layout::AIRCR, 16, 16, kWO, 0x0, true> VECTKEY;                                      // Register key
 constexpr SCB_Reg<regs::constify(&SCB_Layout::AIRCR), 16, 16> VECTKEYSTAT;
-constexpr SCB_Reg<regs::constify(&SCB_Layout::AIRCR),  1, 15> ENDIANNESS;            // Data endianness
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  3,  8, (uint32_t{0x7} << 8) | kWO> PRIGROUP;  // Interrupt priority grouping field.
+constexpr SCB_Reg<regs::constify(&SCB_Layout::AIRCR),  1, 15> ENDIANNESS;                                   // Data endianness
+constexpr SCB_Reg<regs::constify(&SCB_Layout::AIRCR),  3,  8, regs::shiftedMask32<3, 8>() | kWO> PRIGROUP;  // Interrupt priority grouping field.
     // This field determines the split of group priority from subpriority.
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  2, kWO, true> SYSRESETREQ;                // System reset request
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  1, kWO, true> VECTCLRACTIVE;              // Writing 1 to this bit clears all active state information for fixed and configurable exceptions.
-constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  0, kWO, true> VECTRESET;                  // Writing 1 to this bit causes a local system reset
+// constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  2, kWO, 0x0, true> SYSRESETREQ;                                  // System reset request
+// constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  1, kWO, 0x0, true> VECTCLRACTIVE;                                // Writing 1 to this bit clears all active state information for fixed and configurable exceptions.
+// constexpr SCB_Reg<&SCB_Layout::AIRCR,  1,  0, kWO, 0x0, true> VECTRESET;                                    // Writing 1 to this bit causes a local system reset
+
+// Versions where VECTKEY also gets set
+namespace keyed {
+constexpr uint32_t kVECTKEY = VECTKEY(0x05FA);
+
+constexpr SCB_Reg<&SCB_Layout::AIRCR, 3, 8, regs::shiftedMask32<3, 8>() | kWO, kVECTKEY> PRIGROUP;
+constexpr SCB_Reg<&SCB_Layout::AIRCR, 1, 2, kWO, kVECTKEY, true> SYSRESETREQ;
+constexpr SCB_Reg<&SCB_Layout::AIRCR, 1, 1, kWO, kVECTKEY, true> VECTCLRACTIVE;
+constexpr SCB_Reg<&SCB_Layout::AIRCR, 1, 0, kWO, kVECTKEY, true> VECTRESET;
+}  // namespace keyed
 }  // namespace AIRCR
 
 // System Control Register
@@ -423,7 +434,7 @@ constexpr SCB_Reg<&SCB_Layout::CPACR, 2,  0> CP0;   // Access privileges for cop
 
 // Software Triggered Interrupt Register
 namespace STIR {
-constexpr SCB_Reg<&SCB_Layout::STIR, 9, 0, 0x0, true> INTID;  // Indicates the interrupt to be triggered
+constexpr SCB_Reg<&SCB_Layout::STIR, 9, 0, 0x0, 0x0, true> INTID;  // Indicates the interrupt to be triggered
 }  // namespace STIR
 
 // Media and VFP Feature Register 0
@@ -453,58 +464,58 @@ constexpr SCB_Reg<&SCB_Layout::MVFR2, 4, 4> FPMisc;  // VFP Misc bits
 
 // Instruction cache invalidate all to Point of Unification (PoU)
 namespace ICIALLU {
-constexpr SCB_Reg<&SCB_Layout::ICIALLU, 32, 0, 0x0, true> ICIALLU;  // I-cache invalidate all to PoU
+constexpr SCB_Reg<&SCB_Layout::ICIALLU, 32, 0, 0x0, 0x0, true> ICIALLU;  // I-cache invalidate all to PoU
 }  // namespace ICIALLU
 
 // Instruction cache invalidate by address to PoU
 namespace ICIMVAU {
-constexpr SCB_Reg<&SCB_Layout::ICIMVAU, 32, 0, 0x0, true> ICIMVAU;  // I-cache invalidate by MVA to PoU
+constexpr SCB_Reg<&SCB_Layout::ICIMVAU, 32, 0, 0x0, 0x0, true> ICIMVAU;  // I-cache invalidate by MVA to PoU
 }  // namespace ICIMVAU
 
 // Data cache invalidate by address to Point of Coherency (PoC)
 namespace DCIMVAC {
-constexpr SCB_Reg<&SCB_Layout::DCIMVAC, 32, 0, 0x0, true> DCIMVAC;  // D-cache invalidate by MVA to PoC
+constexpr SCB_Reg<&SCB_Layout::DCIMVAC, 32, 0, 0x0, 0x0, true> DCIMVAC;  // D-cache invalidate by MVA to PoC
 }  // namespace DCIMVAC
 
 // Data cache invalidate by set/way
 // Exercise caution when setting or assigning fields in this register.
 namespace DCISW {
-constexpr SCB_Reg<&SCB_Layout::DCISW, 2, 30, 0x0, true> WAY;
-constexpr SCB_Reg<&SCB_Layout::DCISW, 9,  5, 0x0, true> SET;
+constexpr SCB_Reg<&SCB_Layout::DCISW, 2, 30, 0x0, 0x0, true> WAY;
+constexpr SCB_Reg<&SCB_Layout::DCISW, 9,  5, 0x0, 0x0, true> SET;
 }  // namespace DCISW
 
 // Data cache by address to PoU
 namespace DCCMVAU {
-constexpr SCB_Reg<&SCB_Layout::DCCMVAU, 32, 0, 0x0, true> DCCMVAU;  // D-cache clean by MVA to PoU
+constexpr SCB_Reg<&SCB_Layout::DCCMVAU, 32, 0, 0x0, 0x0, true> DCCMVAU;  // D-cache clean by MVA to PoU
 }  // namespace DCCMVAU
 
 // Data cache clean by address to PoC
 namespace DCCMVAC {
-constexpr SCB_Reg<&SCB_Layout::DCCMVAC, 32, 0, 0x0, true> DCCMVAC;  // D-cache clean by MVA to PoC
+constexpr SCB_Reg<&SCB_Layout::DCCMVAC, 32, 0, 0x0, 0x0, true> DCCMVAC;  // D-cache clean by MVA to PoC
 }  // namespace DCCMVAC
 
 // Data cache clean by set/way
 // Exercise caution when setting or assigning fields in this register.
 namespace DCCSW {
-constexpr SCB_Reg<&SCB_Layout::DCCSW, 2, 30, 0x0, true> WAY;
-constexpr SCB_Reg<&SCB_Layout::DCCSW, 9,  5, 0x0, true> SET;
+constexpr SCB_Reg<&SCB_Layout::DCCSW, 2, 30, 0x0, 0x0, true> WAY;
+constexpr SCB_Reg<&SCB_Layout::DCCSW, 9,  5, 0x0, 0x0, true> SET;
 }  // namespace DCCSW
 
 // Data cache clean and invalidate by address to PoC
 namespace DCCIMVAC {
-constexpr SCB_Reg<&SCB_Layout::DCCIMVAC, 32, 0, 0x0, true> DCCIMVAC;  // D-cache clean and invalidate by MVA to PoC
+constexpr SCB_Reg<&SCB_Layout::DCCIMVAC, 32, 0, 0x0, 0x0, true> DCCIMVAC;  // D-cache clean and invalidate by MVA to PoC
 }  // namespace DCCIMVAC
 
 // Data cache clean and invalidate by set/way
 // Exercise caution when setting or assigning fields in this register.
 namespace DCCISW {
-constexpr SCB_Reg<&SCB_Layout::DCCISW, 2, 30, 0x0, true> WAY;
-constexpr SCB_Reg<&SCB_Layout::DCCISW, 9,  5, 0x0, true> SET;
+constexpr SCB_Reg<&SCB_Layout::DCCISW, 2, 30, 0x0, 0x0, true> WAY;
+constexpr SCB_Reg<&SCB_Layout::DCCISW, 9,  5, 0x0, 0x0, true> SET;
 }  // namespace DCCISW
 
 // Branch Predictor Invalidate All
 namespace BPIALL {
-constexpr SCB_Reg<&SCB_Layout::BPIALL, 32, 0, 0x0, true> BPIALL;
+constexpr SCB_Reg<&SCB_Layout::BPIALL, 32, 0, 0x0, 0x0, true> BPIALL;
 }  // namespace BPIALL
 
 // Instruction Tightly-Coupled Memory Control Register

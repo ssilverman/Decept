@@ -41,12 +41,42 @@ class RegGroup {
 // Gets the basic shifted mask for the given parameters.
 template <typename R, size_t Bits, unsigned int Shift>
 constexpr R shiftedMask() {
+  // Number of bits in whole register.
+  constexpr size_t kWholeRegBits = std::numeric_limits<R>::digits;
+
+  // Parameter shape checks
+  static_assert(std::is_integral_v<R> && std::is_unsigned_v<R>,
+                "Type must be unsigned integral");
+  static_assert(Bits != 0, "Bits shouldn't be zero");
+  static_assert(Bits <= kWholeRegBits, "Bit count exceeds type width");
+  static_assert(Shift < kWholeRegBits, "Shift exceeds type width");
+  static_assert((Bits <= kWholeRegBits) && (Shift <= kWholeRegBits - Bits),
+                "Value extends past type bounds");
+
   // Add -1 using R-bit modular arithmetic
   return static_cast<R>(
              (((Bits < std::numeric_limits<R>::digits) ? (R{1} << Bits)
                                                        : R{0}) +
               std::numeric_limits<R>::max())
              << Shift);
+}
+
+// Gets the basic shifted 32-bit mask for the given parameters.
+template <size_t Bits, unsigned int Shift>
+constexpr uint32_t shiftedMask32() {
+  return shiftedMask<uint32_t, Bits, Shift>();
+}
+
+// Gets the basic shifted 16-bit mask for the given parameters.
+template <size_t Bits, unsigned int Shift>
+constexpr uint16_t shiftedMask16() {
+  return shiftedMask<uint16_t, Bits, Shift>();
+}
+
+// Gets the basic shifted 8-bit mask for the given parameters.
+template <size_t Bits, unsigned int Shift>
+constexpr uint8_t shiftedMask8() {
+  return shiftedMask<uint8_t, Bits, Shift>();
 }
 
 // Reg defines an easier way to access parts of a register.
@@ -130,7 +160,8 @@ class Reg {
   // Mask checks
   static_assert((AssignMask == 0) || ((AssignMask & kMask) == kMask),
                 "Nonzero AssignMask must include the complete field mask");
-  static_assert((AssignSet & AssignMask) == 0);  // They should be disjoint
+  // static_assert((AssignSet & AssignMask) == 0);  // They should be disjoint
+  static_assert((AssignSet & kMask) == 0);  // They should be "mostly" disjoint
 
   // Returns the masked and shifted version of the given value.
   [[gnu::always_inline]]
@@ -333,7 +364,7 @@ template <uintptr_t Base, typename Layout,
           auto Member,          // Can be const or non-const
           size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,
-          auto AssignMask = shiftedMask<uint32_t, Bits, Shift>(),
+          auto AssignMask = shiftedMask32<Bits, Shift>(),
           uint32_t AssignSet = 0,
           bool WriteOnly = false>
 using Reg32 = Reg<uint32_t, Base, Layout, Member, MemberOffset, Bits, Shift,
@@ -346,7 +377,7 @@ template <uintptr_t Base, typename Layout,
           auto Member,          // Can be const or non-const
           size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,
-          auto AssignMask = shiftedMask<uint16_t, Bits, Shift>(),
+          auto AssignMask = shiftedMask16<Bits, Shift>(),
           uint16_t AssignSet = 0,
           bool WriteOnly = false>
 using Reg16 = Reg<uint16_t, Base, Layout, Member, MemberOffset, Bits, Shift,
@@ -359,7 +390,7 @@ template <uintptr_t Base, typename Layout,
           auto Member,          // Can be const or non-const
           size_t MemberOffset,  // If the member is an array, otherwise zero
           size_t Bits, unsigned int Shift,
-          auto AssignMask = shiftedMask<uint8_t, Bits, Shift>(),
+          auto AssignMask = shiftedMask8<Bits, Shift>(),
           uint8_t AssignSet = 0,
           bool WriteOnly = false>
 using Reg8 = Reg<uint8_t, Base, Layout, Member, MemberOffset, Bits, Shift,

@@ -125,7 +125,7 @@ constexpr regs::RegGroup<DCP_Layout, kDCP_size, kDCP_base> group;
 }  // namespace DCP
 
 template <auto Member, size_t Bits, unsigned int Shift,
-          auto AssignMask = regs::shiftedMask<uint32_t, Bits, Shift>()>
+          auto AssignMask = regs::shiftedMask32<Bits, Shift>()>
 using DCP_Reg =
     regs::Reg32<kDCP_base, DCP_Layout, Member, 0, Bits, Shift, AssignMask>;
 

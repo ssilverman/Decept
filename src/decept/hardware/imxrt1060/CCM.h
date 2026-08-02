@@ -66,7 +66,7 @@ constexpr regs::RegGroup<CCM_Layout, kCCM_size, kCCM_base> group;
 }  // namespace CCM
 
 template <auto Member, size_t Bits, unsigned int Shift,
-          auto AssignMask = regs::shiftedMask<uint32_t, Bits, Shift>()>
+          auto AssignMask = regs::shiftedMask32<Bits, Shift>()>
 using CCM_Reg =
     regs::Reg32<kCCM_base, CCM_Layout, Member, 0, Bits, Shift, AssignMask>;
 
@@ -75,7 +75,7 @@ namespace CCM {
 template <auto Member, size_t Bits, unsigned int Shift, uint32_t AssignSet>
 using CGPR_Reg =
     regs::Reg32<kCCM_base, CCM_Layout, Member, 0, Bits, Shift,
-                regs::shiftedMask<uint32_t, Bits, Shift>(), AssignSet>;
+                regs::shiftedMask32<Bits, Shift>(), AssignSet>;
 
 // CCM Control Register
 namespace CCR {

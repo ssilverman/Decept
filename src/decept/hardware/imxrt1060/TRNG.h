@@ -98,7 +98,7 @@ constexpr regs::RegGroup<TRNG_Layout, kTRNG_size, kTRNG_base> group;
 }  // namespace TRNG
 
 template <auto Member, size_t Bits, unsigned int Shift,
-          auto AssignMask = regs::shiftedMask<uint32_t, Bits, Shift>(),
+          auto AssignMask = regs::shiftedMask32<Bits, Shift>(),
           bool WriteOnly = false>
 using TRNG_Reg = regs::Reg32<kTRNG_base, TRNG_Layout, Member, 0, Bits, Shift,
                              AssignMask, 0, WriteOnly>;
@@ -111,24 +111,24 @@ namespace MCTL {
 constexpr uint32_t kW1C = 0x0000'1000;
 constexpr uint32_t kWO  = 0x0000'0040;
 
-constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 16, (uint32_t{0x1} << 16) | kW1C | kWO> PRGM;       // Programming Mode Select
-constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 14, (uint32_t{0x1} << 14) | kW1C | kWO> LRUN_CONT;  // Long run count continues between entropy generations
-constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1, 13> TSTOP_OK;                       // TRNG_OK_TO_STOP
-constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 12, kW1C | kWO> ERR;                                // Read: Error status
-constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1, 11> TST_OUT;                        // Read only: Test point inside ring oscillator.
-constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1, 10> ENT_VAL;                        // Read only: Entropy Valid
-constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1,  9> FCT_VAL;                        // Read only: Frequency Count Valid.
+constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 16, regs::shiftedMask32<1, 16>() | kW1C | kWO> PRGM;       // Programming Mode Select
+constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 14, regs::shiftedMask32<1, 14>() | kW1C | kWO> LRUN_CONT;  // Long run count continues between entropy generations
+constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1, 13> TSTOP_OK;                              // TRNG_OK_TO_STOP
+constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1, 12, kW1C | kWO> ERR;                                       // Read: Error status
+constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1, 11> TST_OUT;                               // Read only: Test point inside ring oscillator.
+constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1, 10> ENT_VAL;                               // Read only: Entropy Valid
+constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1,  9> FCT_VAL;                               // Read only: Frequency Count Valid.
     // Indicates that a valid frequency count may be read from FRQCNT.
-constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1,  8> FCT_FAIL;                       // Read only: Frequency Count Fail
-constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1,  7, (uint32_t{0x1} <<  7) | kW1C | kWO> FOR_SCLK;   // Force System Clock
-constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1,  6, kW1C | kWO, true> RST_DEF;                      // Reset Defaults
-constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1,  5> UNUSED5;                        // This bit is unused.
+constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1,  8> FCT_FAIL;                              // Read only: Frequency Count Fail
+constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1,  7, regs::shiftedMask32<1,  7>() | kW1C | kWO> FOR_SCLK;   // Force System Clock
+constexpr TRNG_Reg<&TRNG_Layout::MCTL, 1,  6, kW1C | kWO, true> RST_DEF;                             // Reset Defaults
+constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1,  5> UNUSED5;                               // This bit is unused.
     // Always reads zero.
-constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1,  4> UNUSED4;                        // This bit is unused.
+constexpr TRNG_Reg<regs::constify(&TRNG_Layout::MCTL), 1,  4> UNUSED4;                               // This bit is unused.
     // Always reads zero.
-constexpr TRNG_Reg<&TRNG_Layout::MCTL, 2,  2, (uint32_t{0x3} <<  2) | kW1C | kWO> OSC_DIV;    // Oscillator Divide
+constexpr TRNG_Reg<&TRNG_Layout::MCTL, 2,  2, regs::shiftedMask32<2,  2>() | kW1C | kWO> OSC_DIV;    // Oscillator Divide
     // 1/2^value
-constexpr TRNG_Reg<&TRNG_Layout::MCTL, 2,  0, (uint32_t{0x3} <<  0) | kW1C | kWO> SAMP_MODE;  // Sample Mode
+constexpr TRNG_Reg<&TRNG_Layout::MCTL, 2,  0, regs::shiftedMask32<2,  0>() | kW1C | kWO> SAMP_MODE;  // Sample Mode
     // 0b00..use Von Neumann data into both Entropy shifter and Statistical Checker
     // 0b01..use raw data into both Entropy shifter and Statistical Checker
     // 0b10..use Von Neumann data into Entropy shifter. Use raw data into Statistical Checker

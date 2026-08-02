@@ -127,12 +127,30 @@ constexpr SCB_Reg<regs::constify(&SCB_Layout::ICSR), 9,  0> VECTACTIVE;   // Act
 
 // Vector Table Offset Register
 namespace VTOR {
+
+static_assert(sizeof(void (*)()) == sizeof(uint32_t),
+              "Function pointer size must be 4 bytes");
+
+// Sets an interrupt vector. VTOR must point to a vector table in writable RAM.
+static inline void setVector(const uint8_t irq, void (* const f)()) {
+  const auto table = reinterpret_cast<uint32_t*>(group->VTOR);
+  table[irq + 16] = reinterpret_cast<uint32_t>(f);
+  asm volatile ("dsb sy" ::: "memory");
+}
+
+static inline void (*getVector(const uint8_t irq))() {
+  const auto table = reinterpret_cast<uint32_t*>(group->VTOR);
+  return reinterpret_cast<void (*)()>(table[irq + 16]);
+}
+
 constexpr SCB_Reg<&SCB_Layout::VTOR, 25, 7> TBLOFF;  // Vector table base offset
+
 }  // namespace VTOR
 
 // Application Interrupt and Reset Control Register
 // Exercise caution when setting or assigning fields in this register.
 namespace AIRCR {
+
 // TODO: Is this the correct way?
 constexpr uint32_t kWO = 0xffff'0007;
 
@@ -154,6 +172,25 @@ constexpr SCB_Reg<&SCB_Layout::AIRCR, 1, 2, kWO, kVECTKEY, true> SYSRESETREQ;
 constexpr SCB_Reg<&SCB_Layout::AIRCR, 1, 1, kWO, kVECTKEY, true> VECTCLRACTIVE;
 constexpr SCB_Reg<&SCB_Layout::AIRCR, 1, 0, kWO, kVECTKEY, true> VECTRESET;
 }  // namespace keyed
+
+static inline void systemReset() {
+  // Ensure all outstanding memory accesses including buffered writes are
+  // completed before reset
+  asm volatile("dsb sy" ::: "memory");
+
+  // Keep priority group unchanged
+  group->AIRCR =
+      VECTKEY(0x05fa) | (group->AIRCR & PRIGROUP.kMask) | keyed::SYSRESETREQ(1);
+
+  // Ensure completion of memory access
+  asm volatile("dsb sy" ::: "memory");
+
+  // Wait until reset
+  while (true) {
+    asm volatile ("nop");
+  }
+}
+
 }  // namespace AIRCR
 
 // System Control Register

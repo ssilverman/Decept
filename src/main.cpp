@@ -9,7 +9,8 @@
 #include "decept/dcp/dcp.h"
 #include "decept/entropy/random_device.h"
 
-#if !defined(PIO_UNIT_TESTING)
+// Define DECEPT_MAIN_TEST_PROGRAM to use this test program.
+#if defined(DECEPT_MAIN_TEST_PROGRAM) && !defined(PIO_UNIT_TESTING)
 
 static uint32_t kStartupDelay = 1500;
 
@@ -35,4 +36,4 @@ void loop() {
   delay(10);
 }
 
-#endif  // !PIO_UNIT_TESTING
+#endif  // defined(DECEPT_MAIN_TEST_PROGRAM) && !defined(PIO_UNIT_TESTING)

@@ -8,6 +8,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <utility>
 
 #include "decept/hardware/regs/regs.h"
 
@@ -173,6 +174,7 @@ constexpr SCB_Reg<&SCB_Layout::AIRCR, 1, 1, kWO, kVECTKEY, true> VECTCLRACTIVE;
 constexpr SCB_Reg<&SCB_Layout::AIRCR, 1, 0, kWO, kVECTKEY, true> VECTRESET;
 }  // namespace keyed
 
+[[noreturn]]
 static inline void systemReset() {
   // Ensure all outstanding memory accesses including buffered writes are
   // completed before reset
@@ -189,6 +191,12 @@ static inline void systemReset() {
   while (true) {
     asm volatile ("nop");
   }
+
+#if (__cplusplus < 202302L)
+  __builtin_unreachable();
+#else
+  std::unreachable();
+#endif  // C++ < 23
 }
 
 }  // namespace AIRCR

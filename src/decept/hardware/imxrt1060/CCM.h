@@ -62,15 +62,13 @@ constexpr size_t    kCCM_size = 0x8C;
 constexpr uintptr_t kCCM_base = 0x400F'C000;
 
 namespace CCM {
+
 constexpr regs::RegGroup<CCM_Layout, kCCM_size, kCCM_base> group;
-}  // namespace CCM
 
 template <auto Member, size_t Bits, unsigned int Shift,
           auto AssignMask = regs::shiftedMask32<Bits, Shift>()>
 using CCM_Reg =
     regs::Reg32<kCCM_base, CCM_Layout, Member, 0, Bits, Shift, AssignMask>;
-
-namespace CCM {
 
 template <auto Member, size_t Bits, unsigned int Shift, uint32_t AssignSet>
 using CGPR_Reg =
@@ -90,7 +88,7 @@ constexpr CCM_Reg<&CCM_Layout::CCR, 6, 21> REG_BYPASS_COUNT;  // Counter for ana
 constexpr CCM_Reg<&CCM_Layout::CCR, 1, 12> COSC_EN;           // On chip oscillator enable bit - this bit value is reflected on the output cosc_en
     // 0b0..disable on chip oscillator
     // 0b1..enable on chip oscillator
-constexpr CCM_Reg<&CCM_Layout::CCR, 8,  0> OSCNT;             // Oscillator ready counter value
+constexpr CCM_Reg<&CCM_Layout::CCR, 8,  0> OSCNT;             // Oscillator ready counter value.
     // These bits define value of 32KHz counter, that serve as
     // counter for oscillator lock time (count to n+1 ckil's). This is used for oscillator lock time.
     // Current estimation is ~5ms. This counter will be used in ignition sequence and in wake from
@@ -358,14 +356,14 @@ namespace CS1CDR {
 constexpr CCM_Reg<&CCM_Layout::CS1CDR, 3, 25> FLEXIO2_CLK_PODF;  //  Divider for flexio2/flexio3 clock.
     // Divider should be updated when output clock is gated.
     // Divide by 'value' + 1:
-    // 0b000..divide by 1
-    // 0b001..divide by 2
-    // 0b010..divide by 3
-    // 0b011..divide by 4
-    // 0b100..divide by 5
-    // 0b101..divide by 6
-    // 0b110..divide by 7
-    // 0b111..divide by 8
+    // 0b000..Divide by 1
+    // 0b001..Divide by 2
+    // 0b010..Divide by 3
+    // 0b011..Divide by 4
+    // 0b100..Divide by 5
+    // 0b101..Divide by 6
+    // 0b110..Divide by 7
+    // 0b111..Divide by 8
 constexpr CCM_Reg<&CCM_Layout::CS1CDR, 3, 22> SAI3_CLK_PRED;     // Divider for sai3/adc1/adc2 clock pred.
     // Divide by 'value' + 1:
     // 0b000..divide by 1
@@ -430,25 +428,25 @@ namespace CDCDR {
 constexpr CCM_Reg<&CCM_Layout::CDCDR, 3, 25> SPDIF0_CLK_PRED;   // Divider for spdif0 clock pred.
     // Divider should be updated when output clock is gated.
     // Divide by 'value' + 1:
-    // 0b000..divide by 1
-    // 0b001..divide by 2
-    // 0b010..divide by 3
-    // 0b011..divide by 4
-    // 0b100..divide by 5
-    // 0b101..divide by 6
-    // 0b110..divide by 7
-    // 0b111..divide by 8
+    // 0b000..Divide by 1
+    // 0b001..Divide by 2
+    // 0b010..Divide by 3
+    // 0b011..Divide by 4
+    // 0b100..Divide by 5
+    // 0b101..Divide by 6
+    // 0b110..Divide by 7
+    // 0b111..Divide by 8
 constexpr CCM_Reg<&CCM_Layout::CDCDR, 3, 22> SPDIF0_CLK_PODF;   // Divider for spdif0 clock podf.
     // Divider should be updated when output clock is gated.
     // Divide by 'value' + 1:
-    // 0b000..divide by 1
-    // 0b001..divide by 2
-    // 0b010..divide by 3
-    // 0b011..divide by 4
-    // 0b100..divide by 5
-    // 0b101..divide by 6
-    // 0b110..divide by 7
-    // 0b111..divide by 8
+    // 0b000..Divide by 1
+    // 0b001..Divide by 2
+    // 0b010..Divide by 3
+    // 0b011..Divide by 4
+    // 0b100..Divide by 5
+    // 0b101..Divide by 6
+    // 0b110..Divide by 7
+    // 0b111..Divide by 8
 constexpr CCM_Reg<&CCM_Layout::CDCDR, 2, 20> SPDIF0_CLK_SEL;    // Selector for spdif0 clock multiplexer
     // 0b00..derive clock from PLL4
     // 0b01..derive clock from PLL3 PFD2
@@ -457,25 +455,25 @@ constexpr CCM_Reg<&CCM_Layout::CDCDR, 2, 20> SPDIF0_CLK_SEL;    // Selector for 
 constexpr CCM_Reg<&CCM_Layout::CDCDR, 3, 12> FLEXIO1_CLK_PRED;  // Divider for flexio1 clock pred.
     // Divider should be updated when output clock is gated.
     // Divide by 'value' + 1:
-    // 0b000..divide by 1
-    // 0b001..divide by 2
-    // 0b010..divide by 3
-    // 0b011..divide by 4
-    // 0b100..divide by 5
-    // 0b101..divide by 6
-    // 0b110..divide by 7
-    // 0b111..divide by 8
+    // 0b000..Divide by 1
+    // 0b001..Divide by 2
+    // 0b010..Divide by 3
+    // 0b011..Divide by 4
+    // 0b100..Divide by 5
+    // 0b101..Divide by 6
+    // 0b110..Divide by 7
+    // 0b111..Divide by 8
 constexpr CCM_Reg<&CCM_Layout::CDCDR, 3,  9> FLEXIO1_CLK_PODF;  // Divider for flexio1 clock podf.
     // Divider should be updated when output clock is gated.
     // Divide by 'value' + 1:
-    // 0b000..divide by 1
-    // 0b001..divide by 2
-    // 0b010..divide by 3
-    // 0b011..divide by 4
-    // 0b100..divide by 5
-    // 0b101..divide by 6
-    // 0b110..divide by 7
-    // 0b111..divide by 8
+    // 0b000..Divide by 1
+    // 0b001..Divide by 2
+    // 0b010..Divide by 3
+    // 0b011..Divide by 4
+    // 0b100..Divide by 5
+    // 0b101..Divide by 6
+    // 0b110..Divide by 7
+    // 0b111..Divide by 8
 constexpr CCM_Reg<&CCM_Layout::CDCDR, 2,  7> FLEXIO1_CLK_SEL;   // Selector for flexio1 clock multiplexer
     // 0b00..derive clock from PLL4
     // 0b01..derive clock from PLL3 PFD2
@@ -741,160 +739,160 @@ constexpr CGPR_Reg<&CCM_Layout::CGPR, 1,  0, kWOO> PMIC_DELAY_SCALER;       // D
 
 // CCM Clock Gating Register 0
 namespace CCGR0 {
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 30> GPIO2;        // CG15
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 28> LPUART2;      // CG14
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 26> GPT2_SERIAL;  // CG13
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 24> GPT2_BUS;     // CG12
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 22> TRACE;        // CG11
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 20> CAN2_SERIAL;  // CG10
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 18> CAN2_CLOCK;   // CG9
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 16> CAN1_SERIAL;  // CG8
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 14> CAN1_CLOCK;   // CG7
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 12> LPUART3;      // CG6
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 10> DCP;          // CG5
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2,  8> SIM_M;        // CG4
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2,  6> CG3;          // CG3 (Reserved)
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2,  4> MQS;          // CG2
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2,  2> AIPS_TZ2;     // CG1
-constexpr CCM_Reg<&CCM_Layout::CCGR0, 2,  0> AIPS_TZ1;     // CG0
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 30> GPIO2;        // CG15 - gpio2_clocks (gpio2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 28> LPUART2;      // CG14 - lpuart2 clock (lpuart2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 26> GPT2_SERIAL;  // CG13 - gpt2 serial clocks (gpt2_serial_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 24> GPT2_BUS;     // CG12 - gpt2 bus clocks (gpt2_bus_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 22> TRACE;        // CG11 - trace clock (trace_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 20> CAN2_SERIAL;  // CG10 - can2_serial clock (can2_serial_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 18> CAN2_CLOCK;   // CG9 - can2 clock (can2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 16> CAN1_SERIAL;  // CG8 - can1_serial clock (can1_serial_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 14> CAN1_CLOCK;   // CG7 - can1 clock (can1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 12> LPUART3;      // CG6 - lpuart3 clock (lpuart3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2, 10> DCP;          // CG5 - dcp clock (dcp_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2,  8> SIM_M;        // CG4 - sim_m or sim_main register access clock (sim_m_mainclk_r_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2,  6> CG3;          // CG3 - Reserved
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2,  4> MQS;          // CG2 - mqs clock ( mqs_hmclk_clock_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2,  2> AIPS_TZ2;     // CG1 - aips_tz2 clocks (aips_tz2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR0, 2,  0> AIPS_TZ1;     // CG0 - aips_tz1 clocks (aips_tz1_clk_enable)
 }  // namespace CCGR0
 
 // CCM Clock Gating Register 1
 namespace CCGR1 {
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 30> GPIO5;        // CG15
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 28> CSU;          // CG14
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 26> GPIO1;        // CG13
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 24> LPUART4;      // CG12
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 22> GPT1_SERIAL;  // CG11
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 20> GPT1_BUS;     // CG10
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 18> SEMC_EXSC;    // CG9
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 16> ADC1;         // CG8
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 14> AOI2;         // CG7
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 12> PIT;          // CG6
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 10> ENET;         // CG5
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2,  8> ADC2;         // CG4
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2,  6> LPSPI4;       // CG3
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2,  4> LPSPI3;       // CG2
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2,  2> LPSPI2;       // CG1
-constexpr CCM_Reg<&CCM_Layout::CCGR1, 2,  0> LPSPI1;       // CG0
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 30> GPIO5;        // CG15 - gpio5 clock (gpio5_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 28> CSU;          // CG14 - csu clock (csu_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 26> GPIO1;        // CG13 - gpio1 clock (gpio1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 24> LPUART4;      // CG12 - lpuart4 clock (lpuart4_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 22> GPT1_SERIAL;  // CG11 - gpt1 serial clock (gpt_serial_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 20> GPT1_BUS;     // CG10 - gpt1 bus clock (gpt_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 18> SEMC_EXSC;    // CG9 - semc_exsc clock (semc_exsc_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 16> ADC1;         // CG8 - adc1 clock (adc1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 14> AOI2;         // CG7 - aoi2 clocks (aoi2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 12> PIT;          // CG6 - pit clocks (pit_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2, 10> ENET;         // CG5 - enet clock (enet_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2,  8> ADC2;         // CG4 - adc2 clock (adc2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2,  6> LPSPI4;       // CG3 - lpspi4 clocks (lpspi4_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2,  4> LPSPI3;       // CG2 - lpspi3 clocks (lpspi3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2,  2> LPSPI2;       // CG1 - lpspi2 clocks (lpspi2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR1, 2,  0> LPSPI1;       // CG0 - lpspi1 clocks (lpspi1_clk_enable)
 }  // namespace CCGR1
 
 // CCM Clock Gating Register 2
 namespace CCGR2 {
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 30> PXP;          // CG15
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 28> LCD;          // CG14
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 26> GPIO3;        // CG13
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 24> XBAR2;        // CG12
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 22> XBAR1;        // CG11
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 20> IPMUX3;       // CG10
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 18> IPMUX2;       // CG9
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 16> IPMUX1;       // CG8
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 14> XBAR3;        // CG7
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 12> OCOTP_CTRL;   // CG6
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 10> LPI2C3;       // CG5
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2,  8> LPI2C2;       // CG4
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2,  6> LPI2C1;       // CG3
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2,  4> IOMUXC_SNVS;  // CG2
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2,  2> CSI;          // CG1
-constexpr CCM_Reg<&CCM_Layout::CCGR2, 2,  0> OCRAM_EXSC;   // CG0
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 30> PXP;          // CG15 - pxp clocks (pxp_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 28> LCD;          // CG14 - lcd clocks (lcd_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 26> GPIO3;        // CG13 - gpio3 clock (gpio3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 24> XBAR2;        // CG12 - xbar2 clock (xbar2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 22> XBAR1;        // CG11 - xbar1 clock (xbar1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 20> IPMUX3;       // CG10 - ipmux3 clock (ipmux3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 18> IPMUX2;       // CG9 - ipmux2 clock (ipmux2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 16> IPMUX1;       // CG8 - ipmux1 clock (ipmux1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 14> XBAR3;        // CG7 - xbar3 clock (xbar3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 12> OCOTP_CTRL;   // CG6 - OCOTP_CTRL clock (ocotp_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2, 10> LPI2C3;       // CG5 - lpi2c3 clock (lpi2c3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2,  8> LPI2C2;       // CG4 - lpi2c2 clock (lpi2c2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2,  6> LPI2C1;       // CG3 - lpi2c1 clock (lpi2c1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2,  4> IOMUXC_SNVS;  // CG2 - iomuxc_snvs clock (iomuxc_snvs_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2,  2> CSI;          // CG1 - csi clock (csi_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR2, 2,  0> OCRAM_EXSC;   // CG0 - ocram_exsc clock (ocram_exsc_clk_enable)
 }  // namespace CCGR2
 
 // CCM Clock Gating Register 3
 namespace CCGR3 {
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 30> IOMUXC_SNVS_GPR;  // CG15
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 30> IOMUXC_SNVS_GPR;  // CG15 - iomuxc_snvs_gpr clock (iomuxc_snvs_gpr_clk_enable)
 constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 28> OCRAM;            // CG14 - The OCRAM clock cannot be turned off when the CM cache is running on this device.
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 26> ACMP4;            // CG13
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 24> ACMP3;            // CG12
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 22> ACMP2;            // CG11
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 20> ACMP1;            // CG10
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 18> FLEXRAM;          // CG9
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 16> WDOG1;            // CG8
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 14> EWM;              // CG7
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 12> GPIO4;            // CG6
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 10> LCDIF_PIX;        // CG5
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2,  8> AOI1;             // CG4
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2,  6> LPUART6;          // CG3
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2,  4> SEMC;             // CG2
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2,  2> LPUART5;          // CG1
-constexpr CCM_Reg<&CCM_Layout::CCGR3, 2,  0> FLEXIO2;          // CG0
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 26> ACMP4;            // CG13 - acmp4 clocks (acmp4_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 24> ACMP3;            // CG12 - acmp3 clocks (acmp3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 22> ACMP2;            // CG11 - acmp2 clocks (acmp2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 20> ACMP1;            // CG10 - acmp1 clocks (acmp1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 18> FLEXRAM;          // CG9 - flexram clock (flexram_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 16> WDOG1;            // CG8 - wdog1 clock (wdog1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 14> EWM;              // CG7 - ewm clocks (ewm_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 12> GPIO4;            // CG6 - gpio4 clock (gpio4_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2, 10> LCDIF_PIX;        // CG5 - lcdif pix clock (lcdif_pix_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2,  8> AOI1;             // CG4 - aoi1 clock (aoi1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2,  6> LPUART6;          // CG3 - lpuart6 clock (lpuart6_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2,  4> SEMC;             // CG2 - semc clocks (semc_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2,  2> LPUART5;          // CG1 - lpuart5 clock (lpuart5_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR3, 2,  0> FLEXIO2;          // CG0 - flexio2 clocks (flexio2_clk_enable)
 }  // namespace CCGR3
 
 // CCM Clock Gating Register 4
 namespace CCGR4 {
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 30> QDC4;        // CG15
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 28> QDC3;        // CG14
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 26> QDC2;        // CG13
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 24> QDC1;        // CG12
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 22> PWM4;        // CG11
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 20> PWM3;        // CG10
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 18> PWM2;        // CG9
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 16> PWM1;        // CG8
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 14> SIM_EMS;     // CG7
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 12> SIM_M;       // CG6
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 10> TSC_DIG;     // CG5
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2,  8> SIM_M7;      // CG4
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2,  6> BEE;         // CG3
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2,  4> IOMUXC_GPR;  // CG2
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2,  2> IOMUXC;      // CG1
-constexpr CCM_Reg<&CCM_Layout::CCGR4, 2,  0> SIM_M7_REG;  // CG0
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 30> QDC4;        // CG15 - qdc4 clocks (qdc4_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 28> QDC3;        // CG14 - qdc3 clocks (qdc3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 26> QDC2;        // CG13 - qdc2 clocks (qdc2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 24> QDC1;        // CG12 - qdc1 clocks (qdc1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 22> PWM4;        // CG11 - pwm4 clocks (pwm4_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 20> PWM3;        // CG10 - pwm3 clocks (pwm3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 18> PWM2;        // CG9 - pwm2 clocks (pwm2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 16> PWM1;        // CG8 - pwm1 clocks (pwm1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 14> SIM_EMS;     // CG7 - sim_ems clocks (sim_ems_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 12> SIM_M;       // CG6 - sim_m clocks (sim_m_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2, 10> TSC_DIG;     // CG5 - tsc_dig clock (tsc_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2,  8> SIM_M7;      // CG4 - sim_m7 clock (sim_m7_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2,  6> BEE;         // CG3 - bee clock(bee_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2,  4> IOMUXC_GPR;  // CG2 - iomuxc gpr clock (iomuxc_gpr_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2,  2> IOMUXC;      // CG1 - iomuxc clock (iomuxc_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR4, 2,  0> SIM_M7_REG;  // CG0 - sim_m7 register access clock (sim_m7_mainclk_r_enable)
 }  // namespace CCGR4
 
 // CCM Clock Gating Register 5
 namespace CCGR5 {
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 30> SNVS_LP;   // CG15
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 28> SNVS_HP;   // CG14
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 26> LPUART7;   // CG13
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 24> LPUART1;   // CG12
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 22> SAI3;      // CG11
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 20> SAI2;      // CG10
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 18> SAI1;      // CG9
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 16> SIM_MAIN;  // CG8
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 14> SPDIF;     // CG7
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 12> AIPSTZ4;   // CG6
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 10> WDOG2;     // CG5
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2,  8> KPP;       // CG4
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2,  6> DMA;       // CG3
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2,  4> WDOG3;     // CG2
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2,  2> FLEXIO1;   // CG1
-constexpr CCM_Reg<&CCM_Layout::CCGR5, 2,  0> ROM;       // CG0
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 30> SNVS_LP;   // CG15 - snvs_lp clock (snvs_lp_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 28> SNVS_HP;   // CG14 - snvs_hp clock (snvs_hp_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 26> LPUART7;   // CG13 - lpuart7 clock (lpuart7_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 24> LPUART1;   // CG12 - lpuart1 clock (lpuart1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 22> SAI3;      // CG11 - sai3 clock (sai3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 20> SAI2;      // CG10 - sai2 clock (sai2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 18> SAI1;      // CG9 - sai1 clock (sai1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 16> SIM_MAIN;  // CG8 - sim_main clock (sim_main_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 14> SPDIF;     // CG7 - spdif clock (spdif_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 12> AIPSTZ4;   // CG6 - aipstz4 clocks (aips_tz4_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2, 10> WDOG2;     // CG5 - wdog2 clock (wdog2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2,  8> KPP;       // CG4 - kpp clock (kpp_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2,  6> DMA;       // CG3 - dma clock (dma_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2,  4> WDOG3;     // CG2 - wdog3 clock (wdog3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2,  2> FLEXIO1;   // CG1 - flexio1 clock (flexio1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR5, 2,  0> ROM;       // CG0 - rom clock (rom_clk_enable)
 }  // namespace CCGR5
 
 // CCM Clock Gating Register 6
 namespace CCGR6 {
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 30> TIMER3;    // CG15
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 28> TIMER2;    // CG14
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 26> TIMER1;    // CG13
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 24> LPI2C4;    // CG12
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 22> ANADIG;    // CG11
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 20> SIM_PER;   // CG10
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 18> AIPS_TZ3;  // CG9
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 16> TIMER4;    // CG8
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 14> LPUART8;   // CG7
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 12> TRNG;      // CG6
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 10> FLEXSPI;   // CG5
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2,  8> IPMUX4;    // CG4
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2,  6> DCDC;      // CG3
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2,  4> USDHC2;    // CG2
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2,  2> USDHC1;    // CG1
-constexpr CCM_Reg<&CCM_Layout::CCGR6, 2,  0> USBOH3;    // CG0
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 30> TIMER3;    // CG15 - timer3 clocks (timer3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 28> TIMER2;    // CG14 - timer2 clocks (timer2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 26> TIMER1;    // CG13 - timer1 clocks (timer1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 24> LPI2C4;    // CG12 - lpi2c4 serial clock (lpi2c4_serial_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 22> ANADIG;    // CG11 - anadig clocks (anadig_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 20> SIM_PER;   // CG10 - sim_per clock (sim_per_clk_enable) sim_axbs_p_clk_enable
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 18> AIPS_TZ3;  // CG9 - aips_tz3 clock (aips_tz3_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 16> TIMER4;    // CG8 - timer4 clocks (timer4_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 14> LPUART8;   // CG7 - lpuart8 clocks (lpuart8_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 12> TRNG;      // CG6 - trng clock (trng_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2, 10> FLEXSPI;   // CG5 - flexspi clocks (flexspi_clk_enable) sim_ems_clk_enable must also be cleared, when flexspi_clk_enable is cleared
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2,  8> IPMUX4;    // CG4 - ipmux4 clock (ipmux4_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2,  6> DCDC;      // CG3 - dcdc clocks (dcdc_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2,  4> USDHC2;    // CG2 - usdhc2 clocks (usdhc2_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2,  2> USDHC1;    // CG1 - usdhc1 clocks (usdhc1_clk_enable)
+constexpr CCM_Reg<&CCM_Layout::CCGR6, 2,  0> USBOH3;    // CG0 - usboh3 clock (usboh3_clk_enable)
 }  // namespace CCGR6
 
 // CCM Clock Gating Register 7
 namespace CCGR7 {
-constexpr CCM_Reg<&CCM_Layout::CCGR7, 2, 12> FLEXIO3;      // CG6
-constexpr CCM_Reg<&CCM_Layout::CCGR7, 2, 10> AIPS_LITE;    // CG5
-constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  8> CAN3_SERIAL;  // CG4
-constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  6> CAN3_CLK;     // CG3
-constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  4> AXBS_L;       // CG2
-constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  2> FLEXSPI2;     // CG1
-constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  0> ENET2;        // CG0
+constexpr CCM_Reg<&CCM_Layout::CCGR7, 2, 12> FLEXIO3;      // CG6 - flexio3_clk_enable
+constexpr CCM_Reg<&CCM_Layout::CCGR7, 2, 10> AIPS_LITE;    // CG5 - aips_lite_clk_enable
+constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  8> CAN3_SERIAL;  // CG4 - can3_serial_clk_enable
+constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  6> CAN3_CLK;     // CG3 - can3_clk_enable
+constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  4> AXBS_L;       // CG2 - axbs_l_clk_enable
+constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  2> FLEXSPI2;     // CG1 - flexspi2_clk_enable
+constexpr CCM_Reg<&CCM_Layout::CCGR7, 2,  0> ENET2;        // CG0 - enet2_clk_enable
 }  // namespace CCGR7
 
 // CCM Module Enable Overide Register
 namespace CMEOR {
 constexpr CCM_Reg<&CCM_Layout::CMEOR, 1, 30> MOD_EN_OV_CAN1_CPI;   // Overide clock enable signal from CAN1 - clock will not be gated based on CAN's signal 'enable_clk_cpi'
-    // 0b0..don't override module enable signal
-    // 0b1..override module enable signal
+    // 0b0..don't overide module enable signal
+    // 0b1..overide module enable signal
 constexpr CCM_Reg<&CCM_Layout::CMEOR, 1, 28> MOD_EN_OV_CAN2_CPI;   // Overide clock enable signal from CAN2 - clock will not be gated based on CAN's signal 'enable_clk_cpi'
     // 0b0..don't override module enable signal
     // 0b1..override module enable signal

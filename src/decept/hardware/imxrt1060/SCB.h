@@ -83,8 +83,8 @@ constexpr uintptr_t kSCS_base = 0xE000'E000;          /*!< System Control Space 
 constexpr uintptr_t kSCB_base = SCB::kSCS_base + 0x0D00;  /*!< System Control Block Base Address */
 
 namespace SCB {
+
 constexpr regs::RegGroup<SCB_Layout, kSCB_size, kSCB_base> group;
-}  // namespace SCB
 
 template <auto Member, size_t Bits, unsigned int Shift,
           auto AssignMask = regs::shiftedMask32<Bits, Shift>(),
@@ -100,8 +100,6 @@ using SCB_ArrayReg32 =
 template <auto Member, size_t MemberOffset, size_t Bits, unsigned int Shift>
 using SCB_ArrayReg8 =
     regs::Reg8<kSCB_base, SCB_Layout, Member, MemberOffset, Bits, Shift>;
-
-namespace SCB {
 
 // CPUID Base Register
 namespace CPUID {
@@ -132,19 +130,22 @@ namespace VTOR {
 static_assert(sizeof(void (*)()) == sizeof(uint32_t),
               "Function pointer size must be 4 bytes");
 
+using Vector = void (*)();
+
 // Sets an interrupt vector. VTOR must point to a vector table in writable RAM.
-static inline void setVector(const uint8_t irq, void (* const f)()) {
+static inline void setVector(const uint8_t irq, const Vector f) {
   const auto table = reinterpret_cast<uint32_t*>(group->VTOR);
   table[irq + 16] = reinterpret_cast<uint32_t>(f);
   asm volatile ("dsb sy" ::: "memory");
 }
 
-static inline void (*getVector(const uint8_t irq))() {
+static inline Vector getVector(const uint8_t irq) {
   const auto table = reinterpret_cast<uint32_t*>(group->VTOR);
-  return reinterpret_cast<void (*)()>(table[irq + 16]);
+  return reinterpret_cast<Vector>(table[irq + 16]);
 }
 
 constexpr SCB_Reg<&SCB_Layout::VTOR, 25, 7> TBLOFF;  // Vector table base offset
+    // The vector table address actually uses all the bits, not just these
 
 }  // namespace VTOR
 

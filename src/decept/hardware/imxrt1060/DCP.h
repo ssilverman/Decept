@@ -121,15 +121,13 @@ constexpr size_t    kDCP_size = 0x434;
 constexpr uintptr_t kDCP_base = 0x402F'C000;
 
 namespace DCP {
+
 constexpr regs::RegGroup<DCP_Layout, kDCP_size, kDCP_base> group;
-}  // namespace DCP
 
 template <auto Member, size_t Bits, unsigned int Shift,
           auto AssignMask = regs::shiftedMask32<Bits, Shift>()>
 using DCP_Reg =
     regs::Reg32<kDCP_base, DCP_Layout, Member, 0, Bits, Shift, AssignMask>;
-
-namespace DCP {
 
 // DCP control register 0
 namespace CTRL {
@@ -423,7 +421,7 @@ constexpr DCP_Reg<&DCP_Layout::PACKET5, 32, 0> COUNT;  // Byte count register.
 
 // DCP work packet 6 status register
 namespace PACKET6 {
-constexpr DCP_Reg<&DCP_Layout::PACKET6, 32, 0> ADDR;  // This register reflects the payload pointer for the current control packet.
+constexpr DCP_Reg<&DCP_Layout::PACKET6, 32, 0> ADDR;  // This regiser reflects the payload pointer for the current control packet.
 }  // namespace PACKET6
 
 // DCP channel 0 command pointer address register

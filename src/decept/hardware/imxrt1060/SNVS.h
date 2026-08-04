@@ -11,6 +11,9 @@
 
 #include "decept/hardware/regs/regs.h"
 
+// Undefine some Arduino nonsense because of field name conflicts
+#undef PI
+
 namespace qindesign {
 namespace hardware {
 namespace imxrt1060 {
@@ -70,8 +73,8 @@ constexpr size_t    kSNVS_size = 0xC00;
 constexpr uintptr_t kSNVS_base = 0x400D'4000;
 
 namespace SNVS {
+
 constexpr regs::RegGroup<SNVS_Layout, kSNVS_size, kSNVS_base> group;
-}  // namespace SNVS
 
 template <auto Member, size_t Bits, unsigned int Shift,
           auto AssignMask = regs::shiftedMask32<Bits, Shift>(),
@@ -84,8 +87,6 @@ template <auto Member, size_t MemberOffset, size_t Bits, unsigned int Shift,
 using SNVS_ArrayReg =
     regs::Reg32<kSNVS_base, SNVS_Layout, Member, MemberOffset, Bits, Shift,
                 AssignMask>;
-
-namespace SNVS {
 
 // SNVS_HP Lock Register
 namespace HPLR {
@@ -542,8 +543,8 @@ constexpr SNVS_Reg<&SNVS_Layout::LPMKCR, 1, 2> ZMK_HWP;                        /
 constexpr SNVS_Reg<&SNVS_Layout::LPMKCR, 2, 0> MASTER_KEY_SEL;                 // Master Key Select
     // These bits select the SNVS Master Key output when Master Key Select bits are enabled by MKS_EN bit in the HPCOMR
     // 0b0x..Select one time programmable master key.
-    // 0b10..Select zeroizable master key when MKS_EN bit is set.
-    // 0b11..Select combined master key when MKS_EN bit is set.
+    // 0b10..Select zeroizable master key when MKS_EN bit is set .
+    // 0b11..Select combined master key when MKS_EN bit is set .
 
 // SNVS_LP Master Key Control Register values
 constexpr uint32_t kMASTER_KEY_SEL_OTPMK = 0;  /*!< One Time Programmable Master Key. */

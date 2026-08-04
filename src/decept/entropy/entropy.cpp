@@ -122,10 +122,10 @@ FLASHMEM void trng_init() {
                         TRNG::SCR5L::RUN5_MAX(config::kRUNBIT5_MAX);
   TRNG::group->SCR6PL = TRNG::SCR6PL::RUN6P_RNG(config::kRUNBIT6PLUS_RANGE) |
                         TRNG::SCR6PL::RUN6P_MAX(config::kRUNBIT6PLUS_MAX);
-  TRNG::group->PKRMAX = TRNG::PKRMAX::PKR_MAX(config::kPOKER_MAX);
-  TRNG::group->PKRRNG = TRNG::PKRRNG::PKR_RNG(config::kPOKER_RANGE);
-  TRNG::group->FRQMAX = TRNG::FRQMAX::FRQ_MAX(config::kFREQUENCY_MAX);
-  TRNG::group->FRQMIN = TRNG::FRQMIN::FRQ_MIN(config::kFREQUENCY_MIN);
+  TRNG::PKRMAX::PKR_MAX = config::kPOKER_MAX;
+  TRNG::PKRRNG::PKR_RNG = config::kPOKER_RANGE;
+  TRNG::FRQMAX::FRQ_MAX = config::kFREQUENCY_MAX;
+  TRNG::FRQMIN::FRQ_MIN = config::kFREQUENCY_MIN;
 
   // Clock settings
   TRNG::MCTL::FOR_SCLK = config::kCLOCK_MODE;

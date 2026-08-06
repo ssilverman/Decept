@@ -35,7 +35,7 @@ enum : uint32_t {
 #endif  // F_CPU range
 
   // Sampling
-  kSAMPLE_MODE      = TRNG::MCTL::kSAMP_MODE_VON_NEUMANN_SHIFTER_RAW_CHECKER,
+  kSAMPLE_MODE      = TRNG::MCTL::kSAMP_MODE_VON_NEUMANN_SHIFTER_RAW_CHECKER/*TRNG::MCTL::kSAMP_MODE_RAW_BOTH*/,
       // 0:Von Neumann in both, 1:raw in both, 2:VN Entropy and raw in stats
   kSPARSE_BIT_LIMIT = 63,
 
@@ -70,7 +70,7 @@ enum : uint32_t {
   kFREQUENCY_MAX = 25600/*30000*/,
   kFREQUENCY_MIN = 1600,
 
-// Security configuration
+  // Security configuration
   kLOCK = 0,
 };
 

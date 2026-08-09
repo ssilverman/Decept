@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "decept/hardware/regs/regs.h"
+#include "qindesign/hardware/regs/regs.h"
 
 namespace qindesign {
 namespace hardware {
